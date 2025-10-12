@@ -1,2 +1,2 @@
 [workspace]
-members = ["app", "crates/ersflute_io"]
+members = ["app", "crates/erm"]

@@ -60,7 +60,7 @@ checksum = "a23eb6b1614318a8071c9b2521f36b424b2c83db5eb3a0fead4a6c0809af6e61"
 name = "app"
 version = "0.1.0"
 dependencies = [
- "ersflute_io",
+ "erm",
  "serde",
  "serde_json",
  "tauri",
@@ -887,6 +887,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "erm"
+version = "0.1.0"
+dependencies = [
+ "quick-xml",
+ "serde",
+]
+
+[[package]]
 name = "errno"
 version = "0.3.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -894,14 +902,6 @@ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
  "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "ersflute_io"
-version = "0.1.0"
-dependencies = [
- "quick-xml",
- "serde",
 ]
 
 [[package]]
