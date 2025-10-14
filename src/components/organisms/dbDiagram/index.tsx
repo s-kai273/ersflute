@@ -63,13 +63,14 @@ const nodes = createNodes(tables);
 
 export const DbDiagram = () => {
   return (
-    <div className="relative inset-0 w-full h-full pointer-events-none">
+    <div className="relative inset-0 w-full h-full">
       <GridBackground className="absolute -z-10 inset-0 w-full h-full" />
       <Canvas
+        panType="drag"
         nodes={nodes}
         // edges={edges}
         node={(nodeProps) => <TableNode {...nodeProps} />}
-        className="relative z-10"
+        className="relative z-0"
       />
     </div>
   );
