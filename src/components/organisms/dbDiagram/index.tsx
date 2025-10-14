@@ -1,6 +1,7 @@
 import { Canvas, NodeData } from "reaflow";
 import { TableNode } from "../../atoms/tableNode";
 import { Table } from "../../../types/table";
+import { GridBackground } from "../../atoms/gridBackground";
 
 function createNodes(tables: Table[]): NodeData<Table>[] {
   return tables.map((table, index) => {
@@ -61,12 +62,15 @@ const nodes = createNodes(tables);
 // ];
 
 export const DbDiagram = () => {
-  console.log("## DbDiagram", nodes);
   return (
-    <Canvas
-      nodes={nodes}
-      // edges={edges}
-      node={(nodeProps) => <TableNode {...nodeProps} />}
-    />
+    <div className="relative inset-0 w-full h-full pointer-events-none">
+      <GridBackground className="absolute -z-10 inset-0 w-full h-full" />
+      <Canvas
+        nodes={nodes}
+        // edges={edges}
+        node={(nodeProps) => <TableNode {...nodeProps} />}
+        className="relative z-10"
+      />
+    </div>
   );
 };
