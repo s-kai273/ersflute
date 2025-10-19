@@ -1,4 +1,4 @@
-import { NodeData } from "reaflow";
+import { NodeProps } from "reaflow";
 import { Table } from "../../../types/table";
 
-export type TableNodeProps = Omit<NodeData, "data"> & { data: Table };
+export type TableNodeProps = NodeProps<Table> & {};
