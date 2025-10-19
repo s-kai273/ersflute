@@ -11,6 +11,7 @@ pub struct Color {
 pub struct FkColumn {
     pub fk_column_name: String,
 }
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct FkColumns {
     #[serde(default)]

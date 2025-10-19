@@ -1,12 +1,12 @@
-import { Canvas, NodeData } from "reaflow";
+import { Canvas, EdgeData, NodeData } from "reaflow";
 import { TableNode } from "../../atoms/tableNode";
 import { Table } from "../../../types/table";
 import { GridBackground } from "../../atoms/gridBackground";
 
 function createNodes(tables: Table[]): NodeData<Table>[] {
-  return tables.map((table, index) => {
+  return tables.map((table) => {
     return {
-      id: index.toString(),
+      id: table.physicalName,
       x: table.x,
       y: table.y,
       width: table.width,
@@ -14,6 +14,21 @@ function createNodes(tables: Table[]): NodeData<Table>[] {
       data: table,
     } as NodeData<Table>;
   });
+}
+
+function createEdges(tables: Table[]): EdgeData[] {
+  return tables
+    .filter((table) => !!table.connections)
+    .flatMap((table) => table.connections!.relationship)
+    .map((relationship) => {
+      const from = relationship.source.slice("table.".length);
+      const to = relationship.target.slice("table.".length);
+      return {
+        id: relationship.name,
+        from,
+        to,
+      } as EdgeData;
+    });
 }
 
 const tables: Table[] = [
@@ -48,18 +63,32 @@ const tables: Table[] = [
       g: 128,
       b: 192,
     },
+    connections: {
+      relationship: [
+        {
+          name: "FK_MEMBER_PROFILES_MEMBERS",
+          source: "table.MEMBERS",
+          target: "table.MEMBER_PROFILES",
+          fkColumns: {
+            fkColumn: [
+              {
+                fkColumnName: "MEMBER_ID",
+              },
+            ],
+          },
+          parentCardinality: 1,
+          childCardinality: 1,
+          referenceForPk: true,
+          onDeleteAction: "RESTRICT",
+          onUpdateAction: "RESTRICT",
+        },
+      ],
+    },
   },
 ];
 
 const nodes = createNodes(tables);
-
-// const edges = [
-//   {
-//     id: "1-2",
-//     from: "1",
-//     to: "2",
-//   },
-// ];
+const edges = createEdges(tables);
 
 export const DbDiagram = () => {
   return (
@@ -68,7 +97,7 @@ export const DbDiagram = () => {
       <Canvas
         panType="drag"
         nodes={nodes}
-        // edges={edges}
+        edges={edges}
         node={(nodeProps) => <TableNode {...nodeProps} />}
         className="relative z-0"
       />
