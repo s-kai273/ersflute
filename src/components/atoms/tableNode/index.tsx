@@ -13,6 +13,9 @@ export function TableNode({
   const [pos, setPos] = useState<Position>([x, y]);
   const dragStartPosRef = useRef<Position>(pos);
   const data: Table | undefined = properties.data;
+  if (!data) {
+    return null;
+  }
   const handleDragStart = () => {
     dragStartPosRef.current = pos;
   };
@@ -20,9 +23,6 @@ export function TableNode({
     const startPos = dragStartPosRef.current;
     setPos([startPos[0] + event.movement[0], startPos[1] + event.movement[1]]);
   };
-  if (!data) {
-    return null;
-  }
   return (
     <Node
       {...props}
@@ -42,7 +42,7 @@ export function TableNode({
         return (
           <foreignObject width={nodeProps.width} height={nodeProps.height}>
             <div className="h-5 pointer-events-none">
-              <p className="text-3 text-center">{nodeData.physical_name}</p>
+              <p className="text-3 text-center">{nodeData.physicalName}</p>
             </div>
             <div className="w-full h-full bg-white"></div>
           </foreignObject>

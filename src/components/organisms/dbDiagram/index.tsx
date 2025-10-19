@@ -18,13 +18,13 @@ function createNodes(tables: Table[]): NodeData<Table>[] {
 
 const tables: Table[] = [
   {
-    physical_name: "MEMBERS",
-    logical_name: "会員",
+    physicalName: "MEMBERS",
+    logicalName: "会員",
     description: "",
     height: 108,
     width: 194,
-    font_name: "Ubuntu",
-    font_size: 9,
+    fontName: "Ubuntu",
+    fontSize: 9,
     x: 160,
     y: 106,
     color: {
@@ -34,13 +34,13 @@ const tables: Table[] = [
     },
   },
   {
-    physical_name: "MEMBER_PROFILES",
-    logical_name: "会員プロフィール",
+    physicalName: "MEMBER_PROFILES",
+    logicalName: "会員プロフィール",
     description: "",
     height: 89,
     width: 245,
-    font_name: "Ubuntu",
-    font_size: 9,
+    fontName: "Ubuntu",
+    fontSize: 9,
     x: 488,
     y: 113,
     color: {

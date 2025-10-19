@@ -5,13 +5,13 @@ type Color = {
 };
 
 export type Table = {
-  physical_name: string;
-  logical_name: string;
+  physicalName: string;
+  logicalName: string;
   description: string;
   height: number;
   width: number;
-  font_name: string;
-  font_size: number;
+  fontName: string;
+  fontSize: number;
   x: number;
   y: number;
   color: Color;
