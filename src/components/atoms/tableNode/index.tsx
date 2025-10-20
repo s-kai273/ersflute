@@ -1,52 +1,36 @@
-// import { Table } from "../../../types/table";
-// import { useRef, useState } from "react";
-// import { TableNodeProps } from "./types";
+import { NodeProps } from "@xyflow/react";
+import { Table } from "../../../types/table";
 
-// export function TableNode({
-//   x,
-//   y,
-//   onDragEnd,
-//   properties,
-//   ...props
-// }: TableNodeProps) {
-//   const [pos, setPos] = useState<Position>([x, y]);
-//   const dragStartPosRef = useRef<Position>(pos);
-//   const data: Table | undefined = properties.data;
-//   if (!data) {
-//     return null;
-//   }
-//   const handleDragStart = () => {
-//     dragStartPosRef.current = pos;
-//   };
-//   const handleDrag = (event: DragEvent) => {
-//     const startPos = dragStartPosRef.current;
-//     setPos([startPos[0] + event.movement[0], startPos[1] + event.movement[1]]);
-//   };
-//   return (
-//     <Node
-//       {...props}
-//       x={pos[0]}
-//       y={pos[1]}
-//       properties={properties}
-//       onDragStart={handleDragStart}
-//       onDrag={handleDrag}
-//       style={{
-//         fill: `rgb(${data.color.r}, ${data.color.g}, ${data.color.b})`,
-//         stroke: "#333",
-//         strokeWidth: 2,
-//       }}
-//     >
-//       {(nodeProps) => {
-//         const nodeData: Table = nodeProps.node.data;
-//         return (
-//           <foreignObject width={nodeProps.width} height={nodeProps.height}>
-//             <div className="h-5 pointer-events-none">
-//               <p className="text-3 text-center">{nodeData.physicalName}</p>
-//             </div>
-//             <div className="w-full h-full bg-white"></div>
-//           </foreignObject>
-//         );
-//       }}
-//     </Node>
-//   );
-// }
+export function TableNode({ width, height, ...props }: NodeProps) {
+  const data = props.data as Table;
+  // const [pos, setPos] = useState<Position>([x, y]);
+  // const dragStartPosRef = useRef<Position>(pos);
+  // const data: Table | undefined = properties.data;
+  // if (!data) {
+  //   return null;
+  // }
+  // const handleDragStart = () => {
+  //   dragStartPosRef.current = pos;
+  // };
+  // const handleDrag = (event: DragEvent) => {
+  //   const startPos = dragStartPosRef.current;
+  //   setPos([startPos[0] + event.movement[0], startPos[1] + event.movement[1]]);
+  // };
+  return (
+    <div
+      className="flex flex-col min-h-0 rounded-sm"
+      style={{
+        width,
+        height,
+        background: `rgb(${data.color.r}, ${data.color.g}, ${data.color.b})`,
+      }}
+    >
+      <div className="flex items-center justify-center h-5 pointer-events-none">
+        <p className="text-sm">{data.physicalName}</p>
+      </div>
+      <div className="flex-1 w-full px-1 pb-1">
+        <div className="w-full h-full bg-white"></div>
+      </div>
+    </div>
+  );
+}

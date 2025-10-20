@@ -7,19 +7,21 @@ import {
   Node,
   ReactFlow,
 } from "@xyflow/react";
+import { TableNode } from "../../atoms/tableNode";
 
 function createNodes(tables: Table[]): Node[] {
   return tables.map((table) => {
     return {
       id: `table.${table.physicalName}`,
+      type: "table",
       position: {
         x: table.x,
         y: table.y,
       },
       width: table.width,
       height: table.height,
-      // data: table,
-      data: { label: table.logicalName },
+      data: table,
+      // data: { label: table.logicalName },
     } as Node;
   });
 }
@@ -101,7 +103,14 @@ const edges = createEdges(tables);
 export const DbDiagram = () => {
   return (
     <div className="w-screen h-screen">
-      <ReactFlow nodes={nodes} edges={edges} fitView>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={{
+          table: TableNode,
+        }}
+        fitView
+      >
         <Background variant={BackgroundVariant.Lines} gap={16} size={1} />
       </ReactFlow>
     </div>
