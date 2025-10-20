@@ -1,33 +1,41 @@
-import { Canvas, EdgeData, NodeData } from "reaflow";
-import { TableNode } from "../../atoms/tableNode";
+import "@xyflow/react/dist/style.css";
 import { Table } from "../../../types/table";
-import { GridBackground } from "../../atoms/gridBackground";
+import {
+  Background,
+  BackgroundVariant,
+  Edge,
+  Node,
+  ReactFlow,
+} from "@xyflow/react";
 
-function createNodes(tables: Table[]): NodeData<Table>[] {
+function createNodes(tables: Table[]): Node[] {
   return tables.map((table) => {
     return {
-      id: table.physicalName,
-      x: table.x,
-      y: table.y,
+      id: `table.${table.physicalName}`,
+      position: {
+        x: table.x,
+        y: table.y,
+      },
       width: table.width,
       height: table.height,
-      data: table,
-    } as NodeData<Table>;
+      // data: table,
+      data: { label: table.logicalName },
+    } as Node;
   });
 }
 
-function createEdges(tables: Table[]): EdgeData[] {
+function createEdges(tables: Table[]): Edge[] {
   return tables
     .filter((table) => !!table.connections)
     .flatMap((table) => table.connections!.relationship)
     .map((relationship) => {
-      const from = relationship.source.slice("table.".length);
-      const to = relationship.target.slice("table.".length);
+      const source = relationship.source;
+      const target = relationship.target;
       return {
         id: relationship.name,
-        from,
-        to,
-      } as EdgeData;
+        source,
+        target,
+      } as Edge;
     });
 }
 
@@ -92,15 +100,10 @@ const edges = createEdges(tables);
 
 export const DbDiagram = () => {
   return (
-    <div className="relative inset-0 w-full h-full">
-      <GridBackground className="absolute -z-10 inset-0 w-full h-full" />
-      <Canvas
-        panType="drag"
-        nodes={nodes}
-        edges={edges}
-        node={(nodeProps) => <TableNode {...nodeProps} />}
-        className="relative z-0"
-      />
+    <div className="w-screen h-screen">
+      <ReactFlow nodes={nodes} edges={edges} fitView>
+        <Background variant={BackgroundVariant.Lines} gap={16} size={1} />
+      </ReactFlow>
     </div>
   );
 };
