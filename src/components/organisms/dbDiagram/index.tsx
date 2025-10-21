@@ -1,11 +1,14 @@
 import "@xyflow/react/dist/style.css";
 import { Table } from "../../../types/table";
 import {
+  applyNodeChanges,
   Background,
   BackgroundVariant,
   Edge,
   Node,
+  OnNodesChange,
   ReactFlow,
+  useNodesState,
 } from "@xyflow/react";
 import { TableNode } from "../../atoms/tableNode";
 
@@ -97,18 +100,20 @@ const tables: Table[] = [
   },
 ];
 
-const nodes = createNodes(tables);
-const edges = createEdges(tables);
+const initialNodes = createNodes(tables);
+const initialEdges = createEdges(tables);
 
 export const DbDiagram = () => {
+  const [nodes, _, onNodesChange] = useNodesState(initialNodes);
   return (
     <div className="w-screen h-screen">
       <ReactFlow
         nodes={nodes}
-        edges={edges}
+        edges={initialEdges}
         nodeTypes={{
           table: TableNode,
         }}
+        onNodesChange={onNodesChange}
         fitView
       >
         <Background variant={BackgroundVariant.Lines} gap={16} size={1} />
