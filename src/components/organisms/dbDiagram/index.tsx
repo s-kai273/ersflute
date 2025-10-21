@@ -1,12 +1,10 @@
 import "@xyflow/react/dist/style.css";
 import { Table } from "../../../types/table";
 import {
-  applyNodeChanges,
   Background,
   BackgroundVariant,
   Edge,
   Node,
-  OnNodesChange,
   ReactFlow,
   useNodesState,
 } from "@xyflow/react";
