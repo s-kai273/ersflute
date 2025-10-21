@@ -1,4 +1,4 @@
-import { NodeProps } from "@xyflow/react";
+import { Handle, NodeProps, Position } from "@xyflow/react";
 import { Table } from "../../../types/table";
 
 export function TableNode({ width, height, ...props }: NodeProps) {
@@ -31,6 +31,8 @@ export function TableNode({ width, height, ...props }: NodeProps) {
       <div className="flex-1 w-full px-1 pb-1">
         <div className="w-full h-full bg-white"></div>
       </div>
+      <Handle type="source" position={Position.Top} />
+      <Handle type="target" position={Position.Bottom} />
     </div>
   );
 }
