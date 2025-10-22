@@ -9,6 +9,7 @@ import {
   useNodesState,
 } from "@xyflow/react";
 import { TableNode } from "../../atoms/tableNode";
+import { CardinalityEdge } from "../../atoms/cardinalityEdge";
 
 function createNodes(tables: Table[]): Node[] {
   return tables.map((table) => {
@@ -36,6 +37,7 @@ function createEdges(tables: Table[]): Edge[] {
       const target = relationship.target;
       return {
         id: relationship.name,
+        type: "cardinality",
         source,
         target,
       } as Edge;
@@ -110,6 +112,9 @@ export const DbDiagram = () => {
         edges={initialEdges}
         nodeTypes={{
           table: TableNode,
+        }}
+        edgeTypes={{
+          cardinality: CardinalityEdge,
         }}
         onNodesChange={onNodesChange}
         fitView
