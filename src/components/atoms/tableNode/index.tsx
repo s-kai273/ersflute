@@ -1,4 +1,4 @@
-import { Node, NodeProps } from "@xyflow/react";
+import { Handle, Node, NodeProps, Position } from "@xyflow/react";
 import { Table } from "../../../types/table";
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/16/solid";
 
@@ -39,6 +39,14 @@ export function TableNode({ width, height, data }: NodeProps<Node<Table>>) {
           ))}
         </div>
       </div>
+      <Handle type="source" position={Position.Top} />
+      <Handle type="source" position={Position.Right} />
+      <Handle type="source" position={Position.Bottom} />
+      <Handle type="source" position={Position.Left} />
+      <Handle type="target" position={Position.Top} />
+      <Handle type="target" position={Position.Right} />
+      <Handle type="target" position={Position.Bottom} />
+      <Handle type="target" position={Position.Left} />
     </div>
   );
 }
