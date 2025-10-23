@@ -25,7 +25,22 @@ type Relationship = {
 };
 
 type Connections = {
-  relationship: Relationship[];
+  relationship?: Relationship[];
+};
+
+type NormalColumn = {
+  physicalName: string;
+  logicalName?: string;
+  columnType?: string;
+  length?: number;
+  notNull: boolean;
+  primaryKey?: boolean;
+  referredColumn?: string;
+  relationship?: string;
+};
+
+type Columns = {
+  normalColumn: NormalColumn[];
 };
 
 export type Table = {
@@ -40,4 +55,5 @@ export type Table = {
   y: number;
   color: Color;
   connections?: Connections;
+  columns?: Columns;
 };

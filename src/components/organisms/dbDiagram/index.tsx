@@ -30,8 +30,8 @@ function createNodes(tables: Table[]): Node[] {
 
 function createEdges(tables: Table[]): Edge[] {
   return tables
-    .filter((table) => !!table.connections)
-    .flatMap((table) => table.connections!.relationship)
+    .filter((table) => !!table.connections && !!table.connections!.relationship)
+    .flatMap((table) => table.connections!.relationship!)
     .map((relationship) => {
       const source = relationship.source;
       const target = relationship.target;
@@ -59,6 +59,31 @@ const tables: Table[] = [
       r: 128,
       g: 128,
       b: 192,
+    },
+    columns: {
+      normalColumn: [
+        {
+          physicalName: "MEMBER_ID",
+          logicalName: "会員ID",
+          columnType: "bigint",
+          notNull: true,
+          primaryKey: true,
+        },
+        {
+          physicalName: "LAST_NAME",
+          logicalName: "苗字",
+          columnType: "varchar(n)",
+          length: 0,
+          notNull: true,
+        },
+        {
+          physicalName: "FIRST_NAME",
+          logicalName: "名前",
+          columnType: "varchar(n)",
+          length: 0,
+          notNull: true,
+        },
+      ],
     },
   },
   {
@@ -94,6 +119,30 @@ const tables: Table[] = [
           referenceForPk: true,
           onDeleteAction: "RESTRICT",
           onUpdateAction: "RESTRICT",
+        },
+      ],
+    },
+    columns: {
+      normalColumn: [
+        {
+          physicalName: "MEMBER_PROFILE_ID",
+          logicalName: "会員プロフィールID",
+          columnType: "bigint(n)",
+          length: 0,
+          notNull: true,
+          primaryKey: true,
+        },
+        {
+          physicalName: "MEMBER_ID",
+          referredColumn: "table.MEMBERS.MEMBER_ID",
+          relationship: "FK_MEMBER_PROFILES_MEMBERS",
+          notNull: true,
+        },
+        {
+          physicalName: "SELF_INTRODUCTION",
+          logicalName: "自己紹介",
+          columnType: "text",
+          notNull: true,
         },
       ],
     },
