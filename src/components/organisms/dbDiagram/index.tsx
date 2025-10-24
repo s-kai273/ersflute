@@ -10,6 +10,7 @@ import {
 } from "@xyflow/react";
 import { TableNode } from "../../atoms/tableNode";
 import { CardinalityEdge } from "../../atoms/cardinalityEdge";
+import { CardinalityEdgeData } from "../../atoms/cardinalityEdge/types";
 
 function createNodes(tables: Table[]): Node[] {
   return tables.map((table) => {
@@ -40,7 +41,11 @@ function createEdges(tables: Table[]): Edge[] {
         type: "cardinality",
         source,
         target,
-      } as Edge;
+        data: {
+          parentCardinality: relationship.parentCardinality,
+          childCardinality: relationship.childCardinality,
+        },
+      } as Edge<CardinalityEdgeData>;
     });
 }
 
@@ -114,8 +119,8 @@ const tables: Table[] = [
               },
             ],
           },
-          parentCardinality: 1,
-          childCardinality: 1,
+          parentCardinality: "1",
+          childCardinality: "1",
           referenceForPk: true,
           onDeleteAction: "RESTRICT",
           onUpdateAction: "RESTRICT",

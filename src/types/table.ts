@@ -17,8 +17,8 @@ type Relationship = {
   source: string;
   target: string;
   fkColumns: FkColumns;
-  parentCardinality: number;
-  childCardinality: number;
+  parentCardinality: string;
+  childCardinality: string;
   referenceForPk: boolean;
   onDeleteAction: string;
   onUpdateAction: string;
