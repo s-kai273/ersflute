@@ -1,5 +1,5 @@
 import "@xyflow/react/dist/style.css";
-import { Table } from "../../../types/table";
+import { Cardinality, Table } from "../../../types/table";
 import {
   Background,
   BackgroundVariant,
@@ -119,8 +119,8 @@ const tables: Table[] = [
               },
             ],
           },
-          parentCardinality: "1",
-          childCardinality: "1",
+          parentCardinality: Cardinality.OneN,
+          childCardinality: Cardinality.OneN,
           referenceForPk: true,
           onDeleteAction: "RESTRICT",
           onUpdateAction: "RESTRICT",

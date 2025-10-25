@@ -1,3 +1,12 @@
+export const Cardinality = {
+  One: "1",
+  ZeroOne: "0..1",
+  OneN: "1..n",
+  ZeroN: "0..n",
+} as const;
+
+export type Cardinality = (typeof Cardinality)[keyof typeof Cardinality];
+
 type Color = {
   r: number;
   g: number;
@@ -17,8 +26,8 @@ type Relationship = {
   source: string;
   target: string;
   fkColumns: FkColumns;
-  parentCardinality: string;
-  childCardinality: string;
+  parentCardinality: Cardinality;
+  childCardinality: Cardinality;
   referenceForPk: boolean;
   onDeleteAction: string;
   onUpdateAction: string;

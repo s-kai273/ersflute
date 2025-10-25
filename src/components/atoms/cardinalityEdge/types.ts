@@ -1,4 +1,6 @@
+import { Cardinality } from "../../../types/table";
+
 export type CardinalityEdgeData = {
-  parentCardinality: string;
-  childCardinality: string;
+  parentCardinality: Cardinality;
+  childCardinality: Cardinality;
 };

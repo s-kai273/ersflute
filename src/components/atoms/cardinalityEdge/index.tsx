@@ -5,9 +5,31 @@ import {
   getStraightPath,
   useStore,
 } from "@xyflow/react";
-import { getEdgeParams } from "./edgeParams";
 import { useMemo } from "react";
+import { Cardinality } from "../../../types/table";
+import { getEdgeParams } from "./edgeParams";
 import { CardinalityEdgeData } from "./types";
+import {
+  buildCardinalitySymbolSegments,
+  type CardinalitySymbol,
+} from "./symbolSegments";
+
+const cardinalityToSymbols = (
+  value?: CardinalityEdgeData["parentCardinality"]
+): CardinalitySymbol[] => {
+  switch (value) {
+    case Cardinality.One:
+      return ["line"];
+    case Cardinality.ZeroOne:
+      return ["circle", "line"];
+    case Cardinality.OneN:
+      return ["crowfoot", "line"];
+    case Cardinality.ZeroN:
+      return ["crowfoot", "circle"];
+    default:
+      return [];
+  }
+};
 
 export function CardinalityEdge({
   id,
@@ -48,42 +70,54 @@ export function CardinalityEdge({
   const dx = tx - sx;
   const dy = ty - sy;
   const length = Math.hypot(dx, dy);
-  const tickLength = 10;
-  const tickGap = 12;
 
-  let pathWithTicks = straightPath;
-
-  if (length > 0.0001) {
-    const dirX = dx / length;
-    const dirY = dy / length;
-    const perpX = -dirY;
-    const perpY = dirX;
-    const halfTick = tickLength / 2;
-    const offset = Math.min(tickGap, length / 3);
-
-    const nearTargetX = tx - dirX * offset;
-    const nearTargetY = ty - dirY * offset;
-    const targetTickStartX = nearTargetX + perpX * halfTick;
-    const targetTickStartY = nearTargetY + perpY * halfTick;
-    const targetTickEndX = nearTargetX - perpX * halfTick;
-    const targetTickEndY = nearTargetY - perpY * halfTick;
-    pathWithTicks += ` M ${targetTickStartX} ${targetTickStartY} L ${targetTickEndX} ${targetTickEndY}`;
-
-    const nearSourceX = sx + dirX * offset;
-    const nearSourceY = sy + dirY * offset;
-    const sourceTickStartX = nearSourceX + perpX * halfTick;
-    const sourceTickStartY = nearSourceY + perpY * halfTick;
-    const sourceTickEndX = nearSourceX - perpX * halfTick;
-    const sourceTickEndY = nearSourceY - perpY * halfTick;
-    pathWithTicks += ` M ${sourceTickStartX} ${sourceTickStartY} L ${sourceTickEndX} ${sourceTickEndY}`;
+  if (length <= 0.0001) {
+    return (
+      <BaseEdge id={id} path={straightPath} style={style} markerEnd={markerEnd} />
+    );
   }
 
+  const dirX = dx / length;
+  const dirY = dy / length;
+
+  const strokeColor =
+    (style && typeof style.stroke === "string" ? style.stroke : undefined) ??
+    "#111";
+
+  const sourceSymbols = buildCardinalitySymbolSegments({
+    nodeX: sx,
+    nodeY: sy,
+    dirX,
+    dirY,
+    symbols: cardinalityToSymbols(data?.parentCardinality),
+    keyPrefix: "source",
+    pathLength: length,
+    strokeColor,
+  });
+
+  const targetSymbols = buildCardinalitySymbolSegments({
+    nodeX: tx,
+    nodeY: ty,
+    dirX: -dirX,
+    dirY: -dirY,
+    symbols: cardinalityToSymbols(data?.childCardinality),
+    keyPrefix: "target",
+    pathLength: length,
+    strokeColor,
+  });
+
+  const pathWithSymbols = `${straightPath}${sourceSymbols.path}${targetSymbols.path}`;
+  const extraElements = [...sourceSymbols.elements, ...targetSymbols.elements];
+
   return (
-    <BaseEdge
-      id={id}
-      path={pathWithTicks}
-      style={style}
-      markerEnd={markerEnd}
-    />
+    <>
+      <BaseEdge
+        id={id}
+        path={pathWithSymbols}
+        style={style}
+        markerEnd={markerEnd}
+      />
+      {extraElements}
+    </>
   );
 }
