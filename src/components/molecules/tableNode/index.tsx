@@ -1,8 +1,12 @@
 import { Handle, Node, NodeProps, Position } from "@xyflow/react";
-import { Table } from "../../../types/table";
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/16/solid";
+import { TableNodeData } from "./types";
 
-export function TableNode({ width, height, data }: NodeProps<Node<Table>>) {
+export function TableNode({
+  width,
+  height,
+  data,
+}: NodeProps<Node<TableNodeData>>) {
   return (
     <div
       className="flex flex-col min-h-0 rounded-sm"
@@ -17,7 +21,7 @@ export function TableNode({ width, height, data }: NodeProps<Node<Table>>) {
       </div>
       <div className="nodrag flex-1 w-full px-1 pb-1">
         <div className="w-full h-full bg-white">
-          {data.columns?.normalColumn.map((column) => (
+          {data.columns?.map((column) => (
             <p className="flex items-center text-[0.625rem] leading-5 whitespace-nowrap">
               <span className="flex items-center justify-center w-4 h-4">
                 {column.primaryKey && (

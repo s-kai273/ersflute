@@ -7,7 +7,7 @@ export const Cardinality = {
 
 export type Cardinality = (typeof Cardinality)[keyof typeof Cardinality];
 
-type Color = {
+export type Color = {
   r: number;
   g: number;
   b: number;

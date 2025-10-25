@@ -12,6 +12,7 @@ import { TableNode } from "../../molecules/tableNode";
 import { CardinalityEdge } from "../../molecules/cardinalityEdge";
 import { CardinalityEdgeData } from "../../molecules/cardinalityEdge/types";
 import { tables } from "./testData";
+import { Column, TableNodeData } from "../../molecules/tableNode/types";
 
 function createNodes(tables: Table[]): Node[] {
   return tables.map((table) => {
@@ -24,8 +25,26 @@ function createNodes(tables: Table[]): Node[] {
       },
       width: table.width,
       height: table.height,
-      data: table,
-    } as Node;
+      data: {
+        color: {
+          r: table.color.r,
+          g: table.color.g,
+          b: table.color.b,
+        },
+        physicalName: table.physicalName,
+        columns: table.columns?.normalColumn.map((column) => {
+          return {
+            physicalName: column.physicalName,
+            logicalName: column.logicalName,
+            columnType: column.columnType,
+            length: column.length,
+            notNull: column.notNull,
+            primaryKey: column.primaryKey,
+            referredColumn: column.referredColumn,
+          } satisfies Column;
+        }),
+      } satisfies TableNodeData,
+    } satisfies Node;
   });
 }
 
