@@ -24,7 +24,6 @@ function createNodes(tables: Table[]): Node[] {
       width: table.width,
       height: table.height,
       data: table,
-      // data: { label: table.logicalName },
     } as Node;
   });
 }
@@ -119,7 +118,7 @@ const tables: Table[] = [
               },
             ],
           },
-          parentCardinality: Cardinality.OneN,
+          parentCardinality: Cardinality.ZeroN,
           childCardinality: Cardinality.OneN,
           referenceForPk: true,
           onDeleteAction: "RESTRICT",

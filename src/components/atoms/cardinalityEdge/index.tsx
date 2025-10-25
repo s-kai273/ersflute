@@ -6,30 +6,13 @@ import {
   useStore,
 } from "@xyflow/react";
 import { useMemo } from "react";
-import { Cardinality } from "../../../types/table";
 import { getEdgeParams } from "./edgeParams";
 import { CardinalityEdgeData } from "./types";
 import {
-  buildCardinalitySymbolSegments,
-  type CardinalitySymbol,
-} from "./symbolSegments";
-
-const cardinalityToSymbols = (
-  value?: CardinalityEdgeData["parentCardinality"]
-): CardinalitySymbol[] => {
-  switch (value) {
-    case Cardinality.One:
-      return ["line"];
-    case Cardinality.ZeroOne:
-      return ["circle", "line"];
-    case Cardinality.OneN:
-      return ["crowfoot", "line"];
-    case Cardinality.ZeroN:
-      return ["crowfoot", "circle"];
-    default:
-      return [];
-  }
-};
+  buildSymbols as buildSymbolSpec,
+  cardinalityToSymbolPartKinds,
+} from "./symbol";
+import { Cardinality } from "../../../types/table";
 
 export function CardinalityEdge({
   id,
@@ -73,7 +56,12 @@ export function CardinalityEdge({
 
   if (length <= 0.0001) {
     return (
-      <BaseEdge id={id} path={straightPath} style={style} markerEnd={markerEnd} />
+      <BaseEdge
+        id={id}
+        path={straightPath}
+        style={style}
+        markerEnd={markerEnd}
+      />
     );
   }
 
@@ -84,27 +72,30 @@ export function CardinalityEdge({
     (style && typeof style.stroke === "string" ? style.stroke : undefined) ??
     "#111";
 
-  const sourceSymbols = buildCardinalitySymbolSegments({
-    nodeX: sx,
-    nodeY: sy,
+  const parentCardinality = data?.parentCardinality ?? Cardinality.One;
+  const childCardinality = data?.childCardinality ?? Cardinality.One;
+
+  const sourceSymbols = buildSymbolSpec(
+    sx,
+    sy,
     dirX,
     dirY,
-    symbols: cardinalityToSymbols(data?.parentCardinality),
-    keyPrefix: "source",
-    pathLength: length,
-    strokeColor,
-  });
+    cardinalityToSymbolPartKinds(parentCardinality),
+    "source",
+    length,
+    strokeColor
+  );
 
-  const targetSymbols = buildCardinalitySymbolSegments({
-    nodeX: tx,
-    nodeY: ty,
-    dirX: -dirX,
-    dirY: -dirY,
-    symbols: cardinalityToSymbols(data?.childCardinality),
-    keyPrefix: "target",
-    pathLength: length,
-    strokeColor,
-  });
+  const targetSymbols = buildSymbolSpec(
+    tx,
+    ty,
+    -dirX,
+    -dirY,
+    cardinalityToSymbolPartKinds(childCardinality),
+    "target",
+    length,
+    strokeColor
+  );
 
   const pathWithSymbols = `${straightPath}${sourceSymbols.path}${targetSymbols.path}`;
   const extraElements = [...sourceSymbols.elements, ...targetSymbols.elements];
