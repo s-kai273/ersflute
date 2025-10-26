@@ -1,12 +1,15 @@
+import { useId } from "react";
 import { cn } from "../../../utils/cn";
 import { GridBackgroundProps } from "./type";
 
 export function GridBackground({ className, ...props }: GridBackgroundProps) {
+  const uid = useId();
+  const gridId = `grid-${uid}`;
   return (
     <svg {...props} className={cn("pointer-events-none", className)}>
       <defs>
         <pattern
-          id="smallGrid"
+          id={gridId}
           width="20"
           height="20"
           patternUnits="userSpaceOnUse"
@@ -19,7 +22,7 @@ export function GridBackground({ className, ...props }: GridBackgroundProps) {
           />
         </pattern>
       </defs>
-      <rect width="100%" height="100%" fill="url(#smallGrid)" />
+      <rect width="100%" height="100%" fill={`url(#${gridId})`} />
     </svg>
   );
 }
