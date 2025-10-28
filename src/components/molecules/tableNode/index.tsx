@@ -22,7 +22,10 @@ export function TableNode({
       <div className="nodrag flex-1 w-full px-1 pb-1">
         <div className="w-full h-full bg-white">
           {data.columns?.map((column) => (
-            <p className="flex items-center text-[0.625rem] leading-5 whitespace-nowrap">
+            <p
+              key={column.physicalName}
+              className="flex items-center text-[0.625rem] leading-5 whitespace-nowrap"
+            >
               <span className="flex items-center justify-center w-4 h-4">
                 {column.primaryKey && (
                   <KeyIcon width={10} height={10} className="text-yellow-500" />
