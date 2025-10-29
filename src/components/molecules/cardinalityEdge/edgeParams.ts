@@ -19,6 +19,8 @@ function getIntersectionOnRect(
   const cy = rect.y + rect.h / 2;
   const vx = from.x - cx;
   const vy = from.y - cy;
+  const halfW = rect.w / 2;
+  const halfH = rect.h / 2;
 
   if (vx === 0 && vy === 0) {
     return {
@@ -27,10 +29,34 @@ function getIntersectionOnRect(
     };
   }
 
-  const halfW = rect.w / 2;
-  const halfH = rect.h / 2;
+  if (halfW === 0 && halfH === 0) {
+    return { x: rect.x, y: rect.y };
+  }
+
+  if (halfW === 0) {
+    if (vx === 0 && halfH > 0) {
+      return { x: cx, y: cy + Math.sign(vy || 1) * halfH };
+    }
+    return { x: cx, y: cy };
+  }
+
+  if (halfH === 0) {
+    if (vy === 0 && halfW > 0) {
+      return { x: cx + Math.sign(vx || 1) * halfW, y: cy };
+    }
+    return { x: cx, y: cy };
+  }
+
   const avx = Math.abs(vx);
   const avy = Math.abs(vy);
+
+  if (avx === 0) {
+    return { x: cx, y: cy + Math.sign(vy) * halfH };
+  }
+
+  if (avy === 0) {
+    return { x: cx + Math.sign(vx) * halfW, y: cy };
+  }
 
   if (avx / halfW > avy / halfH) {
     const s = halfW / avx;

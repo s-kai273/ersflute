@@ -89,4 +89,24 @@ describe("getEdgeParams", () => {
       ty: 25,
     });
   });
+
+  it("falls back to zero dimensions when neither width nor measured size exist", () => {
+    const source = makeNode({
+      id: "source",
+      position: { x: 10, y: 10 },
+    });
+    const target = makeNode({
+      id: "target",
+      position: { x: 50, y: 10 },
+    });
+
+    const params = getEdgeParams(source, target);
+
+    expect(params).toEqual({
+      sx: 10,
+      sy: 10,
+      tx: 50,
+      ty: 10,
+    });
+  });
 });
