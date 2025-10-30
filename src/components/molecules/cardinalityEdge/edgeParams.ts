@@ -35,14 +35,14 @@ function getIntersectionOnRect(
 
   if (halfW === 0) {
     if (vx === 0 && halfH > 0) {
-      return { x: cx, y: cy + Math.sign(vy || 1) * halfH };
+      return { x: cx, y: cy + Math.sign(vy) * halfH };
     }
     return { x: cx, y: cy };
   }
 
   if (halfH === 0) {
     if (vy === 0 && halfW > 0) {
-      return { x: cx + Math.sign(vx || 1) * halfW, y: cy };
+      return { x: cx + Math.sign(vx) * halfW, y: cy };
     }
     return { x: cx, y: cy };
   }
