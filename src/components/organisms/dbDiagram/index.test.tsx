@@ -26,7 +26,7 @@ describe("DbDiagram", () => {
 
     expect(screen.getByText(/Mode: Select/i)).toBeInTheDocument();
 
-    const tableButton = screen.getByRole("button", { name: /Table/i });
+    const tableButton = screen.getByRole("button", { name: /^Table$/i });
     await user.click(tableButton);
 
     expect(tableButton).toHaveAttribute("aria-pressed", "true");

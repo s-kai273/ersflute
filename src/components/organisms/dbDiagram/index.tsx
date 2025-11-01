@@ -1,4 +1,3 @@
-import "@xyflow/react/dist/style.css";
 import { useState } from "react";
 import {
   ArrowPathRoundedSquareIcon,
@@ -10,7 +9,7 @@ import {
   Square3Stack3DIcon,
   TableCellsIcon,
 } from "@heroicons/react/24/outline";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import {
   Background,
   BackgroundVariant,
