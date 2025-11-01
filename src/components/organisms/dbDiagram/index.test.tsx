@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { DbDiagram } from ".";
+import { DiagramMode } from "../../../types/diagramMode";
 
 jest.mock("@xyflow/react", () => ({
   Background: ({ children }: { children?: ReactNode }) => (
@@ -11,25 +11,30 @@ jest.mock("@xyflow/react", () => ({
   ReactFlow: ({
     children,
     className,
-  }: { children?: ReactNode; className?: string }) => (
+  }: {
+    children?: ReactNode;
+    className?: string;
+  }) => (
     <div data-testid="reactflow" className={className}>
       {children}
     </div>
   ),
-  useNodesState: (initial: unknown) => [initial, () => undefined, () => undefined],
+  useNodesState: (initial: unknown) => [
+    initial,
+    () => undefined,
+    () => undefined,
+  ],
 }));
 
 describe("DbDiagram", () => {
-  it("shows the current mode and allows switching via the tool tray", async () => {
-    const user = userEvent.setup();
-    render(<DbDiagram />);
+  it("shows the passed mode label, description, and applies the cursor class", () => {
+    render(<DbDiagram activeMode={DiagramMode.Table} />);
 
-    expect(screen.getByText(/Mode: Select/i)).toBeInTheDocument();
-
-    const tableButton = screen.getByRole("button", { name: /^Table$/i });
-    await user.click(tableButton);
-
-    expect(tableButton).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByText(/Mode: Table/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Create a new table by clicking on the canvas\./i)
+    ).toBeInTheDocument();
+
+    expect(screen.getByTestId("reactflow")).toHaveClass("cursor-crosshair");
   });
 });
