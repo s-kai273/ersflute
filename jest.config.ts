@@ -9,6 +9,7 @@ const config: Config = {
   setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts"],
   testMatch: ["**/*.test.(ts|tsx)"],
   clearMocks: true,
+  collectCoverageFrom: ["src/components/**/*.{ts,tsx}", "!src/**/*.d.ts"],
 };
 
 export default config;
