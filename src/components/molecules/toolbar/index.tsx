@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import { toolProfiles } from "./modes";
+import { toolProfiles } from "./toolProfile";
 import { ToolbarProps } from "./types";
 
 export const Toolbar = ({ activeMode, onModeChange }: ToolbarProps) => {

@@ -60,11 +60,3 @@ export const toolProfiles = [
     description: "Place a reference image on the canvas.",
   },
 ] as const;
-
-export const findToolProfile = (mode: DiagramMode) => {
-  const tool = toolProfiles.find((item) => item.id === mode);
-  if (!tool) {
-    throw new Error(`Unknown diagram mode: ${mode}`);
-  }
-  return tool;
-};
