@@ -17,7 +17,7 @@ export function TableNode({
       }}
     >
       <div className="flex items-center justify-center h-5 pointer-events-none">
-        <p className="text-sm translate-y-[2px]">{data.physicalName}</p>
+        <p className="text-sm">{data.physicalName}</p>
       </div>
       <div className="nodrag flex-1 w-full px-1 pb-1">
         <div className="w-full h-full bg-white">
@@ -40,7 +40,7 @@ export function TableNode({
                   />
                 )}
               </span>
-              <span className="translate-y-[2px]">
+              <span>
                 {column.physicalName && <span>{column.physicalName}</span>}
                 {column.columnType && <span>: {column.columnType}</span>}
               </span>

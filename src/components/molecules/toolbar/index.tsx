@@ -17,10 +17,10 @@ export const Toolbar = ({ activeMode, onModeChange }: ToolbarProps) => {
               key={tool.id}
               type="button"
               className={clsx(
-                "flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm transition",
+                "flex w-full items-center gap-2 rounded-md border px-2.5 py-2 text-left text-sm transition",
                 isActive
-                  ? "bg-slate-200 text-slate-900 shadow-inner"
-                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                  ? "border-blue-300 bg-blue-200 text-blue-900 shadow-sm"
+                  : "border-transparent text-slate-600 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-900"
               )}
               onClick={() => onModeChange(tool.id)}
               aria-pressed={isActive}

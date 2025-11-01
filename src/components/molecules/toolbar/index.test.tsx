@@ -9,10 +9,9 @@ describe("DiagramToolbar", () => {
 
     render(<Toolbar activeMode="select" onModeChange={handleModeChange} />);
 
-    expect(screen.getByRole("button", { name: /^Select$/i })).toHaveAttribute(
-      "aria-pressed",
-      "true"
-    );
+    const selectButton = screen.getByRole("button", { name: /^Select$/i });
+    expect(selectButton).toHaveAttribute("aria-pressed", "true");
+    expect(selectButton).toHaveClass("bg-blue-200");
 
     const tableButton = screen.getByRole("button", { name: /^Table$/i });
     await user.click(tableButton);

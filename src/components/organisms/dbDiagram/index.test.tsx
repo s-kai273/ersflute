@@ -27,13 +27,13 @@ jest.mock("@xyflow/react", () => ({
 }));
 
 describe("DbDiagram", () => {
-  it("shows the passed mode label, description, and applies the cursor class", () => {
+  it("applies the cursor class without rendering a mode banner", () => {
     render(<DbDiagram activeMode={DiagramMode.Table} />);
 
-    expect(screen.getByText(/Mode: Table/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Mode:/i)).not.toBeInTheDocument();
     expect(
-      screen.getByText(/Create a new table by clicking on the canvas\./i)
-    ).toBeInTheDocument();
+      screen.queryByText(/Create a new table by clicking on the canvas\./i)
+    ).not.toBeInTheDocument();
 
     expect(screen.getByTestId("reactflow")).toHaveClass("cursor-crosshair");
   });

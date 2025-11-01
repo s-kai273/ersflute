@@ -14,7 +14,6 @@ import { CardinalityEdge } from "../../molecules/cardinalityEdge";
 import { CardinalityEdgeData } from "../../molecules/cardinalityEdge/types";
 import { tables } from "./testData";
 import { Column, TableNodeData } from "../../molecules/tableNode/types";
-import { findToolProfile } from "../../molecules/toolbar/modes";
 import { DbDiagramProps } from "./types";
 import { modeSettings } from "./modeSettings";
 
@@ -77,7 +76,6 @@ const initialEdges = createEdges(tables);
 
 export const DbDiagram = ({ activeMode }: DbDiagramProps) => {
   const [nodes, _, onNodesChange] = useNodesState(initialNodes);
-  const activeTool = findToolProfile(activeMode);
   const activeModeSettings = modeSettings[activeMode];
 
   return (
@@ -102,12 +100,6 @@ export const DbDiagram = ({ activeMode }: DbDiagramProps) => {
       >
         <Background variant={BackgroundVariant.Lines} gap={16} size={1} />
       </ReactFlow>
-      <div className="pointer-events-none absolute bottom-4 left-4 rounded-md bg-white/80 px-3 py-1 text-xs font-medium text-slate-600 shadow-sm">
-        Mode: {activeTool.label}
-        <span className="ml-1 text-[11px] text-slate-500">
-          {activeTool.description}
-        </span>
-      </div>
     </div>
   );
 };
