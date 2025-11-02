@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@radix-ui/react-dialog": "^1.1.15",
     "@tailwindcss/vite": "^4.1.14",
     "@tauri-apps/api": "^2.9.0",
     "@tauri-apps/plugin-opener": "^2",
