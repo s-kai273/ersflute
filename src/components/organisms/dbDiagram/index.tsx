@@ -7,15 +7,18 @@ import {
   Node,
   ReactFlow,
   useNodesState,
+  useReactFlow,
 } from "@xyflow/react";
-import { Table } from "../../../types/table";
 import { TableNode } from "../../molecules/tableNode";
 import { CardinalityEdge } from "../../molecules/cardinalityEdge";
-import { CardinalityEdgeData } from "../../molecules/cardinalityEdge/types";
 import { tables } from "./testData";
-import { Column, TableNodeData } from "../../molecules/tableNode/types";
 import { DbDiagramProps } from "./types";
 import { modeSettings } from "./modeSettings";
+import { DiagramMode } from "../../../types/diagramMode";
+import { createClickInTableModeHandler } from "./handlers";
+import { Table } from "../../../types/table";
+import { Column, TableNodeData } from "../../molecules/tableNode/types";
+import { CardinalityEdgeData } from "../../molecules/cardinalityEdge/types";
 
 function createNodes(tables: Table[]): Node[] {
   return tables.map((table) => {
@@ -71,12 +74,25 @@ function createEdges(tables: Table[]): Edge[] {
     });
 }
 
-const initialNodes = createNodes(tables);
-const initialEdges = createEdges(tables);
-
 export const DbDiagram = ({ activeMode }: DbDiagramProps) => {
-  const [nodes, _, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, _, onNodesChange] = useNodesState(createNodes(tables));
+  const initialEdges = createEdges(tables);
   const activeModeSettings = modeSettings[activeMode];
+  const { addNodes, screenToFlowPosition } = useReactFlow();
+  const handleClickInTableMode = createClickInTableModeHandler(
+    addNodes,
+    screenToFlowPosition
+  );
+
+  const handlePaneClick = (event: React.MouseEvent) => {
+    switch (activeMode) {
+      case DiagramMode.Table:
+        handleClickInTableMode(event.clientX, event.clientY);
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <div className="relative flex h-full w-full">
@@ -91,6 +107,7 @@ export const DbDiagram = ({ activeMode }: DbDiagramProps) => {
         edgeTypes={{
           cardinality: CardinalityEdge,
         }}
+        onPaneClick={handlePaneClick}
         onNodesChange={onNodesChange}
         nodesDraggable={activeModeSettings.nodesDraggable}
         nodesConnectable={activeModeSettings.nodesConnectable}

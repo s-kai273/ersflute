@@ -17,5 +17,6 @@ export type Column = {
 export type TableNodeData = {
   color: Color;
   physicalName: string;
+  logicalName?: string;
   columns?: Column[];
 };
