@@ -35,7 +35,7 @@ describe("buildSymbols", () => {
       ["line", "line", "line", "line"],
       "crowded",
       40,
-      "#000"
+      "#000",
     );
 
     expect(spec).toEqual({ path: "", elements: [] });
@@ -74,7 +74,7 @@ describe("buildSymbols", () => {
       ["crowfoot", "circle"],
       "combo",
       60,
-      "#00ff00"
+      "#00ff00",
     );
 
     expect(spec.path).toBe(" M 6 6 L 16 0 L 6 -6");
@@ -100,7 +100,7 @@ describe("buildSymbols", () => {
       ["line", "line"],
       "double-line",
       100,
-      "#abcdef"
+      "#abcdef",
     );
 
     expect(spec.path).toBe(" M 16 5 L 16 -5 M 22 5 L 22 -5");
@@ -116,7 +116,7 @@ describe("buildSymbols", () => {
       ["circle", "crowfoot"],
       "circle-crowfoot",
       60,
-      "#0088ff"
+      "#0088ff",
     );
 
     expect(spec.path).toBe(" M 8 6 L 18 0 L 8 -6");

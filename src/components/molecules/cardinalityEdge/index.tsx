@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   BaseEdge,
   Edge,
@@ -5,14 +6,13 @@ import {
   getStraightPath,
   useStore,
 } from "@xyflow/react";
-import { useMemo } from "react";
+import { Cardinality } from "../../../types/table";
 import { getEdgeParams } from "./edgeParams";
-import { CardinalityEdgeData } from "./types";
 import {
   buildSymbols as buildSymbolSpec,
   cardinalityToSymbolPartKinds,
 } from "./symbol";
-import { Cardinality } from "../../../types/table";
+import { CardinalityEdgeData } from "./types";
 
 export function CardinalityEdge({
   id,
@@ -40,7 +40,7 @@ export function CardinalityEdge({
       targetNode.position.y,
       targetNode.measured?.width,
       targetNode.measured?.height,
-    ]
+    ],
   );
 
   const [straightPath] = getStraightPath({
@@ -83,7 +83,7 @@ export function CardinalityEdge({
     cardinalityToSymbolPartKinds(parentCardinality),
     "source",
     length,
-    strokeColor
+    strokeColor,
   );
 
   const targetSymbols = buildSymbolSpec(
@@ -94,7 +94,7 @@ export function CardinalityEdge({
     cardinalityToSymbolPartKinds(childCardinality),
     "target",
     length,
-    strokeColor
+    strokeColor,
   );
 
   const pathWithSymbols = `${straightPath}${sourceSymbols.path}${targetSymbols.path}`;

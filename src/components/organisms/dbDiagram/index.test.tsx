@@ -32,7 +32,7 @@ describe("DbDiagram", () => {
 
     expect(screen.queryByText(/Mode:/i)).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/Create a new table by clicking on the canvas\./i)
+      screen.queryByText(/Create a new table by clicking on the canvas\./i),
     ).not.toBeInTheDocument();
 
     expect(screen.getByTestId("reactflow")).toHaveClass("cursor-crosshair");

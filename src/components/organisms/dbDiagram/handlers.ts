@@ -6,7 +6,7 @@ type ScreenToFlowPosition = ReactFlowInstance["screenToFlowPosition"];
 
 export function createClickInTableModeHandler(
   addNodes: AddNodes,
-  screenToFlowPosition: ScreenToFlowPosition
+  screenToFlowPosition: ScreenToFlowPosition,
 ) {
   return (clientX: number, clientY: number) => {
     const defaultTableName = "NEW_TABLE";

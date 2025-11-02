@@ -1,5 +1,4 @@
 import "@xyflow/react/dist/style.css";
-import { clsx } from "clsx";
 import {
   Background,
   BackgroundVariant,
@@ -9,16 +8,17 @@ import {
   useNodesState,
   useReactFlow,
 } from "@xyflow/react";
-import { TableNode } from "../../molecules/tableNode";
+import { clsx } from "clsx";
+import { DiagramMode } from "../../../types/diagramMode";
+import { Table } from "../../../types/table";
 import { CardinalityEdge } from "../../molecules/cardinalityEdge";
+import { CardinalityEdgeData } from "../../molecules/cardinalityEdge/types";
+import { TableNode } from "../../molecules/tableNode";
+import { Column, TableNodeData } from "../../molecules/tableNode/types";
+import { createClickInTableModeHandler } from "./handlers";
+import { modeSettings } from "./modeSettings";
 import { tables } from "./testData";
 import { DbDiagramProps } from "./types";
-import { modeSettings } from "./modeSettings";
-import { DiagramMode } from "../../../types/diagramMode";
-import { createClickInTableModeHandler } from "./handlers";
-import { Table } from "../../../types/table";
-import { Column, TableNodeData } from "../../molecules/tableNode/types";
-import { CardinalityEdgeData } from "../../molecules/cardinalityEdge/types";
 
 function createNodes(tables: Table[]): Node[] {
   return tables.map((table) => {
@@ -81,7 +81,7 @@ export const DbDiagram = ({ activeMode }: DbDiagramProps) => {
   const { addNodes, screenToFlowPosition } = useReactFlow();
   const handleClickInTableMode = createClickInTableModeHandler(
     addNodes,
-    screenToFlowPosition
+    screenToFlowPosition,
   );
 
   const handlePaneClick = (event: React.MouseEvent) => {

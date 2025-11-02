@@ -7,7 +7,7 @@ describe("GridGround", () => {
       <>
         <GridBackground data-testid="g1" />
         <GridBackground data-testid="g2" />
-      </>
+      </>,
     );
 
     const svg1 = screen.getByTestId("g1");

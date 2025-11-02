@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
+import { getStraightPath, useStore } from "@xyflow/react";
 import { Cardinality } from "../../../types/table";
+import { getEdgeParams } from "./edgeParams";
 import { CardinalityEdge } from "./index";
 import { buildSymbols, cardinalityToSymbolPartKinds } from "./symbol";
-import { getEdgeParams } from "./edgeParams";
-import { getStraightPath, useStore } from "@xyflow/react";
 
 jest.mock("./symbol", () => ({
   buildSymbols: jest.fn(),
@@ -34,7 +34,7 @@ const mockedGetEdgeParams = jest.mocked(getEdgeParams);
 const mockedGetStraightPath = jest.mocked(getStraightPath);
 const mockedBuildSymbols = jest.mocked(buildSymbols);
 const mockedCardinalityToSymbolPartKinds = jest.mocked(
-  cardinalityToSymbolPartKinds
+  cardinalityToSymbolPartKinds,
 );
 
 const baseProps = {
@@ -52,7 +52,7 @@ const baseProps = {
 function provideNodes(nodes: Record<string, unknown>) {
   const nodeLookup = new Map(Object.entries(nodes));
   mockedUseStore.mockImplementation((selector: any) =>
-    selector({ nodeLookup } as never)
+    selector({ nodeLookup } as never),
   );
 }
 
@@ -97,7 +97,7 @@ describe("CardinalityEdge", () => {
     expect(baseEdge).toBeInTheDocument();
     expect(baseEdge).toHaveAttribute("data-path", "M 0 0 L 10 0");
     expect(
-      container.querySelectorAll("[data-testid='source-symbol']")
+      container.querySelectorAll("[data-testid='source-symbol']"),
     ).toHaveLength(0);
   });
 
@@ -153,11 +153,11 @@ describe("CardinalityEdge", () => {
 
     expect(mockedCardinalityToSymbolPartKinds).toHaveBeenNthCalledWith(
       1,
-      Cardinality.OneN
+      Cardinality.OneN,
     );
     expect(mockedCardinalityToSymbolPartKinds).toHaveBeenNthCalledWith(
       2,
-      Cardinality.ZeroOne
+      Cardinality.ZeroOne,
     );
 
     expect(mockedBuildSymbols).toHaveBeenCalledTimes(2);
@@ -224,11 +224,11 @@ describe("CardinalityEdge", () => {
 
     expect(mockedCardinalityToSymbolPartKinds).toHaveBeenNthCalledWith(
       1,
-      Cardinality.One
+      Cardinality.One,
     );
     expect(mockedCardinalityToSymbolPartKinds).toHaveBeenNthCalledWith(
       2,
-      Cardinality.One
+      Cardinality.One,
     );
 
     expect(mockedBuildSymbols).toHaveBeenCalledTimes(2);

@@ -18,7 +18,7 @@ type SymbolSpec = {
 };
 
 export const cardinalityToSymbolPartKinds = (
-  value: Cardinality
+  value: Cardinality,
 ): SymbolPartKind[] => {
   switch (value) {
     case Cardinality.One:
@@ -40,7 +40,7 @@ export function buildSymbols(
   symbolPartKinds: SymbolPartKind[],
   keyPrefix: string,
   pathLength: number,
-  strokeColor: string
+  strokeColor: string,
 ): SymbolSpec {
   const result: SymbolSpec = { path: "", elements: [] };
 
@@ -93,7 +93,7 @@ export function buildSymbols(
             cy: centerY,
             r: CIRCLE_RADIUS,
             fill: strokeColor,
-          })
+          }),
         );
         break;
       }
@@ -126,7 +126,7 @@ export function buildSymbols(
 
 function shouldUseAdjacentSpacing(
   current: SymbolPartKind,
-  next: SymbolPartKind
+  next: SymbolPartKind,
 ) {
   return (
     (current === "crowfoot" && (next === "line" || next === "circle")) ||

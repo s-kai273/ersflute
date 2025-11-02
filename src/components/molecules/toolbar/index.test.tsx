@@ -9,7 +9,10 @@ describe("DiagramToolbar", () => {
     const user = userEvent.setup();
 
     render(
-      <Toolbar activeMode={DiagramMode.Select} onModeChange={handleModeChange} />
+      <Toolbar
+        activeMode={DiagramMode.Select}
+        onModeChange={handleModeChange}
+      />,
     );
 
     const selectButton = screen.getByRole("button", { name: /^Select$/i });

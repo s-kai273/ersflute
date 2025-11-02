@@ -13,7 +13,7 @@ function getIntersectionOnRect(
     y: number;
     w: number;
     h: number;
-  }
+  },
 ) {
   const cx = rect.x + rect.w / 2;
   const cy = rect.y + rect.h / 2;

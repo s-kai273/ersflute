@@ -15,7 +15,7 @@ jest.mock("@xyflow/react", () => ({
 }));
 
 function renderTableNode(
-  override?: Partial<TableNodeData>
+  override?: Partial<TableNodeData>,
 ): ReturnType<typeof render> {
   const baseData: TableNodeData = {
     physicalName: "MEMBERS",
@@ -46,7 +46,7 @@ function renderTableNode(
       isConnectable={false}
       positionAbsoluteX={0}
       positionAbsoluteY={0}
-    />
+    />,
   );
 }
 
@@ -118,10 +118,10 @@ describe("TableNode", () => {
 
     ["Top", "Right", "Bottom", "Left"].forEach((position) => {
       expect(
-        screen.getByTestId(`handle-source-${position.toLowerCase()}`)
+        screen.getByTestId(`handle-source-${position.toLowerCase()}`),
       ).toBeInTheDocument();
       expect(
-        screen.getByTestId(`handle-target-${position.toLowerCase()}`)
+        screen.getByTestId(`handle-target-${position.toLowerCase()}`),
       ).toBeInTheDocument();
     });
   });

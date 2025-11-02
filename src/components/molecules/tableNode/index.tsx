@@ -1,5 +1,5 @@
-import { Handle, Node, NodeProps, Position } from "@xyflow/react";
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/16/solid";
+import { Handle, Node, NodeProps, Position } from "@xyflow/react";
 import { TableNodeData } from "./types";
 
 export function TableNode({
