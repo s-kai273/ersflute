@@ -1,12 +1,17 @@
+import { useState } from "react";
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/16/solid";
-import { Handle, Node, NodeProps, Position } from "@xyflow/react";
+import { Handle, Node, NodeProps, Position, useReactFlow } from "@xyflow/react";
+import { TableInfoDialog } from "../tableInfoDialog";
 import { TableNodeData } from "./types";
 
 export function TableNode({
+  id,
   width,
   height,
   data,
 }: NodeProps<Node<TableNodeData>>) {
+  const { setNodes } = useReactFlow();
+  const [tableInfoDialogOpen, setTableInfoDialogOpen] = useState(false);
   return (
     <div
       className="flex flex-col min-h-0 rounded-sm"
@@ -16,8 +21,13 @@ export function TableNode({
         background: `rgb(${data.color.r}, ${data.color.g}, ${data.color.b})`,
       }}
     >
-      <div className="flex items-center justify-center h-5 pointer-events-none">
-        <p className="text-sm">{data.physicalName}</p>
+      <div
+        onDoubleClick={() => {
+          setTableInfoDialogOpen(true);
+        }}
+        className="flex items-center justify-center h-5"
+      >
+        <h1 className="text-sm">{data.physicalName}</h1>
       </div>
       <div className="nodrag flex-1 w-full px-1 pb-1">
         <div className="w-full h-full bg-white">
@@ -56,6 +66,18 @@ export function TableNode({
       <Handle type="target" position={Position.Right} />
       <Handle type="target" position={Position.Bottom} />
       <Handle type="target" position={Position.Left} />
+      <TableInfoDialog
+        data={data}
+        open={tableInfoDialogOpen}
+        onOpenChange={setTableInfoDialogOpen}
+        onApply={(data) => {
+          setNodes((nds) =>
+            nds.map((node) =>
+              node.id === id ? { ...node, data: data } : node,
+            ),
+          );
+        }}
+      />
     </div>
   );
 }

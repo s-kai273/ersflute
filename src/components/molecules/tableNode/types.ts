@@ -12,6 +12,7 @@ export type Column = {
   notNull: boolean;
   primaryKey?: boolean;
   referredColumn?: string;
+  unique?: boolean;
 };
 
 export type TableNodeData = {
