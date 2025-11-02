@@ -1,5 +1,5 @@
 import { useId } from "react";
-import { cn } from "../../../utils/cn";
+import { cn } from "@/lib/utils";
 import { GridBackgroundProps } from "./type";
 
 export function GridBackground({ className, ...props }: GridBackgroundProps) {

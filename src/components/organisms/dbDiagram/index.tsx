@@ -8,7 +8,7 @@ import {
   useNodesState,
   useReactFlow,
 } from "@xyflow/react";
-import { clsx } from "clsx";
+import { cn } from "@/lib/utils";
 import { DiagramMode } from "../../../types/diagramMode";
 import { Table } from "../../../types/table";
 import { CardinalityEdge } from "../../molecules/cardinalityEdge";
@@ -97,7 +97,7 @@ export const DbDiagram = ({ activeMode }: DbDiagramProps) => {
   return (
     <div className="relative flex h-full w-full">
       <ReactFlow
-        className={clsx("flex-1", activeModeSettings.cursorClass)}
+        className={cn("flex-1", activeModeSettings.cursorClass)}
         style={{ width: "100%", height: "100%" }}
         nodes={nodes}
         edges={initialEdges}
