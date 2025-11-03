@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { KeyIcon } from "@heroicons/react/16/solid";
+import { ArrowLeftIcon, KeyIcon } from "@heroicons/react/16/solid";
 import { Column } from "@/components/molecules/tableNode/types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -354,10 +354,11 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
               <Button
                 type="button"
                 variant="secondary"
-                size="sm"
+                size="icon"
+                aria-label="Back to Columns"
                 onClick={handleBackToColumnList}
               >
-                Back to Columns
+                <ArrowLeftIcon className="size-4" />
               </Button>
               <h3
                 id="table-info-column-details-heading"
