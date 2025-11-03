@@ -1,5 +1,5 @@
 import type { ComponentProps } from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TableInfoDialog } from ".";
 import type { TableNodeData } from "../tableNode/types";
@@ -77,22 +77,25 @@ describe("TableInfoDialog", () => {
 
     await user.click(screen.getByRole("button", { name: "Add" }));
 
-    const columnPhysicalInputs = await screen.findAllByLabelText(
+    const detailRegion = await screen.findByRole("region", {
+      name: "Column Details",
+    });
+
+    const columnPhysicalNameInput = within(detailRegion).getByLabelText(
       "Physical Name",
     );
-    const columnPhysicalNameInput = columnPhysicalInputs[1];
     await user.clear(columnPhysicalNameInput);
     await user.type(columnPhysicalNameInput, "LAST_NAME");
 
-    const typeInput = screen.getByLabelText("Type");
+    const typeInput = within(detailRegion).getByLabelText("Type");
     await user.type(typeInput, "varchar");
 
-    const lengthInput = screen.getByLabelText("Length");
+    const lengthInput = within(detailRegion).getByLabelText("Length");
     await user.clear(lengthInput);
     await user.type(lengthInput, "20");
 
-    await user.click(screen.getByLabelText("Not Null"));
-    await user.click(screen.getByLabelText("Unique"));
+    await user.click(within(detailRegion).getByLabelText("Not Null"));
+    await user.click(within(detailRegion).getByLabelText("Unique"));
 
     await user.click(screen.getByRole("button", { name: "OK" }));
 
