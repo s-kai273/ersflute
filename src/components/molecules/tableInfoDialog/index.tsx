@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { Column } from "../tableNode/types";
+import { Column, TableNodeData } from "../tableNode/types";
 import { TableInfoDialogProps } from "./types";
 
 type EditableColumn = Column & {
@@ -42,11 +42,10 @@ export function TableInfoDialog({
   ...props
 }: TableInfoDialogProps) {
   const { open, onOpenChange, ...dialogProps } = props;
-  const [physicalName, setPhysicalName] = useState(data.physicalName);
-  const [logicalName, setLogicalName] = useState(data.logicalName ?? "");
-  const [columns, setColumns] = useState<EditableColumn[]>(
-    toEditableColumns(data.columns),
-  );
+  const [tableData, setTableData] = useState<TableNodeData>({
+    ...data,
+    columns: toEditableColumns(data.columns),
+  });
   const [selectedColumnIndex, setSelectedColumnIndex] = useState<number | null>(
     null,
   );
@@ -61,9 +60,6 @@ export function TableInfoDialog({
       return;
     }
 
-    setPhysicalName(data.physicalName);
-    setLogicalName(data.logicalName ?? "");
-    setColumns(toEditableColumns(data.columns));
     setSelectedColumnIndex(null);
     setAttributeView("list");
     setDescription("");
@@ -83,8 +79,10 @@ export function TableInfoDialog({
 
   const selectedColumn = useMemo(
     () =>
-      selectedColumnIndex != null ? columns[selectedColumnIndex] : undefined,
-    [columns, selectedColumnIndex],
+      selectedColumnIndex != null
+        ? tableData?.columns?.[selectedColumnIndex]
+        : undefined,
+    [tableData, selectedColumnIndex],
   );
 
   const openColumnDetail = (index: number, focus = true) => {
@@ -97,7 +95,7 @@ export function TableInfoDialog({
 
   const handleAddColumn = () => {
     const newColumn: EditableColumn = {
-      physicalName: `COLUMN_${columns.length + 1}`,
+      physicalName: "",
       logicalName: "",
       columnType: "",
       length: undefined,
@@ -107,8 +105,14 @@ export function TableInfoDialog({
       unique: false,
     };
 
-    const nextColumns = [...columns, newColumn];
-    setColumns(nextColumns);
+    const nextColumns = [
+      ...(tableData && tableData.columns ? tableData.columns : []),
+      newColumn,
+    ];
+    setTableData({
+      ...tableData,
+      columns: nextColumns,
+    });
     openColumnDetail(nextColumns.length - 1);
   };
 
@@ -126,36 +130,49 @@ export function TableInfoDialog({
     }
 
     const columnIndex = selectedColumnIndex;
-    setColumns((current) => {
-      const next = current.filter((_, index) => index !== columnIndex);
-      if (next.length === 0) {
+    setTableData((current) => {
+      const nextColumns = current.columns?.filter(
+        (_, index) => index !== columnIndex,
+      );
+      if (nextColumns && nextColumns.length === 0) {
         setSelectedColumnIndex(null);
       } else {
-        const nextIndex = Math.min(columnIndex, next.length - 1);
+        const nextIndex = Math.min(
+          columnIndex,
+          nextColumns ? nextColumns.length - 1 : 0,
+        );
         setSelectedColumnIndex(nextIndex);
       }
-      return next;
+      return {
+        ...current,
+        columns: nextColumns,
+      };
     });
     setAttributeView("list");
   };
 
   const moveColumn = (direction: "up" | "down") => {
-    if (selectedColumnIndex == null) {
+    if (!(tableData && tableData.columns) || selectedColumnIndex == null) {
       return;
     }
 
     const targetIndex =
       direction === "up" ? selectedColumnIndex - 1 : selectedColumnIndex + 1;
 
-    if (targetIndex < 0 || targetIndex >= columns.length) {
+    if (targetIndex < 0 || targetIndex >= tableData.columns.length) {
       return;
     }
 
-    setColumns((current) => {
-      const next = [...current];
-      const [removed] = next.splice(selectedColumnIndex, 1);
-      next.splice(targetIndex, 0, removed);
-      return next;
+    setTableData((current) => {
+      const nextColumns = [
+        ...(current && current.columns ? current.columns : []),
+      ];
+      const [removed] = nextColumns.splice(selectedColumnIndex, 1);
+      nextColumns.splice(targetIndex, 0, removed);
+      return {
+        ...current,
+        columns: nextColumns,
+      };
     });
     setSelectedColumnIndex(targetIndex);
   };
@@ -172,17 +189,23 @@ export function TableInfoDialog({
       return;
     }
 
-    setColumns((current) => {
-      const next = [...current];
-      next[selectedColumnIndex] = {
-        ...next[selectedColumnIndex],
+    setTableData((current) => {
+      const nextColumns = [
+        ...(current && current.columns ? current.columns : []),
+      ];
+      nextColumns[selectedColumnIndex] = {
+        ...nextColumns[selectedColumnIndex],
         [key]: value,
       };
-      return next;
+      return {
+        ...current,
+        columns: nextColumns,
+      };
     });
   };
 
   const handleApply = () => {
+    const columns = tableData.columns || [];
     const preparedColumns = columns.map<Column>((column) => ({
       physicalName: column.physicalName.trim(),
       logicalName: column.logicalName?.trim()
@@ -202,8 +225,10 @@ export function TableInfoDialog({
 
     onApply?.({
       ...data,
-      physicalName: physicalName.trim(),
-      logicalName: logicalName.trim() ? logicalName.trim() : undefined,
+      physicalName: tableData.physicalName.trim(),
+      logicalName: tableData?.logicalName?.trim()
+        ? tableData?.logicalName.trim()
+        : undefined,
       columns: preparedColumns,
     });
     onOpenChange?.(false);
@@ -272,8 +297,13 @@ export function TableInfoDialog({
                   id="table-info-physical-name"
                   className="h-8 rounded border border-slate-300 px-2 text-sm shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                   type="text"
-                  value={physicalName}
-                  onChange={(event) => setPhysicalName(event.target.value)}
+                  value={tableData.physicalName}
+                  onChange={(event) =>
+                    setTableData({
+                      ...tableData,
+                      physicalName: event.target.value,
+                    })
+                  }
                 />
                 <label
                   className="font-medium text-slate-600"
@@ -285,8 +315,13 @@ export function TableInfoDialog({
                   id="table-info-logical-name"
                   className="h-8 rounded border border-slate-300 px-2 text-sm shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                   type="text"
-                  value={logicalName}
-                  onChange={(event) => setLogicalName(event.target.value)}
+                  value={tableData.logicalName}
+                  onChange={(event) =>
+                    setTableData({
+                      ...tableData,
+                      logicalName: event.target.value,
+                    })
+                  }
                 />
               </div>
             </section>
@@ -307,7 +342,7 @@ export function TableInfoDialog({
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200 bg-white text-slate-700">
-                      {columns.map((column, index) => {
+                      {tableData?.columns?.map((column, index) => {
                         const isSelected = selectedColumnIndex === index;
                         return (
                           <tr
@@ -356,7 +391,7 @@ export function TableInfoDialog({
                           </tr>
                         );
                       })}
-                      {columns.length === 0 && (
+                      {tableData?.columns?.length === 0 && (
                         <tr>
                           <td
                             className="px-4 py-6 text-center text-sm text-slate-400"
@@ -414,7 +449,8 @@ export function TableInfoDialog({
                     onClick={() => moveColumn("down")}
                     disabled={
                       selectedColumnIndex == null ||
-                      selectedColumnIndex === columns.length - 1
+                      !tableData?.columns ||
+                      selectedColumnIndex === tableData.columns.length - 1
                     }
                   >
                     Down
@@ -463,7 +499,8 @@ export function TableInfoDialog({
                       onClick={() => moveColumn("down")}
                       disabled={
                         selectedColumnIndex == null ||
-                        selectedColumnIndex === columns.length - 1
+                        !tableData?.columns ||
+                        selectedColumnIndex === tableData.columns.length - 1
                       }
                     >
                       Move Down
