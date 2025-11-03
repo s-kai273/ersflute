@@ -8,6 +8,7 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { TableInfoDialogProps } from "./types";
 import { Column } from "../tableNode/types";
@@ -19,15 +20,6 @@ type EditableColumn = Column & {
   referredColumn?: string;
   unique?: boolean;
 };
-
-const buttonClass =
-  "rounded border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none";
-
-const secondaryButtonClass =
-  "rounded border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 shadow-sm transition hover:bg-slate-50";
-
-const dangerButtonClass =
-  "rounded border border-red-500 bg-red-500 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition hover:bg-red-600 disabled:cursor-not-allowed disabled:border-red-300 disabled:bg-red-300 disabled:text-white/80";
 
 function toEditableColumns(columns?: Column[]): EditableColumn[] {
   if (!columns) {
@@ -387,42 +379,47 @@ export function TableInfoDialog({
                     </table>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2 text-sm">
-                    <button
+                    <Button
                       type="button"
-                      className={buttonClass}
+                      variant="outline"
+                      size="sm"
                       onClick={handleAddColumn}
                     >
                       Add
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
-                      className={buttonClass}
+                      variant="outline"
+                      size="sm"
                       onClick={handleEditColumn}
                       disabled={selectedColumnIndex == null}
                     >
                       Edit
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
-                      className={buttonClass}
+                      variant="outline"
+                      size="sm"
                       onClick={handleDeleteColumn}
                       disabled={selectedColumnIndex == null}
                     >
                       Delete
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
-                      className={buttonClass}
+                      variant="outline"
+                      size="sm"
                       onClick={() => moveColumn("up")}
                       disabled={
                         selectedColumnIndex == null || selectedColumnIndex === 0
                       }
                     >
                       Up
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
-                      className={buttonClass}
+                      variant="outline"
+                      size="sm"
                       onClick={() => moveColumn("down")}
                       disabled={
                         selectedColumnIndex == null ||
@@ -430,7 +427,7 @@ export function TableInfoDialog({
                       }
                     >
                       Down
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}
@@ -447,9 +444,9 @@ export function TableInfoDialog({
                     value={groupName}
                     onChange={(event) => setGroupName(event.target.value)}
                   />
-                  <button type="button" className={buttonClass}>
+                  <Button type="button" variant="outline" size="sm">
                     Add the group item to the table
-                  </button>
+                  </Button>
                 </div>
                 <div className="max-h-[200px] overflow-auto rounded border border-slate-200">
                   <table className="min-w-full divide-y divide-slate-200 text-sm">
@@ -477,9 +474,9 @@ export function TableInfoDialog({
                   </table>
                 </div>
                 <div>
-                  <button type="button" className={secondaryButtonClass}>
+                  <Button type="button" variant="secondary" size="sm">
                     Group Management
-                  </button>
+                  </Button>
                 </div>
               </section>
             ) : (
@@ -490,13 +487,14 @@ export function TableInfoDialog({
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex flex-wrap items-center gap-2">
-                    <button
+                    <Button
                       type="button"
-                      className={secondaryButtonClass}
+                      variant="secondary"
+                      size="sm"
                       onClick={handleBackToColumnList}
                     >
                       Back to Columns
-                    </button>
+                    </Button>
                     <h3
                       id="table-info-column-details-heading"
                       className="text-base font-semibold text-slate-600"
@@ -505,19 +503,21 @@ export function TableInfoDialog({
                     </h3>
                   </div>
                   <div className="flex gap-2">
-                    <button
+                    <Button
                       type="button"
-                      className={buttonClass}
+                      variant="outline"
+                      size="sm"
                       onClick={() => moveColumn("up")}
                       disabled={
                         selectedColumnIndex == null || selectedColumnIndex === 0
                       }
                     >
                       Move Up
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
-                      className={buttonClass}
+                      variant="outline"
+                      size="sm"
                       onClick={() => moveColumn("down")}
                       disabled={
                         selectedColumnIndex == null ||
@@ -525,7 +525,7 @@ export function TableInfoDialog({
                       }
                     >
                       Move Down
-                    </button>
+                    </Button>
                   </div>
                 </div>
 
@@ -700,22 +700,24 @@ export function TableInfoDialog({
                     </div>
 
                     <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-                      <button
+                      <Button
                         type="button"
-                        className={dangerButtonClass}
+                        variant="destructive"
+                        size="sm"
                         onClick={handleDeleteColumn}
                         disabled={selectedColumnIndex == null}
                       >
                         Delete Column
-                      </button>
+                      </Button>
                       <div className="flex gap-2">
-                        <button
+                        <Button
                           type="button"
-                          className={buttonClass}
+                          variant="outline"
+                          size="sm"
                           onClick={handleBackToColumnList}
                         >
                           Done
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </>
@@ -763,16 +765,12 @@ export function TableInfoDialog({
           </TabsContent>
         </Tabs>
         <DialogFooter className="mt-4">
-          <button
-            type="button"
-            className={buttonClass}
-            onClick={handleCancel}
-          >
+          <Button type="button" variant="outline" size="sm" onClick={handleCancel}>
             Cancel
-          </button>
-          <button type="button" className={buttonClass} onClick={handleApply}>
+          </Button>
+          <Button type="button" size="sm" onClick={handleApply}>
             OK
-          </button>
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
