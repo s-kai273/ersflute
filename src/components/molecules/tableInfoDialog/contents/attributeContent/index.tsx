@@ -103,32 +103,6 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
     setAttributeView("list");
   };
 
-  const moveColumn = (direction: "up" | "down") => {
-    if (!(data && data.columns) || selectedColumnIndex == null) {
-      return;
-    }
-
-    const targetIndex =
-      direction === "up" ? selectedColumnIndex - 1 : selectedColumnIndex + 1;
-
-    if (targetIndex < 0 || targetIndex >= data.columns.length) {
-      return;
-    }
-
-    setData((current) => {
-      const nextColumns = [
-        ...(current && current.columns ? current.columns : []),
-      ];
-      const [removed] = nextColumns.splice(selectedColumnIndex, 1);
-      nextColumns.splice(targetIndex, 0, removed);
-      return {
-        ...current,
-        columns: nextColumns,
-      };
-    });
-    setSelectedColumnIndex(targetIndex);
-  };
-
   const handleBackToColumnList = () => {
     setAttributeView("list");
   };
@@ -317,30 +291,6 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
             >
               Delete
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => moveColumn("up")}
-              disabled={
-                selectedColumnIndex == null || selectedColumnIndex === 0
-              }
-            >
-              Up
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => moveColumn("down")}
-              disabled={
-                selectedColumnIndex == null ||
-                !data?.columns ||
-                selectedColumnIndex === data.columns.length - 1
-              }
-            >
-              Down
-            </Button>
           </div>
         </section>
       ) : (
@@ -367,30 +317,15 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                 Column Details
               </h3>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button
                 type="button"
-                variant="outline"
+                variant="destructive"
                 size="sm"
-                onClick={() => moveColumn("up")}
-                disabled={
-                  selectedColumnIndex == null || selectedColumnIndex === 0
-                }
+                onClick={handleDeleteColumn}
+                disabled={selectedColumnIndex == null}
               >
-                Move Up
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => moveColumn("down")}
-                disabled={
-                  selectedColumnIndex == null ||
-                  !data?.columns ||
-                  selectedColumnIndex === data.columns.length - 1
-                }
-              >
-                Move Down
+                Delete Column
               </Button>
             </div>
           </div>
@@ -555,27 +490,6 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                 </div>
               </div>
 
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  onClick={handleDeleteColumn}
-                  disabled={selectedColumnIndex == null}
-                >
-                  Delete Column
-                </Button>
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={handleBackToColumnList}
-                  >
-                    Done
-                  </Button>
-                </div>
-              </div>
             </>
           ) : (
             <p className="mt-4 text-sm text-slate-500">
