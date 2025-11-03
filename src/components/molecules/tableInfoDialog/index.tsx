@@ -52,7 +52,6 @@ export function TableInfoDialog({
   >(null);
   const [attributeView, setAttributeView] = useState<"list" | "detail">("list");
   const [description, setDescription] = useState("");
-  const [groupName, setGroupName] = useState("");
   const [shouldFocusColumnDetails, setShouldFocusColumnDetails] =
     useState(false);
   const columnPhysicalNameInputRef = useRef<HTMLInputElement>(null);
@@ -68,7 +67,6 @@ export function TableInfoDialog({
     setSelectedColumnIndex(null);
     setAttributeView("list");
     setDescription("");
-    setGroupName("");
   }, [data, open]);
 
   useEffect(() => {
@@ -433,53 +431,7 @@ export function TableInfoDialog({
               )}
             </section>
 
-            {attributeView === "list" ? (
-              <section className="flex-none space-y-3 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm">
-                <header className="font-medium text-slate-600">Group</header>
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <input
-                    className="h-8 flex-1 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                    type="text"
-                    placeholder="Group name"
-                    value={groupName}
-                    onChange={(event) => setGroupName(event.target.value)}
-                  />
-                  <Button type="button" variant="outline" size="sm">
-                    Add the group item to the table
-                  </Button>
-                </div>
-                <div className="max-h-[200px] overflow-auto rounded border border-slate-200">
-                  <table className="min-w-full divide-y divide-slate-200 text-sm">
-                    <thead className="bg-slate-100 text-xs uppercase tracking-wide text-slate-600">
-                      <tr>
-                        <th className="w-10 px-2 py-2 text-center">PK</th>
-                        <th className="w-10 px-2 py-2 text-center">FK</th>
-                        <th className="px-2 py-2 text-left">Physical Name</th>
-                        <th className="px-2 py-2 text-left">Logical Name</th>
-                        <th className="px-2 py-2 text-left">Type</th>
-                        <th className="w-24 px-2 py-2 text-center">NOT NULL</th>
-                        <th className="w-20 px-2 py-2 text-center">UNIQUE</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td
-                          className="px-4 py-6 text-center text-sm text-slate-400"
-                          colSpan={7}
-                        >
-                          No group items added.
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div>
-                  <Button type="button" variant="secondary" size="sm">
-                    Group Management
-                  </Button>
-                </div>
-              </section>
-            ) : (
+            {attributeView === "list" ? null : (
               <section
                 role="region"
                 aria-labelledby="table-info-column-details-heading"
