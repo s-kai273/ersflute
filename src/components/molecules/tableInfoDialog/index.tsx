@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DialogTitle } from "@radix-ui/react-dialog";
 import { KeyIcon } from "@heroicons/react/16/solid";
+import { DialogTitle } from "@radix-ui/react-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,10 +9,9 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { TableInfoDialogProps } from "./types";
 import { Column } from "../tableNode/types";
+import { TableInfoDialogProps } from "./types";
 
 type EditableColumn = Column & {
   logicalName?: string;
@@ -47,9 +47,9 @@ export function TableInfoDialog({
   const [columns, setColumns] = useState<EditableColumn[]>(
     toEditableColumns(data.columns),
   );
-  const [selectedColumnIndex, setSelectedColumnIndex] = useState<
-    number | null
-  >(null);
+  const [selectedColumnIndex, setSelectedColumnIndex] = useState<number | null>(
+    null,
+  );
   const [attributeView, setAttributeView] = useState<"list" | "detail">("list");
   const [description, setDescription] = useState("");
   const [shouldFocusColumnDetails, setShouldFocusColumnDetails] =
@@ -234,7 +234,7 @@ export function TableInfoDialog({
         </DialogHeader>
         <Tabs
           defaultValue="attribute"
-          className="flex h-full flex-col gap-4 overflow-hidden"
+          className="flex h-full flex-col gap-2 overflow-hidden"
         >
           <TabsList className="rounded-md border border-slate-200 bg-white p-0.5">
             <TabsTrigger className="px-3" value="attribute">
@@ -258,7 +258,7 @@ export function TableInfoDialog({
           </TabsList>
           <TabsContent
             value="attribute"
-            className="flex flex-1 flex-col gap-4 overflow-y-auto pr-2"
+            className="flex flex-1 flex-col gap-1 overflow-y-auto pr-2"
           >
             <section className="flex-none rounded-md border border-slate-200 bg-white">
               <div className="grid grid-cols-[140px_1fr_140px_1fr] items-center gap-3 border-b border-slate-200 px-4 py-3 text-sm">
@@ -289,149 +289,139 @@ export function TableInfoDialog({
                   onChange={(event) => setLogicalName(event.target.value)}
                 />
               </div>
-
-              {attributeView === "list" && (
-                <div className="px-4 pb-4 pt-3">
-                  <div className="max-h-[260px] overflow-auto rounded border border-slate-200">
-                    <table className="min-w-full divide-y divide-slate-200 text-sm">
-                      <thead className="bg-slate-100 text-xs uppercase tracking-wide text-slate-600">
-                        <tr>
-                          <th className="w-10 px-2 py-2 text-center">PK</th>
-                          <th className="w-10 px-2 py-2 text-center">FK</th>
-                          <th className="px-2 py-2 text-left">Physical Name</th>
-                          <th className="px-2 py-2 text-left">Logical Name</th>
-                          <th className="px-2 py-2 text-left">Type</th>
-                          <th className="w-24 px-2 py-2 text-center">
-                            NOT NULL
-                          </th>
-                          <th className="w-20 px-2 py-2 text-center">
-                            UNIQUE
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-200 bg-white text-slate-700">
-                        {columns.map((column, index) => {
-                          const isSelected = selectedColumnIndex === index;
-                          return (
-                            <tr
-                              key={`${column.physicalName}-${index}`}
-                              className={cn(
-                                "cursor-pointer transition-colors hover:bg-blue-50",
-                                isSelected && "bg-blue-100/70",
-                              )}
-                              onClick={() => setSelectedColumnIndex(index)}
-                              onDoubleClick={() => openColumnDetail(index)}
-                            >
-                              <td className="px-2 py-2 text-center">
-                                {column.primaryKey && (
-                                  <KeyIcon
-                                    aria-label="Primary key"
-                                    className="mx-auto h-4 w-4 text-amber-500"
-                                  />
-                                )}
-                              </td>
-                              <td className="px-2 py-2 text-center">
-                                {column.referredColumn ? "✓" : ""}
-                              </td>
-                              <td className="px-2 py-2 font-medium">
-                                {column.physicalName}
-                              </td>
-                              <td className="px-2 py-2">
-                                {column.logicalName}
-                              </td>
-                              <td className="px-2 py-2">
-                                {typeDisplay(column)}
-                              </td>
-                              <td className="px-2 py-2 text-center">
-                                <input
-                                  aria-label={`Column ${column.physicalName} is not null`}
-                                  type="checkbox"
-                                  checked={column.notNull}
-                                  readOnly
-                                  className="pointer-events-none accent-blue-500"
-                                />
-                              </td>
-                              <td className="px-2 py-2 text-center">
-                                <input
-                                  aria-label={`Column ${column.physicalName} is unique`}
-                                  type="checkbox"
-                                  checked={column.unique ?? false}
-                                  readOnly
-                                  className="pointer-events-none accent-blue-500"
-                                />
-                              </td>
-                            </tr>
-                          );
-                        })}
-                        {columns.length === 0 && (
-                          <tr>
-                            <td
-                              className="px-4 py-6 text-center text-sm text-slate-400"
-                              colSpan={7}
-                            >
-                              Columns will appear here once added.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-2 text-sm">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleAddColumn}
-                    >
-                      Add
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleEditColumn}
-                      disabled={selectedColumnIndex == null}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleDeleteColumn}
-                      disabled={selectedColumnIndex == null}
-                    >
-                      Delete
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => moveColumn("up")}
-                      disabled={
-                        selectedColumnIndex == null || selectedColumnIndex === 0
-                      }
-                    >
-                      Up
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => moveColumn("down")}
-                      disabled={
-                        selectedColumnIndex == null ||
-                        selectedColumnIndex === columns.length - 1
-                      }
-                    >
-                      Down
-                    </Button>
-                  </div>
-                </div>
-              )}
             </section>
 
-            {attributeView === "list" ? null : (
+            {attributeView === "list" ? (
+              <section className="rounded-md border border-slate-200 bg-white px-4 py-3 text-sm">
+                <div className="h-[150px] overflow-y-auto rounded border border-slate-200">
+                  <table className="min-w-full divide-y divide-slate-200 text-sm">
+                    <thead className="bg-slate-100 text-xs uppercase tracking-wide text-slate-600">
+                      <tr>
+                        <th className="w-10 px-2 py-2 text-center">PK</th>
+                        <th className="w-10 px-2 py-2 text-center">FK</th>
+                        <th className="px-2 py-2 text-left">Physical Name</th>
+                        <th className="px-2 py-2 text-left">Logical Name</th>
+                        <th className="px-2 py-2 text-left">Type</th>
+                        <th className="w-24 px-2 py-2 text-center">NOT NULL</th>
+                        <th className="w-20 px-2 py-2 text-center">UNIQUE</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200 bg-white text-slate-700">
+                      {columns.map((column, index) => {
+                        const isSelected = selectedColumnIndex === index;
+                        return (
+                          <tr
+                            key={`${column.physicalName}-${index}`}
+                            className={cn(
+                              "cursor-pointer transition-colors hover:bg-blue-50",
+                              isSelected && "bg-blue-100/70",
+                            )}
+                            onClick={() => setSelectedColumnIndex(index)}
+                            onDoubleClick={() => openColumnDetail(index)}
+                          >
+                            <td className="px-2 py-2 text-center">
+                              {column.primaryKey && (
+                                <KeyIcon
+                                  aria-label="Primary key"
+                                  className="mx-auto h-4 w-4 text-amber-500"
+                                />
+                              )}
+                            </td>
+                            <td className="px-2 py-2 text-center">
+                              {column.referredColumn ? "✓" : ""}
+                            </td>
+                            <td className="px-2 py-2 font-medium">
+                              {column.physicalName}
+                            </td>
+                            <td className="px-2 py-2">{column.logicalName}</td>
+                            <td className="px-2 py-2">{typeDisplay(column)}</td>
+                            <td className="px-2 py-2 text-center">
+                              <input
+                                aria-label={`Column ${column.physicalName} is not null`}
+                                type="checkbox"
+                                checked={column.notNull}
+                                readOnly
+                                className="pointer-events-none accent-blue-500"
+                              />
+                            </td>
+                            <td className="px-2 py-2 text-center">
+                              <input
+                                aria-label={`Column ${column.physicalName} is unique`}
+                                type="checkbox"
+                                checked={column.unique ?? false}
+                                readOnly
+                                className="pointer-events-none accent-blue-500"
+                              />
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      {columns.length === 0 && (
+                        <tr>
+                          <td
+                            className="px-4 py-6 text-center text-sm text-slate-400"
+                            colSpan={7}
+                          >
+                            Columns will appear here once added.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddColumn}
+                  >
+                    Add
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleEditColumn}
+                    disabled={selectedColumnIndex == null}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleDeleteColumn}
+                    disabled={selectedColumnIndex == null}
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => moveColumn("up")}
+                    disabled={
+                      selectedColumnIndex == null || selectedColumnIndex === 0
+                    }
+                  >
+                    Up
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => moveColumn("down")}
+                    disabled={
+                      selectedColumnIndex == null ||
+                      selectedColumnIndex === columns.length - 1
+                    }
+                  >
+                    Down
+                  </Button>
+                </div>
+              </section>
+            ) : (
               <section
                 role="region"
                 aria-labelledby="table-info-column-details-heading"
@@ -681,9 +671,14 @@ export function TableInfoDialog({
               </section>
             )}
           </TabsContent>
-          <TabsContent value="description" className="rounded-md border border-slate-200 bg-white p-4">
+          <TabsContent
+            value="description"
+            className="rounded-md border border-slate-200 bg-white p-4"
+          >
             <label className="flex flex-col gap-2 text-sm">
-              <span className="font-medium text-slate-600">Table Description</span>
+              <span className="font-medium text-slate-600">
+                Table Description
+              </span>
               <textarea
                 className="min-h-[150px] rounded border border-slate-300 px-2 py-2 text-sm leading-5 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                 value={description}
@@ -717,7 +712,12 @@ export function TableInfoDialog({
           </TabsContent>
         </Tabs>
         <DialogFooter className="mt-4">
-          <Button type="button" variant="outline" size="sm" onClick={handleCancel}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleCancel}
+          >
             Cancel
           </Button>
           <Button type="button" size="sm" onClick={handleApply}>
