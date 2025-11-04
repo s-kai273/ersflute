@@ -9,10 +9,16 @@ export type Column = {
   logicalName?: string;
   columnType?: string;
   length?: number;
+  decimal?: number;
   notNull: boolean;
   primaryKey?: boolean;
+  autoIncrement?: boolean;
   referredColumn?: string;
   unique?: boolean;
+  unsigned?: boolean;
+  enumArgs?: string;
+  description?: string;
+  defaultValue?: string;
 };
 
 export type TableNodeData = {
