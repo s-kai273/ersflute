@@ -324,17 +324,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                 Column Details
               </h3>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                onClick={handleDeleteColumn}
-                disabled={selectedColumnIndex == null}
-              >
-                Delete Column
-              </Button>
-            </div>
+            <div className="flex flex-wrap gap-2" />
           </div>
 
           {selectedColumn ? (
