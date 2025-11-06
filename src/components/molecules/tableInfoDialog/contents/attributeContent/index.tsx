@@ -324,82 +324,76 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                 Column Details
               </h3>
             </div>
-            <div className="flex flex-wrap gap-2" />
+            {selectedColumn && (
+              <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-slate-600">
+                <label
+                  className="flex items-center gap-2"
+                  htmlFor="table-info-column-primary-key"
+                >
+                  <input
+                    id="table-info-column-primary-key"
+                    className="h-4 w-4 rounded border border-slate-300 text-blue-500 focus:ring-blue-200"
+                    type="checkbox"
+                    checked={selectedColumn.primaryKey ?? false}
+                    onChange={(event) =>
+                      updateSelectedColumn("primaryKey", event.target.checked)
+                    }
+                  />
+                  <span>Primary Key</span>
+                </label>
+                <label
+                  className="flex items-center gap-2"
+                  htmlFor="table-info-column-not-null"
+                >
+                  <input
+                    id="table-info-column-not-null"
+                    className="h-4 w-4 rounded border border-slate-300 text-blue-500 focus:ring-blue-200"
+                    type="checkbox"
+                    checked={selectedColumn.notNull}
+                    onChange={(event) =>
+                      updateSelectedColumn("notNull", event.target.checked)
+                    }
+                  />
+                  <span>Not Null</span>
+                </label>
+                <label
+                  className="flex items-center gap-2"
+                  htmlFor="table-info-column-unique"
+                >
+                  <input
+                    id="table-info-column-unique"
+                    className="h-4 w-4 rounded border border-slate-300 text-blue-500 focus:ring-blue-200"
+                    type="checkbox"
+                    checked={selectedColumn.unique ?? false}
+                    onChange={(event) =>
+                      updateSelectedColumn("unique", event.target.checked)
+                    }
+                  />
+                  <span>Unique</span>
+                </label>
+                <label
+                  className="flex items-center gap-2"
+                  htmlFor="table-info-column-auto-increment"
+                >
+                  <input
+                    id="table-info-column-auto-increment"
+                    className="h-4 w-4 rounded border border-slate-300 text-blue-500 focus:ring-blue-200"
+                    type="checkbox"
+                    checked={selectedColumn.autoIncrement ?? false}
+                    onChange={(event) =>
+                      updateSelectedColumn("autoIncrement", event.target.checked)
+                    }
+                  />
+                  <span>Auto Increment</span>
+                </label>
+              </div>
+            )}
           </div>
 
           {selectedColumn ? (
             <>
               <div className="mt-4 flex-1 overflow-y-auto pr-1">
                 <div className="flex flex-col gap-4">
-                  <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-slate-600">
-                    <label
-                      className="flex items-center gap-2"
-                      htmlFor="table-info-column-primary-key"
-                    >
-                      <input
-                        id="table-info-column-primary-key"
-                        className="h-4 w-4 rounded border border-slate-300 text-blue-500 focus:ring-blue-200"
-                        type="checkbox"
-                        checked={selectedColumn.primaryKey ?? false}
-                        onChange={(event) =>
-                          updateSelectedColumn(
-                            "primaryKey",
-                            event.target.checked,
-                          )
-                        }
-                      />
-                      <span>Primary Key</span>
-                    </label>
-                    <label
-                      className="flex items-center gap-2"
-                      htmlFor="table-info-column-not-null"
-                    >
-                      <input
-                        id="table-info-column-not-null"
-                        className="h-4 w-4 rounded border border-slate-300 text-blue-500 focus:ring-blue-200"
-                        type="checkbox"
-                        checked={selectedColumn.notNull}
-                        onChange={(event) =>
-                          updateSelectedColumn("notNull", event.target.checked)
-                        }
-                      />
-                      <span>Not Null</span>
-                    </label>
-                    <label
-                      className="flex items-center gap-2"
-                      htmlFor="table-info-column-unique"
-                    >
-                      <input
-                        id="table-info-column-unique"
-                        className="h-4 w-4 rounded border border-slate-300 text-blue-500 focus:ring-blue-200"
-                        type="checkbox"
-                        checked={selectedColumn.unique ?? false}
-                        onChange={(event) =>
-                          updateSelectedColumn("unique", event.target.checked)
-                        }
-                      />
-                      <span>Unique</span>
-                    </label>
-                    <label
-                      className="flex items-center gap-2"
-                      htmlFor="table-info-column-auto-increment"
-                    >
-                      <input
-                        id="table-info-column-auto-increment"
-                        className="h-4 w-4 rounded border border-slate-300 text-blue-500 focus:ring-blue-200"
-                        type="checkbox"
-                        checked={selectedColumn.autoIncrement ?? false}
-                        onChange={(event) =>
-                          updateSelectedColumn(
-                            "autoIncrement",
-                            event.target.checked,
-                          )
-                        }
-                      />
-                      <span>Auto Increment</span>
-                    </label>
-                  </div>
-
                   <div className="grid gap-3 text-sm sm:grid-cols-2">
                     <label
                       className="flex flex-col gap-1"
@@ -531,7 +525,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                       </label>
                     </div>
                     <label
-                      className="flex flex-col gap-1 sm:col-span-2"
+                      className="flex flex-col gap-1 sm:col-span-1"
                       htmlFor="table-info-column-enum-args"
                     >
                       <span className="font-medium text-slate-600">
@@ -553,28 +547,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                       />
                     </label>
                     <label
-                      className="flex flex-col gap-1 sm:col-span-2"
-                      htmlFor="table-info-column-description"
-                    >
-                      <span className="font-medium text-slate-600">
-                        Description
-                      </span>
-                      <textarea
-                        id="table-info-column-description"
-                        className="min-h-24 rounded border border-slate-300 px-2 py-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                        value={selectedColumn.description ?? ""}
-                        onChange={(event) =>
-                          updateSelectedColumn(
-                            "description",
-                            event.target.value === ""
-                              ? undefined
-                              : event.target.value,
-                          )
-                        }
-                      />
-                    </label>
-                    <label
-                      className="flex flex-col gap-1 sm:col-span-2"
+                      className="flex flex-col gap-1 sm:col-span-1"
                       htmlFor="table-info-column-default-value"
                     >
                       <span className="font-medium text-slate-600">
@@ -588,6 +561,27 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                         onChange={(event) =>
                           updateSelectedColumn(
                             "defaultValue",
+                            event.target.value === ""
+                              ? undefined
+                              : event.target.value,
+                          )
+                        }
+                      />
+                    </label>
+                    <label
+                      className="flex flex-col gap-1 sm:col-span-2"
+                      htmlFor="table-info-column-description"
+                    >
+                      <span className="font-medium text-slate-600">
+                        Description
+                      </span>
+                      <textarea
+                        id="table-info-column-description"
+                        className="min-h-24 rounded border border-slate-300 px-2 py-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
+                        value={selectedColumn.description ?? ""}
+                        onChange={(event) =>
+                          updateSelectedColumn(
+                            "description",
                             event.target.value === ""
                               ? undefined
                               : event.target.value,
