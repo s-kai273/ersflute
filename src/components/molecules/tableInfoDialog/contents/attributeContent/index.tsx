@@ -21,7 +21,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
 
     setSelectedColumnIndex(null);
     setAttributeView("list");
-  }, [data, open]);
+  }, [open]);
 
   useEffect(() => {
     if (
@@ -381,7 +381,10 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                     type="checkbox"
                     checked={selectedColumn.autoIncrement ?? false}
                     onChange={(event) =>
-                      updateSelectedColumn("autoIncrement", event.target.checked)
+                      updateSelectedColumn(
+                        "autoIncrement",
+                        event.target.checked,
+                      )
                     }
                   />
                   <span>Auto Increment</span>
