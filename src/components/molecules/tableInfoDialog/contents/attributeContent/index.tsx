@@ -5,6 +5,29 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AttributeContentProps } from "./types";
 
+const COLUMN_TYPE_OPTIONS = [
+  "bigint",
+  "binary",
+  "bit",
+  "boolean",
+  "char",
+  "date",
+  "datetime",
+  "decimal",
+  "double",
+  "float",
+  "int",
+  "json",
+  "smallint",
+  "text",
+  "time",
+  "timestamp",
+  "tinyint",
+  "varchar",
+  "enum",
+  "set",
+] as const;
+
 export function AttributeContent({ data, setData }: AttributeContentProps) {
   const [attributeView, setAttributeView] = useState<"list" | "detail">("list");
   const [selectedColumnIndex, setSelectedColumnIndex] = useState<number | null>(
@@ -148,6 +171,11 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
 
     return column.columnType;
   };
+
+  const columnTypeValue = selectedColumn?.columnType ?? "";
+  const showCustomColumnType =
+    columnTypeValue !== "" &&
+    !COLUMN_TYPE_OPTIONS.some((option) => option === columnTypeValue);
 
   return (
     <>
@@ -447,11 +475,10 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                         htmlFor="table-info-column-type"
                       >
                         <span className="font-medium text-slate-600">Type</span>
-                        <input
+                        <select
                           id="table-info-column-type"
                           className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                          type="text"
-                          value={selectedColumn.columnType ?? ""}
+                          value={columnTypeValue}
                           onChange={(event) =>
                             updateSelectedColumn(
                               "columnType",
@@ -460,7 +487,19 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                                 : event.target.value,
                             )
                           }
-                        />
+                        >
+                          <option value="">Select type</option>
+                          {showCustomColumnType && (
+                            <option value={columnTypeValue}>
+                              {columnTypeValue}
+                            </option>
+                          )}
+                          {COLUMN_TYPE_OPTIONS.map((option) => (
+                            <option key={option} value={option}>
+                              {option.toUpperCase()}
+                            </option>
+                          ))}
+                        </select>
                       </label>
                       <label
                         className="flex flex-col gap-1"

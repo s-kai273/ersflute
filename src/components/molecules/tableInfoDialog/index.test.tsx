@@ -87,8 +87,8 @@ describe("TableInfoDialog", () => {
     await user.clear(columnPhysicalNameInput);
     await user.type(columnPhysicalNameInput, "LAST_NAME");
 
-    const typeInput = within(detailRegion).getByLabelText("Type");
-    await user.type(typeInput, "varchar");
+    const typeSelect = within(detailRegion).getByLabelText("Type");
+    await user.selectOptions(typeSelect, "varchar");
 
     const lengthInput = within(detailRegion).getByLabelText("Length");
     await user.clear(lengthInput);
