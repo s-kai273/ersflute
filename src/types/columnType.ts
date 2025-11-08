@@ -56,5 +56,323 @@ export const ColumnType = {
 export type ColumnType = (typeof ColumnType)[keyof typeof ColumnType];
 
 export type ColumnTypeConfig = {
-  type: ColumnType;
+  supportsLength: boolean;
+  supportsDecimal: boolean;
+  supportsEnumArgs: boolean;
+  supportsUnsigned: boolean;
+};
+
+export const ColumnTypeConfig: Record<ColumnType, ColumnTypeConfig> = {
+  [ColumnType.Char]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.CharN]: {
+    supportsLength: true,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.VarcharN]: {
+    supportsLength: true,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Text]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.TinyText]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Mediumtext]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Longtext]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Int]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.IntN]: {
+    supportsLength: true,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.TinyInt]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.TinyIntN]: {
+    supportsLength: true,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.SmallInt]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.SmallIntN]: {
+    supportsLength: true,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.MediumInt]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.MediumIntN]: {
+    supportsLength: true,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.BigInt]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.BigIntN]: {
+    supportsLength: true,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.Date]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.Datetime]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Boolean]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Binary]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.BinaryN]: {
+    supportsLength: true,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.VarbinaryN]: {
+    supportsLength: true,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Bit1]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.BitN]: {
+    supportsLength: true,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Blob]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Tinyblog]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Mediumblog]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Longblog]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Decimal]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.DecimalP]: {
+    supportsLength: true,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.DecimalPS]: {
+    supportsLength: true,
+    supportsDecimal: true,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.Decimal104]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.Decimal194]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.Double]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.DoubleMD]: {
+    supportsLength: true,
+    supportsDecimal: true,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.Enum]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: true,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Float]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.FloatMD]: {
+    supportsLength: true,
+    supportsDecimal: true,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.FloatP]: {
+    supportsLength: true,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.Geometry]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Json]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Numeric]: {
+    supportsLength: true,
+    supportsDecimal: true,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.NumericP]: {
+    supportsLength: true,
+    supportsDecimal: true,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.NumericPS]: {
+    supportsLength: true,
+    supportsDecimal: true,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.Real]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.RealMD]: {
+    supportsLength: true,
+    supportsDecimal: true,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.Set]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Time]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Timestamp]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: false,
+  },
+  [ColumnType.Year2]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
+  [ColumnType.Year4]: {
+    supportsLength: false,
+    supportsDecimal: false,
+    supportsEnumArgs: false,
+    supportsUnsigned: true,
+  },
 };
