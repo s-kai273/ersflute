@@ -3,30 +3,63 @@ import { ArrowLeftIcon, KeyIcon } from "@heroicons/react/16/solid";
 import { Column } from "@/components/molecules/tableNode/types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ColumnType, ColumnTypeConfigDict } from "@/types/columnType";
 import { AttributeContentProps } from "./types";
 
-const COLUMN_TYPE_OPTIONS = [
-  "bigint",
-  "binary",
-  "bit",
-  "boolean",
-  "char",
-  "date",
-  "datetime",
-  "decimal",
-  "double",
-  "float",
-  "int",
-  "json",
-  "smallint",
-  "text",
-  "time",
-  "timestamp",
-  "tinyint",
-  "varchar",
-  "enum",
-  "set",
-] as const;
+const COLUMN_TYPE_LIST: ColumnType[] = [
+  ColumnType.BigInt,
+  ColumnType.BigIntN,
+  ColumnType.Binary,
+  ColumnType.BinaryN,
+  ColumnType.Bit1,
+  ColumnType.BitN,
+  ColumnType.Blob,
+  ColumnType.Boolean,
+  ColumnType.Char,
+  ColumnType.CharN,
+  ColumnType.Date,
+  ColumnType.Datetime,
+  ColumnType.Decimal,
+  ColumnType.DecimalP,
+  ColumnType.DecimalPS,
+  ColumnType.Decimal104,
+  ColumnType.Decimal194,
+  ColumnType.Double,
+  ColumnType.DoubleMD,
+  ColumnType.Enum,
+  ColumnType.Float,
+  ColumnType.FloatMD,
+  ColumnType.FloatP,
+  ColumnType.Geometry,
+  ColumnType.Int,
+  ColumnType.IntN,
+  ColumnType.Json,
+  ColumnType.LongBlob,
+  ColumnType.LongText,
+  ColumnType.MediumBlob,
+  ColumnType.MediumInt,
+  ColumnType.MediumIntN,
+  ColumnType.MediumText,
+  ColumnType.Numeric,
+  ColumnType.NumericP,
+  ColumnType.NumericPS,
+  ColumnType.Real,
+  ColumnType.RealMD,
+  ColumnType.Set,
+  ColumnType.SmallInt,
+  ColumnType.SmallIntN,
+  ColumnType.Text,
+  ColumnType.Time,
+  ColumnType.Timestamp,
+  ColumnType.TinyBlob,
+  ColumnType.TinyInt,
+  ColumnType.TinyIntN,
+  ColumnType.TinyText,
+  ColumnType.VarBinaryN,
+  ColumnType.VarCharN,
+  ColumnType.Year2,
+  ColumnType.Year4,
+];
 
 export function AttributeContent({ data, setData }: AttributeContentProps) {
   const [attributeView, setAttributeView] = useState<"list" | "detail">("list");
@@ -173,9 +206,6 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
   };
 
   const columnTypeValue = selectedColumn?.columnType ?? "";
-  const showCustomColumnType =
-    columnTypeValue !== "" &&
-    !COLUMN_TYPE_OPTIONS.some((option) => option === columnTypeValue);
 
   return (
     <>
@@ -488,15 +518,9 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                             )
                           }
                         >
-                          <option value="">Select type</option>
-                          {showCustomColumnType && (
-                            <option value={columnTypeValue}>
-                              {columnTypeValue}
-                            </option>
-                          )}
-                          {COLUMN_TYPE_OPTIONS.map((option) => (
-                            <option key={option} value={option}>
-                              {option.toUpperCase()}
+                          {COLUMN_TYPE_LIST.map((columnType) => (
+                            <option key={columnType} value={columnType}>
+                              {ColumnTypeConfigDict[columnType].label}
                             </option>
                           ))}
                         </select>
