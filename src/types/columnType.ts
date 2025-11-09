@@ -56,9 +56,15 @@ export const ColumnType = {
 export type ColumnType = (typeof ColumnType)[keyof typeof ColumnType];
 
 export function parseColumnType(value: string): ColumnType | undefined {
-  return (Object.values(ColumnType) as string[]).includes(value)
-    ? (value as ColumnType)
-    : undefined;
+  if ((Object.values(ColumnType) as string[]).includes(value)) {
+    return value as ColumnType;
+  }
+  for (const key of Object.keys(ColumnType)) {
+    if (ColumnTypeConfigDict[key as ColumnType].label === value) {
+      return key as ColumnType;
+    }
+  }
+  return undefined;
 }
 
 export type ColumnTypeConfig = {

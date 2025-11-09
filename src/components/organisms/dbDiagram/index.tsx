@@ -9,6 +9,7 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import { cn } from "@/lib/utils";
+import { parseColumnType } from "@/types/columnType";
 import { DiagramMode } from "../../../types/diagramMode";
 import { Table } from "../../../types/table";
 import { CardinalityEdge } from "../../molecules/cardinalityEdge";
@@ -42,7 +43,9 @@ function createNodes(tables: Table[]): Node[] {
           return {
             physicalName: column.physicalName,
             logicalName: column.logicalName,
-            columnType: column.columnType,
+            columnType: column.columnType
+              ? parseColumnType(column.columnType)
+              : undefined,
             length: column.length,
             notNull: column.notNull,
             primaryKey: column.primaryKey,

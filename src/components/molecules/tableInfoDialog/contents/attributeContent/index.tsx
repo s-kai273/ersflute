@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeftIcon, KeyIcon } from "@heroicons/react/16/solid";
 import { Column } from "@/components/molecules/tableNode/types";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import {
   ColumnType,
@@ -221,7 +222,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
           >
             Physical Name
           </label>
-          <input
+          <Input
             id="table-info-physical-name"
             className="h-8 rounded border border-slate-300 px-2 text-sm shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
             type="text"
@@ -239,7 +240,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
           >
             Logical Name
           </label>
-          <input
+          <Input
             id="table-info-logical-name"
             className="h-8 rounded border border-slate-300 px-2 text-sm shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
             type="text"
@@ -467,7 +468,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                       <span className="font-medium text-slate-600">
                         Physical Name
                       </span>
-                      <input
+                      <Input
                         id="table-info-column-physical-name"
                         ref={columnPhysicalNameInputRef}
                         className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
@@ -488,7 +489,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                       <span className="font-medium text-slate-600">
                         Logical Name
                       </span>
-                      <input
+                      <Input
                         id="table-info-column-logical-name"
                         className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                         type="text"
@@ -536,14 +537,14 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                         <span className="font-medium text-slate-600">
                           Length
                         </span>
-                        <input
+                        <Input
                           id="table-info-column-length"
                           className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                           type="number"
                           value={selectedColumn.length ?? ""}
                           disabled={
-                            selectedColumn.columnType
-                              ? ColumnTypeConfigDict[selectedColumn.columnType]
+                            columnTypeValue
+                              ? ColumnTypeConfigDict[columnTypeValue]
                                   .supportsLength === false
                               : true
                           }
@@ -564,14 +565,14 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                         <span className="font-medium text-slate-600">
                           Decimal
                         </span>
-                        <input
+                        <Input
                           id="table-info-column-decimal"
                           className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                           type="number"
                           value={selectedColumn.decimal ?? ""}
                           disabled={
-                            selectedColumn.columnType
-                              ? ColumnTypeConfigDict[selectedColumn.columnType]
+                            columnTypeValue
+                              ? ColumnTypeConfigDict[columnTypeValue]
                                   .supportsDecimal === false
                               : true
                           }
@@ -595,8 +596,8 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                           type="checkbox"
                           checked={selectedColumn.unsigned ?? false}
                           disabled={
-                            selectedColumn.columnType
-                              ? ColumnTypeConfigDict[selectedColumn.columnType]
+                            columnTypeValue
+                              ? ColumnTypeConfigDict[columnTypeValue]
                                   .supportsUnsigned === false
                               : true
                           }
@@ -619,14 +620,14 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                       <span className="font-medium text-slate-600">
                         Args of enum/set Type
                       </span>
-                      <input
+                      <Input
                         id="table-info-column-enum-args"
                         className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                         type="text"
                         value={selectedColumn.enumArgs ?? ""}
                         disabled={
-                          selectedColumn.columnType
-                            ? ColumnTypeConfigDict[selectedColumn.columnType]
+                          columnTypeValue
+                            ? ColumnTypeConfigDict[columnTypeValue]
                                 .supportsEnumArgs === false
                             : true
                         }
@@ -647,7 +648,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                       <span className="font-medium text-slate-600">
                         Default Value
                       </span>
-                      <input
+                      <Input
                         id="table-info-column-default-value"
                         className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                         type="text"
