@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/16/solid";
 import { Handle, Node, NodeProps, Position, useReactFlow } from "@xyflow/react";
+import { ColumnTypeConfigDict, parseColumnType } from "@/types/columnType";
 import { TableInfoDialog } from "../tableInfoDialog";
 import { TableNodeData } from "./types";
 
@@ -52,7 +53,9 @@ export function TableNode({
               </span>
               <span>
                 {column.physicalName && <span>{column.physicalName}</span>}
-                {column.columnType && <span>: {column.columnType}</span>}
+                {column.columnType && (
+                  <span>: {ColumnTypeConfigDict[column.columnType].label}</span>
+                )}
               </span>
             </p>
           ))}

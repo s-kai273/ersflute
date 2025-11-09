@@ -3,6 +3,9 @@ import { render, screen } from "@testing-library/react";
 import { DbDiagram } from ".";
 import { DiagramMode } from "../../../types/diagramMode";
 
+const mockAddNodes = jest.fn();
+const mockScreenToFlowPosition = jest.fn();
+
 jest.mock("@xyflow/react", () => ({
   Background: ({ children }: { children?: ReactNode }) => (
     <div data-testid="background">{children}</div>
@@ -24,9 +27,18 @@ jest.mock("@xyflow/react", () => ({
     () => undefined,
     () => undefined,
   ],
+  useReactFlow: () => ({
+    addNodes: mockAddNodes,
+    screenToFlowPosition: mockScreenToFlowPosition,
+  }),
 }));
 
 describe("DbDiagram", () => {
+  beforeEach(() => {
+    mockAddNodes.mockReset();
+    mockScreenToFlowPosition.mockReset();
+  });
+
   it("applies the cursor class without rendering a mode banner", () => {
     render(<DbDiagram activeMode={DiagramMode.Table} />);
 

@@ -1,6 +1,9 @@
 import { render, screen } from "@testing-library/react";
+import { ColumnType } from "@/types/columnType";
 import { TableNode } from ".";
 import type { TableNodeData } from "./types";
+
+const mockSetNodes = jest.fn();
 
 jest.mock("@xyflow/react", () => ({
   Handle: ({ type, position }: { type: string; position: string }) => (
@@ -12,6 +15,9 @@ jest.mock("@xyflow/react", () => ({
     Bottom: "bottom",
     Left: "left",
   },
+  useReactFlow: () => ({
+    setNodes: mockSetNodes,
+  }),
 }));
 
 function renderTableNode(
@@ -23,7 +29,7 @@ function renderTableNode(
     columns: [
       {
         physicalName: "MEMBER_ID",
-        columnType: "bigint",
+        columnType: ColumnType.BigInt,
         notNull: true,
         primaryKey: true,
       },
@@ -51,6 +57,10 @@ function renderTableNode(
 }
 
 describe("TableNode", () => {
+  beforeEach(() => {
+    mockSetNodes.mockReset();
+  });
+
   it("renders the configured background color, size, and table name", () => {
     const { container } = renderTableNode();
 
@@ -68,13 +78,13 @@ describe("TableNode", () => {
       columns: [
         {
           physicalName: "MEMBER_ID",
-          columnType: "bigint",
+          columnType: ColumnType.BigInt,
           notNull: true,
           primaryKey: true,
         },
         {
           physicalName: "EMAIL",
-          columnType: "varchar",
+          columnType: ColumnType.VarCharN,
           notNull: true,
         },
         {
@@ -97,7 +107,7 @@ describe("TableNode", () => {
       columns: [
         {
           physicalName: "EMAIL",
-          columnType: "varchar",
+          columnType: ColumnType.VarCharN,
           notNull: true,
         },
         {
@@ -109,7 +119,7 @@ describe("TableNode", () => {
 
     const emailText = screen.getByText("EMAIL").parentElement;
     const memoText = screen.getByText("MEMO").parentElement;
-    expect(emailText).toHaveTextContent(/EMAIL\s*:\s*varchar/);
+    expect(emailText).toHaveTextContent(/EMAIL\s*:\s*varchar\(n\)/);
     expect(memoText).not.toHaveTextContent(/MEMO\s*:\s*/);
   });
 

@@ -65,7 +65,10 @@ export function TableInfoDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} {...dialogProps}>
-      <DialogContent className="max-w-[1000px] sm:max-w-[1000px] sm:h-[650px] sm:max-h-[80vh] grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden">
+      <DialogContent
+        aria-describedby={undefined}
+        className="max-w-[1000px] sm:max-w-[1000px] sm:h-[650px] sm:max-h-[80vh] grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden"
+      >
         <DialogHeader>
           <DialogTitle>Table Information</DialogTitle>
         </DialogHeader>

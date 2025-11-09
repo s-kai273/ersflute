@@ -3,6 +3,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TableInfoDialog } from ".";
 import type { TableNodeData } from "../tableNode/types";
+import { ColumnType } from "@/types/columnType";
 
 function createTableData(): TableNodeData {
   return {
@@ -13,7 +14,7 @@ function createTableData(): TableNodeData {
       {
         physicalName: "MEMBER_ID",
         logicalName: "会員ID",
-        columnType: "bigint",
+        columnType: ColumnType.BigInt,
         notNull: true,
         primaryKey: true,
         unique: true,
@@ -88,7 +89,7 @@ describe("TableInfoDialog", () => {
     await user.type(columnPhysicalNameInput, "LAST_NAME");
 
     const typeSelect = within(detailRegion).getByLabelText("Type");
-    await user.selectOptions(typeSelect, "varchar");
+    await user.selectOptions(typeSelect, ColumnType.VarCharN);
 
     const lengthInput = within(detailRegion).getByLabelText("Length");
     await user.clear(lengthInput);
@@ -105,7 +106,7 @@ describe("TableInfoDialog", () => {
     expect(appliedValue.columns).toHaveLength(2);
     expect(appliedValue.columns?.[1]).toMatchObject({
       physicalName: "LAST_NAME",
-      columnType: "varchar",
+      columnType: ColumnType.VarCharN,
       length: 20,
       notNull: true,
       unique: true,
