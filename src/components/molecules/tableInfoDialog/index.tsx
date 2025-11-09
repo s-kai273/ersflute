@@ -37,9 +37,7 @@ export function TableInfoDialog({
       logicalName: column.logicalName?.trim()
         ? column.logicalName.trim()
         : undefined,
-      columnType: column.columnType?.trim()
-        ? column.columnType.trim()
-        : undefined,
+      columnType: column.columnType ? column.columnType : undefined,
       length: column.length,
       notNull: column.notNull,
       primaryKey: column.primaryKey,

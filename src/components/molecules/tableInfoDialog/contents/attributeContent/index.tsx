@@ -3,7 +3,11 @@ import { ArrowLeftIcon, KeyIcon } from "@heroicons/react/16/solid";
 import { Column } from "@/components/molecules/tableNode/types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ColumnType, ColumnTypeConfigDict } from "@/types/columnType";
+import {
+  ColumnType,
+  ColumnTypeConfigDict,
+  parseColumnType,
+} from "@/types/columnType";
 import { AttributeContentProps } from "./types";
 
 const COLUMN_TYPE_LIST: ColumnType[] = [
@@ -205,7 +209,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
     return column.columnType;
   };
 
-  const columnTypeValue = selectedColumn?.columnType ?? "";
+  const columnTypeValue = selectedColumn?.columnType;
 
   return (
     <>
@@ -514,7 +518,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                               "columnType",
                               event.target.value === ""
                                 ? undefined
-                                : event.target.value,
+                                : parseColumnType(event.target.value),
                             )
                           }
                         >
@@ -537,6 +541,12 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                           className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                           type="number"
                           value={selectedColumn.length ?? ""}
+                          disabled={
+                            selectedColumn.columnType
+                              ? ColumnTypeConfigDict[selectedColumn.columnType]
+                                  .supportsLength === false
+                              : true
+                          }
                           onChange={(event) =>
                             updateSelectedColumn(
                               "length",
@@ -559,6 +569,12 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                           className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                           type="number"
                           value={selectedColumn.decimal ?? ""}
+                          disabled={
+                            selectedColumn.columnType
+                              ? ColumnTypeConfigDict[selectedColumn.columnType]
+                                  .supportsDecimal === false
+                              : true
+                          }
                           onChange={(event) =>
                             updateSelectedColumn(
                               "decimal",
@@ -578,6 +594,12 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                           className="h-4 w-4 rounded border border-slate-300 text-blue-500 focus:ring-blue-200"
                           type="checkbox"
                           checked={selectedColumn.unsigned ?? false}
+                          disabled={
+                            selectedColumn.columnType
+                              ? ColumnTypeConfigDict[selectedColumn.columnType]
+                                  .supportsUnsigned === false
+                              : true
+                          }
                           onChange={(event) =>
                             updateSelectedColumn(
                               "unsigned",
@@ -602,6 +624,12 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                         className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                         type="text"
                         value={selectedColumn.enumArgs ?? ""}
+                        disabled={
+                          selectedColumn.columnType
+                            ? ColumnTypeConfigDict[selectedColumn.columnType]
+                                .supportsEnumArgs === false
+                            : true
+                        }
                         onChange={(event) =>
                           updateSelectedColumn(
                             "enumArgs",

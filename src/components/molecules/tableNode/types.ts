@@ -1,3 +1,5 @@
+import { ColumnType } from "@/types/columnType";
+
 type Color = {
   r: number;
   g: number;
@@ -7,7 +9,7 @@ type Color = {
 export type Column = {
   physicalName: string;
   logicalName?: string;
-  columnType?: string;
+  columnType?: ColumnType;
   length?: number;
   decimal?: number;
   notNull: boolean;
