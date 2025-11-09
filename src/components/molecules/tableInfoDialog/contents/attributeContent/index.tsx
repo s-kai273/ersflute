@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeftIcon, KeyIcon } from "@heroicons/react/16/solid";
 import { Column } from "@/components/molecules/tableNode/types";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import {
@@ -301,22 +302,26 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                       <td className="px-2 py-2">{column.logicalName ?? ""}</td>
                       <td className="px-2 py-2">{typeDisplay(column)}</td>
                       <td className="px-2 py-2 text-center">
-                        <input
-                          aria-label={`Column ${column.physicalName} is not null`}
-                          type="checkbox"
-                          checked={column.notNull}
-                          readOnly
-                          className="pointer-events-none accent-blue-500"
-                        />
+                        <div className="flex justify-center">
+                          <Checkbox
+                            aria-label={`Column ${column.physicalName} is not null`}
+                            checked={column.notNull}
+                            tabIndex={-1}
+                            aria-readonly="true"
+                            className="pointer-events-none data-[state=checked]:border-blue-500 data-[state=checked]:bg-blue-500"
+                          />
+                        </div>
                       </td>
                       <td className="px-2 py-2 text-center">
-                        <input
-                          aria-label={`Column ${column.physicalName} is unique`}
-                          type="checkbox"
-                          checked={column.unique ?? false}
-                          readOnly
-                          className="pointer-events-none accent-blue-500"
-                        />
+                        <div className="flex justify-center">
+                          <Checkbox
+                            aria-label={`Column ${column.physicalName} is unique`}
+                            checked={column.unique ?? false}
+                            tabIndex={-1}
+                            aria-readonly="true"
+                            className="pointer-events-none data-[state=checked]:border-blue-500 data-[state=checked]:bg-blue-500"
+                          />
+                        </div>
                       </td>
                     </tr>
                   );
@@ -393,13 +398,12 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                   className="flex items-center gap-2"
                   htmlFor="table-info-column-primary-key"
                 >
-                  <input
+                  <Checkbox
                     id="table-info-column-primary-key"
-                    className="h-4 w-4 rounded border border-slate-300 text-blue-500 focus:ring-blue-200"
-                    type="checkbox"
+                    className="border-slate-300"
                     checked={selectedColumn.primaryKey ?? false}
-                    onChange={(event) =>
-                      updateSelectedColumn("primaryKey", event.target.checked)
+                    onCheckedChange={(checked) =>
+                      updateSelectedColumn("primaryKey", checked === true)
                     }
                   />
                   <span>Primary Key</span>
@@ -408,13 +412,12 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                   className="flex items-center gap-2"
                   htmlFor="table-info-column-not-null"
                 >
-                  <input
+                  <Checkbox
                     id="table-info-column-not-null"
-                    className="h-4 w-4 rounded border border-slate-300 text-blue-500 focus:ring-blue-200"
-                    type="checkbox"
+                    className="border-slate-300"
                     checked={selectedColumn.notNull}
-                    onChange={(event) =>
-                      updateSelectedColumn("notNull", event.target.checked)
+                    onCheckedChange={(checked) =>
+                      updateSelectedColumn("notNull", checked === true)
                     }
                   />
                   <span>Not Null</span>
@@ -423,13 +426,12 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                   className="flex items-center gap-2"
                   htmlFor="table-info-column-unique"
                 >
-                  <input
+                  <Checkbox
                     id="table-info-column-unique"
-                    className="h-4 w-4 rounded border border-slate-300 text-blue-500 focus:ring-blue-200"
-                    type="checkbox"
+                    className="border-slate-300"
                     checked={selectedColumn.unique ?? false}
-                    onChange={(event) =>
-                      updateSelectedColumn("unique", event.target.checked)
+                    onCheckedChange={(checked) =>
+                      updateSelectedColumn("unique", checked === true)
                     }
                   />
                   <span>Unique</span>
@@ -438,16 +440,12 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                   className="flex items-center gap-2"
                   htmlFor="table-info-column-auto-increment"
                 >
-                  <input
+                  <Checkbox
                     id="table-info-column-auto-increment"
-                    className="h-4 w-4 rounded border border-slate-300 text-blue-500 focus:ring-blue-200"
-                    type="checkbox"
+                    className="border-slate-300"
                     checked={selectedColumn.autoIncrement ?? false}
-                    onChange={(event) =>
-                      updateSelectedColumn(
-                        "autoIncrement",
-                        event.target.checked,
-                      )
+                    onCheckedChange={(checked) =>
+                      updateSelectedColumn("autoIncrement", checked === true)
                     }
                   />
                   <span>Auto Increment</span>
@@ -590,10 +588,9 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                         className="flex items-center gap-2 pb-1"
                         htmlFor="table-info-column-unsigned"
                       >
-                        <input
+                        <Checkbox
                           id="table-info-column-unsigned"
-                          className="h-4 w-4 rounded border border-slate-300 text-blue-500 focus:ring-blue-200"
-                          type="checkbox"
+                          className="border-slate-300"
                           checked={selectedColumn.unsigned ?? false}
                           disabled={
                             columnTypeValue
@@ -601,11 +598,8 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                                   .supportsUnsigned === false
                               : true
                           }
-                          onChange={(event) =>
-                            updateSelectedColumn(
-                              "unsigned",
-                              event.target.checked,
-                            )
+                          onCheckedChange={(checked) =>
+                            updateSelectedColumn("unsigned", checked === true)
                           }
                         />
                         <span className="text-sm font-medium text-slate-600">
