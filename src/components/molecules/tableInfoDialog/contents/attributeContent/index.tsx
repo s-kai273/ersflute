@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import {
   ColumnType,
-  ColumnTypeConfigDict,
+  ColumnTypeConfigMap,
   parseColumnType,
 } from "@/types/columnType";
 import { AttributeContentProps } from "./types";
@@ -104,6 +104,18 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
         : undefined,
     [data, selectedColumnIndex],
   );
+  const [columnLength, setColumnLength] = useState<number | undefined>(
+    selectedColumn?.length,
+  );
+  const [columnDecimal, setColumnDecimal] = useState<number | undefined>(
+    selectedColumn?.decimal,
+  );
+  const [columnUnsigned, setColumnUnsigned] = useState<boolean | undefined>(
+    selectedColumn?.unsigned,
+  );
+  const [columnEnumArgs, setColumnEnumArgs] = useState<string | undefined>(
+    selectedColumn?.enumArgs,
+  );
 
   const openColumnDetail = (index: number, focus = true) => {
     setSelectedColumnIndex(index);
@@ -197,18 +209,20 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
       return "";
     }
 
+    const labelWithougArgs =
+      ColumnTypeConfigMap[column.columnType].labelWithoutArgs;
     if (column.length != null && column.length >= 0) {
       if (column.decimal != null && column.decimal >= 0) {
-        return `${column.columnType}(${column.length}, ${column.decimal})`;
+        return `${labelWithougArgs}(${column.length}, ${column.decimal})`;
       }
-      return `${column.columnType}(${column.length})`;
+      return `${labelWithougArgs}(${column.length})`;
     }
 
     if (column.decimal != null && column.decimal >= 0) {
-      return `${column.columnType}(${column.decimal})`;
+      return `${labelWithougArgs}(${column.decimal})`;
     }
 
-    return column.columnType;
+    return ColumnTypeConfigMap[column.columnType].label;
   };
 
   const columnTypeValue = selectedColumn?.columnType;
@@ -512,18 +526,41 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                           id="table-info-column-type"
                           className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                           value={columnTypeValue}
-                          onChange={(event) =>
-                            updateSelectedColumn(
-                              "columnType",
+                          onChange={(event) => {
+                            const columnType =
                               event.target.value === ""
                                 ? undefined
-                                : parseColumnType(event.target.value),
-                            )
-                          }
+                                : parseColumnType(event.target.value);
+                            const length =
+                              columnType &&
+                              ColumnTypeConfigMap[columnType].supportsLength
+                                ? columnLength
+                                : undefined;
+                            const decimal =
+                              columnType &&
+                              ColumnTypeConfigMap[columnType].supportsDecimal
+                                ? columnDecimal
+                                : undefined;
+                            const unsigned =
+                              columnType &&
+                              ColumnTypeConfigMap[columnType].supportsUnsigned
+                                ? columnUnsigned
+                                : undefined;
+                            const enumArgs =
+                              columnType &&
+                              ColumnTypeConfigMap[columnType].supportsEnumArgs
+                                ? columnEnumArgs
+                                : undefined;
+                            setColumnLength(length);
+                            setColumnDecimal(decimal);
+                            setColumnUnsigned(unsigned);
+                            setColumnEnumArgs(enumArgs);
+                            updateSelectedColumn("columnType", columnType);
+                          }}
                         >
                           {COLUMN_TYPE_LIST.map((columnType) => (
                             <option key={columnType} value={columnType}>
-                              {ColumnTypeConfigDict[columnType].label}
+                              {ColumnTypeConfigMap[columnType].label}
                             </option>
                           ))}
                         </select>
@@ -539,21 +576,21 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                           id="table-info-column-length"
                           className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                           type="number"
-                          value={selectedColumn.length ?? ""}
+                          value={columnLength ?? ""}
                           disabled={
                             columnTypeValue
-                              ? ColumnTypeConfigDict[columnTypeValue]
+                              ? ColumnTypeConfigMap[columnTypeValue]
                                   .supportsLength === false
                               : true
                           }
-                          onChange={(event) =>
-                            updateSelectedColumn(
-                              "length",
+                          onChange={(event) => {
+                            const length =
                               event.target.value === ""
                                 ? undefined
-                                : Number(event.target.value),
-                            )
-                          }
+                                : Number(event.target.value);
+                            setColumnLength(length);
+                            updateSelectedColumn("length", length);
+                          }}
                         />
                       </label>
                       <label
@@ -567,21 +604,21 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                           id="table-info-column-decimal"
                           className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                           type="number"
-                          value={selectedColumn.decimal ?? ""}
+                          value={columnDecimal ?? ""}
                           disabled={
                             columnTypeValue
-                              ? ColumnTypeConfigDict[columnTypeValue]
+                              ? ColumnTypeConfigMap[columnTypeValue]
                                   .supportsDecimal === false
                               : true
                           }
-                          onChange={(event) =>
-                            updateSelectedColumn(
-                              "decimal",
+                          onChange={(event) => {
+                            const decimal =
                               event.target.value === ""
                                 ? undefined
-                                : Number(event.target.value),
-                            )
-                          }
+                                : Number(event.target.value);
+                            setColumnDecimal(decimal);
+                            updateSelectedColumn("decimal", decimal);
+                          }}
                         />
                       </label>
                       <label
@@ -591,16 +628,17 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                         <Checkbox
                           id="table-info-column-unsigned"
                           className="border-slate-300"
-                          checked={selectedColumn.unsigned ?? false}
+                          checked={columnUnsigned ?? false}
                           disabled={
                             columnTypeValue
-                              ? ColumnTypeConfigDict[columnTypeValue]
+                              ? ColumnTypeConfigMap[columnTypeValue]
                                   .supportsUnsigned === false
                               : true
                           }
-                          onCheckedChange={(checked) =>
-                            updateSelectedColumn("unsigned", checked === true)
-                          }
+                          onCheckedChange={(checked) => {
+                            setColumnUnsigned(checked === true);
+                            updateSelectedColumn("unsigned", checked === true);
+                          }}
                         />
                         <span className="text-sm font-medium text-slate-600">
                           Unsigned
@@ -621,7 +659,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                         value={selectedColumn.enumArgs ?? ""}
                         disabled={
                           columnTypeValue
-                            ? ColumnTypeConfigDict[columnTypeValue]
+                            ? ColumnTypeConfigMap[columnTypeValue]
                                 .supportsEnumArgs === false
                             : true
                         }

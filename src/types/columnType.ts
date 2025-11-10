@@ -60,7 +60,7 @@ export function parseColumnType(value: string): ColumnType | undefined {
     return value as ColumnType;
   }
   for (const key of Object.keys(ColumnType)) {
-    if (ColumnTypeConfigDict[key as ColumnType].label === value) {
+    if (ColumnTypeConfigMap[key as ColumnType].label === value) {
       return key as ColumnType;
     }
   }
@@ -69,15 +69,17 @@ export function parseColumnType(value: string): ColumnType | undefined {
 
 export type ColumnTypeConfig = {
   label: string;
+  labelWithoutArgs: string;
   supportsLength: boolean;
   supportsDecimal: boolean;
   supportsEnumArgs: boolean;
   supportsUnsigned: boolean;
 };
 
-export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
+export const ColumnTypeConfigMap: Record<ColumnType, ColumnTypeConfig> = {
   [ColumnType.Char]: {
     label: "char",
+    labelWithoutArgs: "char",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -85,6 +87,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.CharN]: {
     label: "char(n)",
+    labelWithoutArgs: "char",
     supportsLength: true,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -92,6 +95,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.VarCharN]: {
     label: "varchar(n)",
+    labelWithoutArgs: "varchar",
     supportsLength: true,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -99,6 +103,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Text]: {
     label: "text",
+    labelWithoutArgs: "text",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -106,6 +111,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.TinyText]: {
     label: "tinytext",
+    labelWithoutArgs: "tinytext",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -113,6 +119,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.MediumText]: {
     label: "mediumtext",
+    labelWithoutArgs: "mediumtext",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -120,6 +127,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.LongText]: {
     label: "longtext",
+    labelWithoutArgs: "longtext",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -127,6 +135,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Int]: {
     label: "int",
+    labelWithoutArgs: "int",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -134,6 +143,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.IntN]: {
     label: "int(n)",
+    labelWithoutArgs: "int",
     supportsLength: true,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -141,6 +151,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.TinyInt]: {
     label: "tinyint",
+    labelWithoutArgs: "tinyint",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -148,6 +159,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.TinyIntN]: {
     label: "tinyint(n)",
+    labelWithoutArgs: "tinyint",
     supportsLength: true,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -155,6 +167,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.SmallInt]: {
     label: "smallint",
+    labelWithoutArgs: "smallint",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -162,6 +175,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.SmallIntN]: {
     label: "smallint(n)",
+    labelWithoutArgs: "smallint",
     supportsLength: true,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -169,6 +183,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.MediumInt]: {
     label: "mediumint",
+    labelWithoutArgs: "mediumint",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -176,6 +191,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.MediumIntN]: {
     label: "mediumint(n)",
+    labelWithoutArgs: "mediumint",
     supportsLength: true,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -183,6 +199,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.BigInt]: {
     label: "bigint",
+    labelWithoutArgs: "bigint",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -190,6 +207,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.BigIntN]: {
     label: "bigint(n)",
+    labelWithoutArgs: "bigint",
     supportsLength: true,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -197,6 +215,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Date]: {
     label: "date",
+    labelWithoutArgs: "date",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -204,6 +223,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Datetime]: {
     label: "datetime",
+    labelWithoutArgs: "datetime",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -211,6 +231,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Boolean]: {
     label: "boolean",
+    labelWithoutArgs: "boolean",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -218,6 +239,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Binary]: {
     label: "binary",
+    labelWithoutArgs: "binary",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -225,6 +247,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.BinaryN]: {
     label: "binary(n)",
+    labelWithoutArgs: "binary",
     supportsLength: true,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -232,6 +255,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.VarBinaryN]: {
     label: "varbinary(n)",
+    labelWithoutArgs: "varbinary",
     supportsLength: true,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -239,6 +263,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Bit1]: {
     label: "bit(1)",
+    labelWithoutArgs: "bit(1)",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -246,6 +271,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.BitN]: {
     label: "bit(n)",
+    labelWithoutArgs: "bit",
     supportsLength: true,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -253,6 +279,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Blob]: {
     label: "blob",
+    labelWithoutArgs: "blob",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -260,6 +287,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.TinyBlob]: {
     label: "tinyblob",
+    labelWithoutArgs: "tinyblob",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -267,6 +295,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.MediumBlob]: {
     label: "mediumblob",
+    labelWithoutArgs: "mediumblob",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -274,6 +303,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.LongBlob]: {
     label: "longblob",
+    labelWithoutArgs: "longblob",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -281,6 +311,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Decimal]: {
     label: "decimal",
+    labelWithoutArgs: "decimal",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -288,6 +319,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.DecimalP]: {
     label: "decimal(p)",
+    labelWithoutArgs: "decimal",
     supportsLength: true,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -295,6 +327,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.DecimalPS]: {
     label: "decimal(p,s)",
+    labelWithoutArgs: "decimal",
     supportsLength: true,
     supportsDecimal: true,
     supportsEnumArgs: false,
@@ -302,6 +335,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Decimal104]: {
     label: "decimal(10,4)",
+    labelWithoutArgs: "decimal(10,4)",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -309,6 +343,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Decimal194]: {
     label: "decimal(19,4)",
+    labelWithoutArgs: "decimal(19,4)",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -316,6 +351,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Double]: {
     label: "double",
+    labelWithoutArgs: "double",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -323,6 +359,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.DoubleMD]: {
     label: "double(m,d)",
+    labelWithoutArgs: "double",
     supportsLength: true,
     supportsDecimal: true,
     supportsEnumArgs: false,
@@ -330,6 +367,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Enum]: {
     label: "enum",
+    labelWithoutArgs: "enum",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: true,
@@ -337,6 +375,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Float]: {
     label: "float",
+    labelWithoutArgs: "float",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -344,6 +383,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.FloatMD]: {
     label: "float(m,d)",
+    labelWithoutArgs: "float",
     supportsLength: true,
     supportsDecimal: true,
     supportsEnumArgs: false,
@@ -351,6 +391,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.FloatP]: {
     label: "float(p)",
+    labelWithoutArgs: "float",
     supportsLength: true,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -358,6 +399,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Geometry]: {
     label: "geometry",
+    labelWithoutArgs: "geometry",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -365,6 +407,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Json]: {
     label: "json",
+    labelWithoutArgs: "json",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -372,6 +415,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Numeric]: {
     label: "numeric",
+    labelWithoutArgs: "numeric",
     supportsLength: true,
     supportsDecimal: true,
     supportsEnumArgs: false,
@@ -379,6 +423,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.NumericP]: {
     label: "numeric(p)",
+    labelWithoutArgs: "numeric",
     supportsLength: true,
     supportsDecimal: true,
     supportsEnumArgs: false,
@@ -386,6 +431,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.NumericPS]: {
     label: "numeric(p,s)",
+    labelWithoutArgs: "numeric",
     supportsLength: true,
     supportsDecimal: true,
     supportsEnumArgs: false,
@@ -393,6 +439,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Real]: {
     label: "real",
+    labelWithoutArgs: "real",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -400,6 +447,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.RealMD]: {
     label: "real(m,d)",
+    labelWithoutArgs: "real",
     supportsLength: true,
     supportsDecimal: true,
     supportsEnumArgs: false,
@@ -407,6 +455,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Set]: {
     label: "set",
+    labelWithoutArgs: "set",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -414,6 +463,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Time]: {
     label: "time",
+    labelWithoutArgs: "time",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -421,6 +471,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Timestamp]: {
     label: "timestamp",
+    labelWithoutArgs: "timestamp",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -428,6 +479,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Year2]: {
     label: "year(2)",
+    labelWithoutArgs: "year(2)",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
@@ -435,6 +487,7 @@ export const ColumnTypeConfigDict: Record<ColumnType, ColumnTypeConfig> = {
   },
   [ColumnType.Year4]: {
     label: "year(4)",
+    labelWithoutArgs: "year(4)",
     supportsLength: false,
     supportsDecimal: false,
     supportsEnumArgs: false,
