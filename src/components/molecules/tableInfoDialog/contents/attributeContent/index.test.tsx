@@ -134,7 +134,7 @@ describe("AttributeContent", () => {
         name: "Column LAST_NAME is unique",
       }),
     ).toBeChecked();
-    expect(within(newRow).getByText("VarCharN(20)")).toBeInTheDocument();
+    expect(within(newRow).getByText("varchar(20)")).toBeInTheDocument();
   });
 
   it("updates the list indicators when editing an existing column", async () => {
@@ -261,9 +261,9 @@ describe("AttributeContent", () => {
       ],
     });
 
-    expect(screen.getByText("Decimal(10, 4)")).toBeInTheDocument();
-    expect(screen.getByText("Decimal(3)")).toBeInTheDocument();
-    expect(screen.getByText("Decimal")).toBeInTheDocument();
+    expect(screen.getByText("decimal(10, 4)")).toBeInTheDocument();
+    expect(screen.getByText("decimal(3)")).toBeInTheDocument();
+    expect(screen.getByText("decimal")).toBeInTheDocument();
 
     const typelessRow = getColumnRow("TYPELESS");
     const typeCell = within(typelessRow).getAllByRole("cell")[4];

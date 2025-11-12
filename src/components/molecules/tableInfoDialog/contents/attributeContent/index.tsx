@@ -555,6 +555,10 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
                             setColumnDecimal(decimal);
                             setColumnUnsigned(unsigned);
                             setColumnEnumArgs(enumArgs);
+                            updateSelectedColumn("length", length);
+                            updateSelectedColumn("decimal", decimal);
+                            updateSelectedColumn("unsigned", unsigned);
+                            updateSelectedColumn("enumArgs", enumArgs);
                             updateSelectedColumn("columnType", columnType);
                           }}
                         >
