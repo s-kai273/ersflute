@@ -315,4 +315,45 @@ describe("AttributeContent", () => {
     await user.click(screen.getByRole("button", { name: "Back to Columns" }));
     expect(screen.getByText("enum")).toBeInTheDocument();
   });
+
+  it("updates the table logical name and clears it back to empty", async () => {
+    const user = userEvent.setup();
+    renderAttributeContent();
+
+    const tableLogicalInput = screen.getByLabelText("Logical Name", {
+      selector: "#table-info-logical-name",
+    });
+
+    await user.clear(tableLogicalInput);
+    await user.type(tableLogicalInput, "Members View");
+    expect(tableLogicalInput).toHaveValue("Members View");
+
+    await user.clear(tableLogicalInput);
+    expect(tableLogicalInput).toHaveValue("");
+  });
+
+  it("keeps a valid selection after deleting one column from many", async () => {
+    const user = userEvent.setup();
+    renderAttributeContent({
+      columns: [
+        { physicalName: "FIRST", columnType: ColumnType.Int, notNull: false },
+        { physicalName: "SECOND", columnType: ColumnType.Int, notNull: false },
+        { physicalName: "THIRD", columnType: ColumnType.Int, notNull: false },
+      ],
+    });
+
+    await user.click(getColumnRow("SECOND"));
+    await user.click(screen.getByRole("button", { name: "Delete" }));
+
+    expect(screen.queryByText("SECOND")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Edit" })).not.toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Edit" }));
+    const detailRegion = await screen.findByRole("region", {
+      name: "Column Details",
+    });
+    expect(
+      within(detailRegion).getByLabelText("Physical Name"),
+    ).toHaveValue("THIRD");
+  });
 });
