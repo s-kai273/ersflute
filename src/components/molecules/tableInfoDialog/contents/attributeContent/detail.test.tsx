@@ -12,6 +12,7 @@ function createColumn(overrides?: Partial<Column>): Column {
     columnType: ColumnType.Int,
     notNull: true,
     primaryKey: true,
+    autoIncrement: false,
     ...overrides,
   };
 }
@@ -66,9 +67,7 @@ describe("AttributeDetail", () => {
     expect(screen.getByLabelText("Length")).toBeDisabled();
     expect(screen.getByLabelText("Decimal")).toBeDisabled();
     expect(screen.getByLabelText("Unsigned")).toBeDisabled();
-    expect(
-      screen.getByLabelText("Args of enum/set Type"),
-    ).toBeDisabled();
+    expect(screen.getByLabelText("Args of enum/set Type")).toBeDisabled();
   });
 
   it("enables advanced inputs for column types that support them", () => {
@@ -99,9 +98,7 @@ describe("AttributeDetail", () => {
         })}
       />,
     );
-    expect(
-      screen.getByLabelText("Args of enum/set Type"),
-    ).not.toBeDisabled();
+    expect(screen.getByLabelText("Args of enum/set Type")).not.toBeDisabled();
   });
 
   it("updates the selected column when editing basic fields and toggles", async () => {
@@ -124,7 +121,9 @@ describe("AttributeDetail", () => {
 
     const descriptionInput = screen.getByLabelText("Description");
     updateSelectedColumn.mockClear();
-    fireEvent.change(descriptionInput, { target: { value: "Some description" } });
+    fireEvent.change(descriptionInput, {
+      target: { value: "Some description" },
+    });
     expect(updateSelectedColumn).toHaveBeenLastCalledWith(
       "description",
       "Some description",
@@ -196,5 +195,34 @@ describe("AttributeDetail", () => {
     const enumArgsInput = screen.getByLabelText("Args of enum/set Type");
     fireEvent.change(enumArgsInput, { target: { value: "A,B" } });
     expect(updateSelectedColumn).toHaveBeenLastCalledWith("enumArgs", "A,B");
+  });
+
+  it("handles auto increment and default value changes", async () => {
+    const user = userEvent.setup();
+    const updateSelectedColumn = jest.fn();
+    const props = createProps({
+      updateSelectedColumn,
+      selectedColumn: createColumn({ autoIncrement: false }),
+    });
+    render(<AttributeDetail {...props} />);
+
+    const autoIncrement = screen.getByLabelText("Auto Increment");
+    await user.click(autoIncrement);
+    expect(updateSelectedColumn).toHaveBeenLastCalledWith(
+      "autoIncrement",
+      true,
+    );
+
+    const defaultInput = screen.getByLabelText("Default Value");
+    fireEvent.change(defaultInput, { target: { value: "default" } });
+    expect(updateSelectedColumn).toHaveBeenLastCalledWith(
+      "defaultValue",
+      "default",
+    );
+    fireEvent.change(defaultInput, { target: { value: "" } });
+    expect(updateSelectedColumn).toHaveBeenLastCalledWith(
+      "defaultValue",
+      undefined,
+    );
   });
 });

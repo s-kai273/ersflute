@@ -178,4 +178,28 @@ describe("AttributeList", () => {
     const typeCell = within(typelessRow).getAllByRole("cell")[4];
     expect(typeCell).toHaveTextContent("");
   });
+
+  it("renders a checkmark for foreign key references", () => {
+    render(
+      <AttributeList
+        data={createTableData([
+          {
+            physicalName: "FK_COLUMN",
+            columnType: ColumnType.Int,
+            notNull: false,
+            referredColumn: "OTHER_TABLE.ID",
+          },
+        ])}
+        selectedColumnIndex={0}
+        onSelectColumn={jest.fn()}
+        onOpenDetail={jest.fn()}
+        onAddColumn={jest.fn()}
+        onEditColumn={jest.fn()}
+        onDeleteColumn={jest.fn()}
+      />,
+    );
+
+    const fkCell = getColumnRow("FK_COLUMN").querySelectorAll("td")[1];
+    expect(fkCell).toHaveTextContent("✓");
+  });
 });

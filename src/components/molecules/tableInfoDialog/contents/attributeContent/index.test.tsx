@@ -1,9 +1,34 @@
 import { useState } from "react";
-import { render, screen, within } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { TableNodeData } from "@/components/molecules/tableNode/types";
 import { ColumnType } from "@/types/columnType";
 import { AttributeContent } from ".";
+
+let latestAttributeListProps: any;
+let latestAttributeDetailProps: any;
+
+jest.mock("./list", () => {
+  const actual = jest.requireActual<typeof import("./list")>("./list");
+  return {
+    ...actual,
+    AttributeList: (props: any) => {
+      latestAttributeListProps = props;
+      return actual.AttributeList(props);
+    },
+  };
+});
+
+jest.mock("./detail", () => {
+  const actual = jest.requireActual<typeof import("./detail")>("./detail");
+  return {
+    ...actual,
+    AttributeDetail: (props: any) => {
+      latestAttributeDetailProps = props;
+      return actual.AttributeDetail(props);
+    },
+  };
+});
 
 function createTableData(overrides?: Partial<TableNodeData>): TableNodeData {
   const baseColumns = [
@@ -64,6 +89,20 @@ function getColumnRow(physicalName: string): HTMLTableRowElement {
 }
 
 describe("AttributeContent", () => {
+beforeEach(() => {
+  latestAttributeListProps = undefined;
+  latestAttributeDetailProps = undefined;
+});
+
+const invokeListHandler = (
+  handler: (...args: any[]) => void,
+  ...args: any[]
+) => {
+  act(() => {
+    handler(...args);
+  });
+};
+
   it("adds a column and persists the configured values", async () => {
     const user = userEvent.setup();
     renderAttributeContent();
@@ -148,5 +187,32 @@ describe("AttributeContent", () => {
     expect(
       within(detailRegion).getByLabelText("Physical Name"),
     ).toHaveValue("THIRD");
+  });
+
+  it("ignores list actions when the dialog is closed and no column is selected", () => {
+    const originalOpen = global.open;
+    (global as unknown as { open?: unknown }).open = undefined;
+    try {
+      renderAttributeContent();
+      expect(latestAttributeListProps).toBeDefined();
+      invokeListHandler(latestAttributeListProps.onEditColumn);
+      expect(
+        screen.queryByRole("region", { name: "Column Details" }),
+      ).not.toBeInTheDocument();
+
+      const rowCountBefore = screen.getAllByRole("row").length;
+      invokeListHandler(latestAttributeListProps.onDeleteColumn);
+      expect(screen.getAllByRole("row")).toHaveLength(rowCountBefore);
+    } finally {
+      (global as unknown as { open?: unknown }).open = originalOpen;
+    }
+  });
+
+  it("does not delete columns when no selection is made", () => {
+    renderAttributeContent();
+    expect(latestAttributeListProps).toBeDefined();
+    const rowCountBefore = screen.getAllByRole("row").length;
+    invokeListHandler(latestAttributeListProps.onDeleteColumn);
+    expect(screen.getAllByRole("row")).toHaveLength(rowCountBefore);
   });
 });
