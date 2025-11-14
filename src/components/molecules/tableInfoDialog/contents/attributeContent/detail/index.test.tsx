@@ -42,7 +42,6 @@ describe("AttributeDetail", () => {
   it("renders a helper message when no column is selected", () => {
     const props = createProps({
       column: undefined,
-      columnTypeValue: undefined,
     });
     render(<AttributeDetail {...props} />);
 

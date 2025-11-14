@@ -140,318 +140,306 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
             Column Details
           </h3>
         </div>
-        {currentColumn && (
-          <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-slate-600">
-            <label
-              className="flex items-center gap-2"
-              htmlFor="table-info-column-primary-key"
-            >
-              <Checkbox
-                id="table-info-column-primary-key"
-                className="border-slate-300"
-                checked={currentColumn.primaryKey ?? false}
-                onCheckedChange={(checked) =>
-                  setCurrentColumn({
-                    ...currentColumn,
-                    primaryKey: checked === true,
-                  })
-                }
-              />
-              <span>Primary Key</span>
-            </label>
-            <label
-              className="flex items-center gap-2"
-              htmlFor="table-info-column-not-null"
-            >
-              <Checkbox
-                id="table-info-column-not-null"
-                className="border-slate-300"
-                checked={currentColumn.notNull}
-                onCheckedChange={(checked) =>
-                  setCurrentColumn({
-                    ...currentColumn,
-                    notNull: checked === true,
-                  })
-                }
-              />
-              <span>Not Null</span>
-            </label>
-            <label
-              className="flex items-center gap-2"
-              htmlFor="table-info-column-unique"
-            >
-              <Checkbox
-                id="table-info-column-unique"
-                className="border-slate-300"
-                checked={currentColumn.unique ?? false}
-                onCheckedChange={(checked) =>
-                  setCurrentColumn({
-                    ...currentColumn,
-                    unique: checked === true,
-                  })
-                }
-              />
-              <span>Unique</span>
-            </label>
-            <label
-              className="flex items-center gap-2"
-              htmlFor="table-info-column-auto-increment"
-            >
-              <Checkbox
-                id="table-info-column-auto-increment"
-                className="border-slate-300"
-                checked={currentColumn.autoIncrement ?? false}
-                onCheckedChange={(checked) =>
-                  setCurrentColumn({
-                    ...currentColumn,
-                    autoIncrement: checked === true,
-                  })
-                }
-              />
-              <span>Auto Increment</span>
-            </label>
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-slate-600">
+          <label
+            className="flex items-center gap-2"
+            htmlFor="table-info-column-primary-key"
+          >
+            <Checkbox
+              id="table-info-column-primary-key"
+              className="border-slate-300"
+              checked={currentColumn.primaryKey ?? false}
+              onCheckedChange={(checked) =>
+                setCurrentColumn({
+                  ...currentColumn,
+                  primaryKey: checked === true,
+                })
+              }
+            />
+            <span>Primary Key</span>
+          </label>
+          <label
+            className="flex items-center gap-2"
+            htmlFor="table-info-column-not-null"
+          >
+            <Checkbox
+              id="table-info-column-not-null"
+              className="border-slate-300"
+              checked={currentColumn.notNull}
+              onCheckedChange={(checked) =>
+                setCurrentColumn({
+                  ...currentColumn,
+                  notNull: checked === true,
+                })
+              }
+            />
+            <span>Not Null</span>
+          </label>
+          <label
+            className="flex items-center gap-2"
+            htmlFor="table-info-column-unique"
+          >
+            <Checkbox
+              id="table-info-column-unique"
+              className="border-slate-300"
+              checked={currentColumn.unique ?? false}
+              onCheckedChange={(checked) =>
+                setCurrentColumn({
+                  ...currentColumn,
+                  unique: checked === true,
+                })
+              }
+            />
+            <span>Unique</span>
+          </label>
+          <label
+            className="flex items-center gap-2"
+            htmlFor="table-info-column-auto-increment"
+          >
+            <Checkbox
+              id="table-info-column-auto-increment"
+              className="border-slate-300"
+              checked={currentColumn.autoIncrement ?? false}
+              onCheckedChange={(checked) =>
+                setCurrentColumn({
+                  ...currentColumn,
+                  autoIncrement: checked === true,
+                })
+              }
+            />
+            <span>Auto Increment</span>
+          </label>
+        </div>
       </div>
 
-      {currentColumn ? (
-        <div className="mt-4 flex-1 overflow-y-auto pr-1">
-          <div className="flex flex-col gap-4">
-            <div className="grid gap-3 text-sm sm:grid-cols-2">
+      <div className="mt-4 flex-1 overflow-y-auto pr-1">
+        <div className="flex flex-col gap-4">
+          <div className="grid gap-3 text-sm sm:grid-cols-2">
+            <label
+              className="flex flex-col gap-1"
+              htmlFor="table-info-column-physical-name"
+            >
+              <span className="font-medium text-slate-600">Physical Name</span>
+              <Input
+                id="table-info-column-physical-name"
+                ref={physicalNameInputRef}
+                className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
+                type="text"
+                value={currentColumn.physicalName}
+                onChange={(event) =>
+                  setCurrentColumn({
+                    ...currentColumn,
+                    physicalName: event.target.value,
+                  })
+                }
+              />
+            </label>
+            <label
+              className="flex flex-col gap-1"
+              htmlFor="table-info-column-logical-name"
+            >
+              <span className="font-medium text-slate-600">Logical Name</span>
+              <Input
+                id="table-info-column-logical-name"
+                className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
+                type="text"
+                value={currentColumn.logicalName ?? ""}
+                onChange={(event) =>
+                  setCurrentColumn({
+                    ...currentColumn,
+                    logicalName:
+                      event.target.value === ""
+                        ? undefined
+                        : event.target.value,
+                  })
+                }
+              />
+            </label>
+            <div className="flex flex-wrap items-end gap-3 sm:col-span-2">
               <label
                 className="flex flex-col gap-1"
-                htmlFor="table-info-column-physical-name"
+                htmlFor="table-info-column-type"
               >
-                <span className="font-medium text-slate-600">
-                  Physical Name
-                </span>
-                <Input
-                  id="table-info-column-physical-name"
-                  ref={physicalNameInputRef}
+                <span className="font-medium text-slate-600">Type</span>
+                <select
+                  id="table-info-column-type"
                   className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                  type="text"
-                  value={currentColumn.physicalName}
+                  value={columnType}
+                  onChange={(event) => {
+                    const columnType =
+                      event.target.value === ""
+                        ? undefined
+                        : parseColumnType(event.target.value);
+                    const length =
+                      columnType &&
+                      ColumnTypeConfigMap[columnType].supportsLength
+                        ? currentColumn.length
+                        : undefined;
+                    const decimal =
+                      columnType &&
+                      ColumnTypeConfigMap[columnType].supportsDecimal
+                        ? currentColumn.decimal
+                        : undefined;
+                    const unsigned =
+                      columnType &&
+                      ColumnTypeConfigMap[columnType].supportsUnsigned
+                        ? currentColumn.unsigned
+                        : undefined;
+                    const enumArgs =
+                      columnType &&
+                      ColumnTypeConfigMap[columnType].supportsEnumArgs
+                        ? currentColumn.enumArgs
+                        : undefined;
+                    setCurrentColumn({
+                      ...currentColumn,
+                      columnType,
+                      length,
+                      decimal,
+                      unsigned,
+                      enumArgs,
+                    });
+                  }}
+                >
+                  {COLUMN_TYPE_LIST.map((columnType) => (
+                    <option key={columnType} value={columnType}>
+                      {ColumnTypeConfigMap[columnType].label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label
+                className="flex flex-col gap-1"
+                htmlFor="table-info-column-length"
+              >
+                <span className="font-medium text-slate-600">Length</span>
+                <Input
+                  id="table-info-column-length"
+                  className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
+                  type="number"
+                  value={currentColumn.length ?? ""}
+                  disabled={!typeSupportsLength}
                   onChange={(event) =>
                     setCurrentColumn({
                       ...currentColumn,
-                      physicalName: event.target.value,
+                      length:
+                        event.target.value === ""
+                          ? undefined
+                          : Number(event.target.value),
                     })
                   }
                 />
               </label>
               <label
                 className="flex flex-col gap-1"
-                htmlFor="table-info-column-logical-name"
+                htmlFor="table-info-column-decimal"
               >
-                <span className="font-medium text-slate-600">Logical Name</span>
+                <span className="font-medium text-slate-600">Decimal</span>
                 <Input
-                  id="table-info-column-logical-name"
+                  id="table-info-column-decimal"
                   className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                  type="text"
-                  value={currentColumn.logicalName ?? ""}
+                  type="number"
+                  value={currentColumn.decimal ?? ""}
+                  disabled={!typeSupportsDecimal}
                   onChange={(event) =>
                     setCurrentColumn({
                       ...currentColumn,
-                      logicalName:
+                      decimal:
                         event.target.value === ""
                           ? undefined
-                          : event.target.value,
+                          : Number(event.target.value),
                     })
                   }
                 />
               </label>
-              <div className="flex flex-wrap items-end gap-3 sm:col-span-2">
-                <label
-                  className="flex flex-col gap-1"
-                  htmlFor="table-info-column-type"
-                >
-                  <span className="font-medium text-slate-600">Type</span>
-                  <select
-                    id="table-info-column-type"
-                    className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                    value={columnType}
-                    onChange={(event) => {
-                      const columnType =
-                        event.target.value === ""
-                          ? undefined
-                          : parseColumnType(event.target.value);
-                      const length =
-                        columnType &&
-                        ColumnTypeConfigMap[columnType].supportsLength
-                          ? currentColumn.length
-                          : undefined;
-                      const decimal =
-                        columnType &&
-                        ColumnTypeConfigMap[columnType].supportsDecimal
-                          ? currentColumn.decimal
-                          : undefined;
-                      const unsigned =
-                        columnType &&
-                        ColumnTypeConfigMap[columnType].supportsUnsigned
-                          ? currentColumn.unsigned
-                          : undefined;
-                      const enumArgs =
-                        columnType &&
-                        ColumnTypeConfigMap[columnType].supportsEnumArgs
-                          ? currentColumn.enumArgs
-                          : undefined;
-                      setCurrentColumn({
-                        ...currentColumn,
-                        columnType,
-                        length,
-                        decimal,
-                        unsigned,
-                        enumArgs,
-                      });
-                    }}
-                  >
-                    {COLUMN_TYPE_LIST.map((columnType) => (
-                      <option key={columnType} value={columnType}>
-                        {ColumnTypeConfigMap[columnType].label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label
-                  className="flex flex-col gap-1"
-                  htmlFor="table-info-column-length"
-                >
-                  <span className="font-medium text-slate-600">Length</span>
-                  <Input
-                    id="table-info-column-length"
-                    className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                    type="number"
-                    value={currentColumn.length ?? ""}
-                    disabled={!typeSupportsLength}
-                    onChange={(event) =>
-                      setCurrentColumn({
-                        ...currentColumn,
-                        length:
-                          event.target.value === ""
-                            ? undefined
-                            : Number(event.target.value),
-                      })
-                    }
-                  />
-                </label>
-                <label
-                  className="flex flex-col gap-1"
-                  htmlFor="table-info-column-decimal"
-                >
-                  <span className="font-medium text-slate-600">Decimal</span>
-                  <Input
-                    id="table-info-column-decimal"
-                    className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                    type="number"
-                    value={currentColumn.decimal ?? ""}
-                    disabled={!typeSupportsDecimal}
-                    onChange={(event) =>
-                      setCurrentColumn({
-                        ...currentColumn,
-                        decimal:
-                          event.target.value === ""
-                            ? undefined
-                            : Number(event.target.value),
-                      })
-                    }
-                  />
-                </label>
-                <label
-                  className="flex items-center gap-2 pb-1"
-                  htmlFor="table-info-column-unsigned"
-                >
-                  <Checkbox
-                    id="table-info-column-unsigned"
-                    className="border-slate-300"
-                    checked={currentColumn.unsigned ?? false}
-                    disabled={!typeSupportsUnsigned}
-                    onCheckedChange={(checked) =>
-                      setCurrentColumn({
-                        ...currentColumn,
-                        unsigned: checked === true,
-                      })
-                    }
-                  />
-                  <span className="text-sm font-medium text-slate-600">
-                    Unsigned
-                  </span>
-                </label>
-              </div>
               <label
-                className="flex flex-col gap-1 sm:col-span-1"
-                htmlFor="table-info-column-enum-args"
+                className="flex items-center gap-2 pb-1"
+                htmlFor="table-info-column-unsigned"
               >
-                <span className="font-medium text-slate-600">
-                  Args of enum/set Type
+                <Checkbox
+                  id="table-info-column-unsigned"
+                  className="border-slate-300"
+                  checked={currentColumn.unsigned ?? false}
+                  disabled={!typeSupportsUnsigned}
+                  onCheckedChange={(checked) =>
+                    setCurrentColumn({
+                      ...currentColumn,
+                      unsigned: checked === true,
+                    })
+                  }
+                />
+                <span className="text-sm font-medium text-slate-600">
+                  Unsigned
                 </span>
-                <Input
-                  id="table-info-column-enum-args"
-                  className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                  type="text"
-                  value={currentColumn.enumArgs ?? ""}
-                  disabled={!typeSupportsEnumArgs}
-                  onChange={(event) =>
-                    setCurrentColumn({
-                      ...currentColumn,
-                      enumArgs:
-                        event.target.value === ""
-                          ? undefined
-                          : event.target.value,
-                    })
-                  }
-                />
-              </label>
-              <label
-                className="flex flex-col gap-1 sm:col-span-1"
-                htmlFor="table-info-column-default-value"
-              >
-                <span className="font-medium text-slate-600">
-                  Default Value
-                </span>
-                <Input
-                  id="table-info-column-default-value"
-                  className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                  type="text"
-                  value={currentColumn.defaultValue ?? ""}
-                  onChange={(event) =>
-                    setCurrentColumn({
-                      ...currentColumn,
-                      defaultValue:
-                        event.target.value === ""
-                          ? undefined
-                          : event.target.value,
-                    })
-                  }
-                />
-              </label>
-              <label
-                className="flex flex-col gap-1 sm:col-span-2"
-                htmlFor="table-info-column-description"
-              >
-                <span className="font-medium text-slate-600">Description</span>
-                <textarea
-                  id="table-info-column-description"
-                  className="min-h-24 rounded border border-slate-300 px-2 py-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                  value={currentColumn.description ?? ""}
-                  onChange={(event) =>
-                    setCurrentColumn({
-                      ...currentColumn,
-                      description:
-                        event.target.value === ""
-                          ? undefined
-                          : event.target.value,
-                    })
-                  }
-                />
               </label>
             </div>
+            <label
+              className="flex flex-col gap-1 sm:col-span-1"
+              htmlFor="table-info-column-enum-args"
+            >
+              <span className="font-medium text-slate-600">
+                Args of enum/set Type
+              </span>
+              <Input
+                id="table-info-column-enum-args"
+                className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
+                type="text"
+                value={currentColumn.enumArgs ?? ""}
+                disabled={!typeSupportsEnumArgs}
+                onChange={(event) =>
+                  setCurrentColumn({
+                    ...currentColumn,
+                    enumArgs:
+                      event.target.value === ""
+                        ? undefined
+                        : event.target.value,
+                  })
+                }
+              />
+            </label>
+            <label
+              className="flex flex-col gap-1 sm:col-span-1"
+              htmlFor="table-info-column-default-value"
+            >
+              <span className="font-medium text-slate-600">Default Value</span>
+              <Input
+                id="table-info-column-default-value"
+                className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
+                type="text"
+                value={currentColumn.defaultValue ?? ""}
+                onChange={(event) =>
+                  setCurrentColumn({
+                    ...currentColumn,
+                    defaultValue:
+                      event.target.value === ""
+                        ? undefined
+                        : event.target.value,
+                  })
+                }
+              />
+            </label>
+            <label
+              className="flex flex-col gap-1 sm:col-span-2"
+              htmlFor="table-info-column-description"
+            >
+              <span className="font-medium text-slate-600">Description</span>
+              <textarea
+                id="table-info-column-description"
+                className="min-h-24 rounded border border-slate-300 px-2 py-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
+                value={currentColumn.description ?? ""}
+                onChange={(event) =>
+                  setCurrentColumn({
+                    ...currentColumn,
+                    description:
+                      event.target.value === ""
+                        ? undefined
+                        : event.target.value,
+                  })
+                }
+              />
+            </label>
           </div>
         </div>
-      ) : (
-        <p className="mt-4 text-sm text-slate-500">
-          Select a column to edit its details.
-        </p>
-      )}
+      </div>
     </section>
   );
 }
