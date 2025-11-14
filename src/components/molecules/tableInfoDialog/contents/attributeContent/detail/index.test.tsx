@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { Column } from "@/components/molecules/tableNode/types";
 import { ColumnType } from "@/types/columnType";
-import { AttributeDetail } from "./detail";
+import { AttributeDetail } from ".";
 
 function createColumn(overrides?: Partial<Column>): Column {
   return {
@@ -41,7 +41,7 @@ function createProps(
 describe("AttributeDetail", () => {
   it("renders a helper message when no column is selected", () => {
     const props = createProps({
-      selectedColumn: undefined,
+      column: undefined,
       columnTypeValue: undefined,
     });
     render(<AttributeDetail {...props} />);
@@ -104,7 +104,7 @@ describe("AttributeDetail", () => {
   it("updates the selected column when editing basic fields and toggles", async () => {
     const user = userEvent.setup();
     const updateSelectedColumn = jest.fn();
-    const props = createProps({ updateSelectedColumn });
+    const props = createProps({ setColumn: updateSelectedColumn });
     render(<AttributeDetail {...props} />);
 
     const physicalInput = screen.getByLabelText("Physical Name");
@@ -147,7 +147,7 @@ describe("AttributeDetail", () => {
       setColumnDecimal,
       setColumnUnsigned,
       setColumnEnumArgs,
-      updateSelectedColumn,
+      setColumn: updateSelectedColumn,
     });
     render(<AttributeDetail {...props} />);
 
@@ -174,7 +174,7 @@ describe("AttributeDetail", () => {
     const updateSelectedColumn = jest.fn();
     const props = createProps({
       columnTypeValue: ColumnType.Int,
-      updateSelectedColumn,
+      setColumn: updateSelectedColumn,
     });
     render(<AttributeDetail {...props} />);
 
@@ -188,7 +188,7 @@ describe("AttributeDetail", () => {
     const updateSelectedColumn = jest.fn();
     const props = createProps({
       columnTypeValue: ColumnType.Enum,
-      updateSelectedColumn,
+      setColumn: updateSelectedColumn,
     });
     render(<AttributeDetail {...props} />);
 
@@ -201,8 +201,8 @@ describe("AttributeDetail", () => {
     const user = userEvent.setup();
     const updateSelectedColumn = jest.fn();
     const props = createProps({
-      updateSelectedColumn,
-      selectedColumn: createColumn({ autoIncrement: false }),
+      setColumn: updateSelectedColumn,
+      column: createColumn({ autoIncrement: false }),
     });
     render(<AttributeDetail {...props} />);
 

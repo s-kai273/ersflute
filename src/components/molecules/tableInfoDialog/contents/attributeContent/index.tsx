@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Column } from "@/components/molecules/tableNode/types";
 import { Input } from "@/components/ui/input";
 import { AttributeDetail } from "./detail";
@@ -10,30 +10,14 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
   const [selectedColumnIndex, setSelectedColumnIndex] = useState<number | null>(
     null,
   );
-  const [shouldFocusColumnDetails, setShouldFocusColumnDetails] =
-    useState(false);
-  const columnPhysicalNameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!open) {
       return;
     }
-
     setSelectedColumnIndex(null);
     setAttributeView("list");
   }, [open]);
-
-  useEffect(() => {
-    if (
-      attributeView === "detail" &&
-      shouldFocusColumnDetails &&
-      columnPhysicalNameInputRef.current
-    ) {
-      columnPhysicalNameInputRef.current.focus();
-      columnPhysicalNameInputRef.current.select();
-      setShouldFocusColumnDetails(false);
-    }
-  }, [attributeView, shouldFocusColumnDetails]);
 
   const selectedColumn = useMemo(
     () =>
@@ -42,40 +26,13 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
         : undefined,
     [data, selectedColumnIndex],
   );
-  const [columnLength, setColumnLength] = useState<number | undefined>(
-    selectedColumn?.length,
-  );
-  const [columnDecimal, setColumnDecimal] = useState<number | undefined>(
-    selectedColumn?.decimal,
-  );
-  const [columnUnsigned, setColumnUnsigned] = useState<boolean | undefined>(
-    selectedColumn?.unsigned,
-  );
-  const [columnEnumArgs, setColumnEnumArgs] = useState<string | undefined>(
-    selectedColumn?.enumArgs,
-  );
   const handleSelectColumn = (index: number) => {
     setSelectedColumnIndex(index);
   };
-  const handleSetColumnLength = (value: number | undefined) => {
-    setColumnLength(value);
-  };
-  const handleSetColumnDecimal = (value: number | undefined) => {
-    setColumnDecimal(value);
-  };
-  const handleSetColumnUnsigned = (value: boolean | undefined) => {
-    setColumnUnsigned(value);
-  };
-  const handleSetColumnEnumArgs = (value: string | undefined) => {
-    setColumnEnumArgs(value);
-  };
 
-  const openColumnDetail = (index: number, focus = true) => {
+  const openColumnDetail = (index: number) => {
     setSelectedColumnIndex(index);
     setAttributeView("detail");
-    if (focus) {
-      setShouldFocusColumnDetails(true);
-    }
   };
 
   const handleAddColumn = () => {
@@ -130,31 +87,20 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
     setAttributeView("list");
   };
 
-  const handleBackToColumnList = () => {
-    setAttributeView("list");
-  };
-
-  const updateSelectedColumn = <Key extends keyof Column>(
-    key: Key,
-    value: Column[Key],
-  ) => {
-    if (selectedColumnIndex == null) {
-      return;
-    }
-
+  const handleBackToColumnList = (column: Column) => {
     setData((current) => {
-      const nextColumns = [
-        ...(current && current.columns ? current.columns : []),
-      ];
-      nextColumns[selectedColumnIndex] = {
-        ...nextColumns[selectedColumnIndex],
-        [key]: value,
-      };
+      const nextColumns = current.columns?.map((col, index) => {
+        if (index === selectedColumnIndex) {
+          return column;
+        }
+        return col;
+      });
       return {
         ...current,
         columns: nextColumns,
       };
     });
+    setAttributeView("list");
   };
 
   return (
@@ -213,19 +159,8 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
         />
       ) : (
         <AttributeDetail
-          selectedColumn={selectedColumn}
-          columnTypeValue={selectedColumn?.columnType}
-          columnLength={columnLength}
-          columnDecimal={columnDecimal}
-          columnUnsigned={columnUnsigned}
-          columnEnumArgs={columnEnumArgs}
-          setColumnLength={handleSetColumnLength}
-          setColumnDecimal={handleSetColumnDecimal}
-          setColumnUnsigned={handleSetColumnUnsigned}
-          setColumnEnumArgs={handleSetColumnEnumArgs}
+          column={selectedColumn}
           onBack={handleBackToColumnList}
-          updateSelectedColumn={updateSelectedColumn}
-          columnPhysicalNameInputRef={columnPhysicalNameInputRef}
         />
       )}
     </>

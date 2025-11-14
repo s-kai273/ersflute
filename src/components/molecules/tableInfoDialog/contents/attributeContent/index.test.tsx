@@ -89,19 +89,19 @@ function getColumnRow(physicalName: string): HTMLTableRowElement {
 }
 
 describe("AttributeContent", () => {
-beforeEach(() => {
-  latestAttributeListProps = undefined;
-  latestAttributeDetailProps = undefined;
-});
-
-const invokeListHandler = (
-  handler: (...args: any[]) => void,
-  ...args: any[]
-) => {
-  act(() => {
-    handler(...args);
+  beforeEach(() => {
+    latestAttributeListProps = undefined;
+    latestAttributeDetailProps = undefined;
   });
-};
+
+  const invokeListHandler = (
+    handler: (...args: any[]) => void,
+    ...args: any[]
+  ) => {
+    act(() => {
+      handler(...args);
+    });
+  };
 
   it("adds a column and persists the configured values", async () => {
     const user = userEvent.setup();
@@ -184,9 +184,9 @@ const invokeListHandler = (
     const detailRegion = await screen.findByRole("region", {
       name: "Column Details",
     });
-    expect(
-      within(detailRegion).getByLabelText("Physical Name"),
-    ).toHaveValue("THIRD");
+    expect(within(detailRegion).getByLabelText("Physical Name")).toHaveValue(
+      "THIRD",
+    );
   });
 
   it("ignores list actions when the dialog is closed and no column is selected", () => {

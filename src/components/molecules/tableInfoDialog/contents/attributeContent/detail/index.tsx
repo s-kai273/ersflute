@@ -1,4 +1,4 @@
-import { useMemo, type RefObject } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/16/solid";
 import type { Column } from "@/components/molecules/tableNode/types";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import {
   ColumnTypeConfigMap,
   parseColumnType,
 } from "@/types/columnType";
+import { AttributeDetailProps } from "./types";
 
 const COLUMN_TYPE_LIST: ColumnType[] = [
   ColumnType.BigInt,
@@ -65,70 +66,53 @@ const COLUMN_TYPE_LIST: ColumnType[] = [
   ColumnType.Year4,
 ];
 
-type UpdateSelectedColumn = <Key extends keyof Column>(
-  key: Key,
-  value: Column[Key],
-) => void;
-
-type AttributeDetailProps = {
-  selectedColumn?: Column;
-  columnTypeValue?: ColumnType;
-  columnLength?: number;
-  columnDecimal?: number;
-  columnUnsigned?: boolean;
-  columnEnumArgs?: string;
-  setColumnLength: (value: number | undefined) => void;
-  setColumnDecimal: (value: number | undefined) => void;
-  setColumnUnsigned: (value: boolean | undefined) => void;
-  setColumnEnumArgs: (value: string | undefined) => void;
-  onBack: () => void;
-  updateSelectedColumn: UpdateSelectedColumn;
-  columnPhysicalNameInputRef: RefObject<HTMLInputElement | null>;
+const initialColumn = {
+  physicalName: "",
+  notNull: true,
 };
 
-export function AttributeDetail({
-  selectedColumn,
-  columnTypeValue,
-  columnLength,
-  columnDecimal,
-  columnUnsigned,
-  columnEnumArgs,
-  setColumnLength,
-  setColumnDecimal,
-  setColumnUnsigned,
-  setColumnEnumArgs,
-  onBack,
-  updateSelectedColumn,
-  columnPhysicalNameInputRef,
-}: AttributeDetailProps) {
+export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
+  const [currentColumn, setCurrentColumn] = useState<Column>(
+    column ? column : initialColumn,
+  );
+  const columnType = currentColumn?.columnType;
   const typeSupportsLength = useMemo(
     () =>
-      columnTypeValue
-        ? ColumnTypeConfigMap[columnTypeValue].supportsLength !== false
+      columnType
+        ? ColumnTypeConfigMap[columnType].supportsLength !== false
         : false,
-    [columnTypeValue],
+    [columnType],
   );
   const typeSupportsDecimal = useMemo(
     () =>
-      columnTypeValue
-        ? ColumnTypeConfigMap[columnTypeValue].supportsDecimal !== false
+      columnType
+        ? ColumnTypeConfigMap[columnType].supportsDecimal !== false
         : false,
-    [columnTypeValue],
+    [columnType],
   );
   const typeSupportsUnsigned = useMemo(
     () =>
-      columnTypeValue
-        ? ColumnTypeConfigMap[columnTypeValue].supportsUnsigned !== false
+      columnType
+        ? ColumnTypeConfigMap[columnType].supportsUnsigned !== false
         : false,
-    [columnTypeValue],
+    [columnType],
   );
   const typeSupportsEnumArgs = useMemo(
     () =>
-      columnTypeValue
-        ? ColumnTypeConfigMap[columnTypeValue].supportsEnumArgs !== false
+      columnType
+        ? ColumnTypeConfigMap[columnType].supportsEnumArgs !== false
         : false,
-    [columnTypeValue],
+    [columnType],
   );
+
+  const physicalNameInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (physicalNameInputRef.current) {
+      physicalNameInputRef.current.focus();
+      physicalNameInputRef.current.select();
+    }
+  }, []);
 
   return (
     <section
@@ -143,7 +127,9 @@ export function AttributeDetail({
             variant="secondary"
             size="icon"
             aria-label="Back to Columns"
-            onClick={onBack}
+            onClick={() => {
+              onBack(currentColumn);
+            }}
           >
             <ArrowLeftIcon className="size-4" />
           </Button>
@@ -154,7 +140,7 @@ export function AttributeDetail({
             Column Details
           </h3>
         </div>
-        {selectedColumn && (
+        {currentColumn && (
           <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-slate-600">
             <label
               className="flex items-center gap-2"
@@ -163,9 +149,12 @@ export function AttributeDetail({
               <Checkbox
                 id="table-info-column-primary-key"
                 className="border-slate-300"
-                checked={selectedColumn.primaryKey ?? false}
+                checked={currentColumn.primaryKey ?? false}
                 onCheckedChange={(checked) =>
-                  updateSelectedColumn("primaryKey", checked === true)
+                  setCurrentColumn({
+                    ...currentColumn,
+                    primaryKey: checked === true,
+                  })
                 }
               />
               <span>Primary Key</span>
@@ -177,9 +166,12 @@ export function AttributeDetail({
               <Checkbox
                 id="table-info-column-not-null"
                 className="border-slate-300"
-                checked={selectedColumn.notNull}
+                checked={currentColumn.notNull}
                 onCheckedChange={(checked) =>
-                  updateSelectedColumn("notNull", checked === true)
+                  setCurrentColumn({
+                    ...currentColumn,
+                    notNull: checked === true,
+                  })
                 }
               />
               <span>Not Null</span>
@@ -191,9 +183,12 @@ export function AttributeDetail({
               <Checkbox
                 id="table-info-column-unique"
                 className="border-slate-300"
-                checked={selectedColumn.unique ?? false}
+                checked={currentColumn.unique ?? false}
                 onCheckedChange={(checked) =>
-                  updateSelectedColumn("unique", checked === true)
+                  setCurrentColumn({
+                    ...currentColumn,
+                    unique: checked === true,
+                  })
                 }
               />
               <span>Unique</span>
@@ -205,9 +200,12 @@ export function AttributeDetail({
               <Checkbox
                 id="table-info-column-auto-increment"
                 className="border-slate-300"
-                checked={selectedColumn.autoIncrement ?? false}
+                checked={currentColumn.autoIncrement ?? false}
                 onCheckedChange={(checked) =>
-                  updateSelectedColumn("autoIncrement", checked === true)
+                  setCurrentColumn({
+                    ...currentColumn,
+                    autoIncrement: checked === true,
+                  })
                 }
               />
               <span>Auto Increment</span>
@@ -216,7 +214,7 @@ export function AttributeDetail({
         )}
       </div>
 
-      {selectedColumn ? (
+      {currentColumn ? (
         <div className="mt-4 flex-1 overflow-y-auto pr-1">
           <div className="flex flex-col gap-4">
             <div className="grid gap-3 text-sm sm:grid-cols-2">
@@ -229,12 +227,15 @@ export function AttributeDetail({
                 </span>
                 <Input
                   id="table-info-column-physical-name"
-                  ref={columnPhysicalNameInputRef}
+                  ref={physicalNameInputRef}
                   className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                   type="text"
-                  value={selectedColumn.physicalName}
+                  value={currentColumn.physicalName}
                   onChange={(event) =>
-                    updateSelectedColumn("physicalName", event.target.value)
+                    setCurrentColumn({
+                      ...currentColumn,
+                      physicalName: event.target.value,
+                    })
                   }
                 />
               </label>
@@ -247,14 +248,15 @@ export function AttributeDetail({
                   id="table-info-column-logical-name"
                   className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                   type="text"
-                  value={selectedColumn.logicalName ?? ""}
+                  value={currentColumn.logicalName ?? ""}
                   onChange={(event) =>
-                    updateSelectedColumn(
-                      "logicalName",
-                      event.target.value === ""
-                        ? undefined
-                        : event.target.value,
-                    )
+                    setCurrentColumn({
+                      ...currentColumn,
+                      logicalName:
+                        event.target.value === ""
+                          ? undefined
+                          : event.target.value,
+                    })
                   }
                 />
               </label>
@@ -267,7 +269,7 @@ export function AttributeDetail({
                   <select
                     id="table-info-column-type"
                     className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                    value={columnTypeValue}
+                    value={columnType}
                     onChange={(event) => {
                       const columnType =
                         event.target.value === ""
@@ -276,32 +278,31 @@ export function AttributeDetail({
                       const length =
                         columnType &&
                         ColumnTypeConfigMap[columnType].supportsLength
-                          ? columnLength
+                          ? currentColumn.length
                           : undefined;
                       const decimal =
                         columnType &&
                         ColumnTypeConfigMap[columnType].supportsDecimal
-                          ? columnDecimal
+                          ? currentColumn.decimal
                           : undefined;
                       const unsigned =
                         columnType &&
                         ColumnTypeConfigMap[columnType].supportsUnsigned
-                          ? columnUnsigned
+                          ? currentColumn.unsigned
                           : undefined;
                       const enumArgs =
                         columnType &&
                         ColumnTypeConfigMap[columnType].supportsEnumArgs
-                          ? columnEnumArgs
+                          ? currentColumn.enumArgs
                           : undefined;
-                      setColumnLength(length);
-                      setColumnDecimal(decimal);
-                      setColumnUnsigned(unsigned);
-                      setColumnEnumArgs(enumArgs);
-                      updateSelectedColumn("length", length);
-                      updateSelectedColumn("decimal", decimal);
-                      updateSelectedColumn("unsigned", unsigned);
-                      updateSelectedColumn("enumArgs", enumArgs);
-                      updateSelectedColumn("columnType", columnType);
+                      setCurrentColumn({
+                        ...currentColumn,
+                        columnType,
+                        length,
+                        decimal,
+                        unsigned,
+                        enumArgs,
+                      });
                     }}
                   >
                     {COLUMN_TYPE_LIST.map((columnType) => (
@@ -320,16 +321,17 @@ export function AttributeDetail({
                     id="table-info-column-length"
                     className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                     type="number"
-                    value={columnLength ?? ""}
+                    value={currentColumn.length ?? ""}
                     disabled={!typeSupportsLength}
-                    onChange={(event) => {
-                      const length =
-                        event.target.value === ""
-                          ? undefined
-                          : Number(event.target.value);
-                      setColumnLength(length);
-                      updateSelectedColumn("length", length);
-                    }}
+                    onChange={(event) =>
+                      setCurrentColumn({
+                        ...currentColumn,
+                        length:
+                          event.target.value === ""
+                            ? undefined
+                            : Number(event.target.value),
+                      })
+                    }
                   />
                 </label>
                 <label
@@ -341,16 +343,17 @@ export function AttributeDetail({
                     id="table-info-column-decimal"
                     className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                     type="number"
-                    value={columnDecimal ?? ""}
+                    value={currentColumn.decimal ?? ""}
                     disabled={!typeSupportsDecimal}
-                    onChange={(event) => {
-                      const decimal =
-                        event.target.value === ""
-                          ? undefined
-                          : Number(event.target.value);
-                      setColumnDecimal(decimal);
-                      updateSelectedColumn("decimal", decimal);
-                    }}
+                    onChange={(event) =>
+                      setCurrentColumn({
+                        ...currentColumn,
+                        decimal:
+                          event.target.value === ""
+                            ? undefined
+                            : Number(event.target.value),
+                      })
+                    }
                   />
                 </label>
                 <label
@@ -360,13 +363,14 @@ export function AttributeDetail({
                   <Checkbox
                     id="table-info-column-unsigned"
                     className="border-slate-300"
-                    checked={columnUnsigned ?? false}
+                    checked={currentColumn.unsigned ?? false}
                     disabled={!typeSupportsUnsigned}
-                    onCheckedChange={(checked) => {
-                      const isChecked = checked === true;
-                      setColumnUnsigned(isChecked);
-                      updateSelectedColumn("unsigned", isChecked);
-                    }}
+                    onCheckedChange={(checked) =>
+                      setCurrentColumn({
+                        ...currentColumn,
+                        unsigned: checked === true,
+                      })
+                    }
                   />
                   <span className="text-sm font-medium text-slate-600">
                     Unsigned
@@ -384,15 +388,16 @@ export function AttributeDetail({
                   id="table-info-column-enum-args"
                   className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                   type="text"
-                  value={selectedColumn.enumArgs ?? ""}
+                  value={currentColumn.enumArgs ?? ""}
                   disabled={!typeSupportsEnumArgs}
                   onChange={(event) =>
-                    updateSelectedColumn(
-                      "enumArgs",
-                      event.target.value === ""
-                        ? undefined
-                        : event.target.value,
-                    )
+                    setCurrentColumn({
+                      ...currentColumn,
+                      enumArgs:
+                        event.target.value === ""
+                          ? undefined
+                          : event.target.value,
+                    })
                   }
                 />
               </label>
@@ -407,14 +412,15 @@ export function AttributeDetail({
                   id="table-info-column-default-value"
                   className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
                   type="text"
-                  value={selectedColumn.defaultValue ?? ""}
+                  value={currentColumn.defaultValue ?? ""}
                   onChange={(event) =>
-                    updateSelectedColumn(
-                      "defaultValue",
-                      event.target.value === ""
-                        ? undefined
-                        : event.target.value,
-                    )
+                    setCurrentColumn({
+                      ...currentColumn,
+                      defaultValue:
+                        event.target.value === ""
+                          ? undefined
+                          : event.target.value,
+                    })
                   }
                 />
               </label>
@@ -426,14 +432,15 @@ export function AttributeDetail({
                 <textarea
                   id="table-info-column-description"
                   className="min-h-24 rounded border border-slate-300 px-2 py-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                  value={selectedColumn.description ?? ""}
+                  value={currentColumn.description ?? ""}
                   onChange={(event) =>
-                    updateSelectedColumn(
-                      "description",
-                      event.target.value === ""
-                        ? undefined
-                        : event.target.value,
-                    )
+                    setCurrentColumn({
+                      ...currentColumn,
+                      description:
+                        event.target.value === ""
+                          ? undefined
+                          : event.target.value,
+                    })
                   }
                 />
               </label>
