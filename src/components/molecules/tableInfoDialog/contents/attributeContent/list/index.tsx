@@ -1,22 +1,10 @@
 import { KeyIcon } from "@heroicons/react/16/solid";
-import type {
-  Column,
-  TableNodeData,
-} from "@/components/molecules/tableNode/types";
+import type { Column } from "@/components/molecules/tableNode/types";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { ColumnTypeConfigMap } from "@/types/columnType";
-
-type AttributeListProps = {
-  data: TableNodeData;
-  selectedColumnIndex: number | null;
-  onSelectColumn: (index: number) => void;
-  onOpenDetail: (index: number) => void;
-  onAddColumn: () => void;
-  onEditColumn: () => void;
-  onDeleteColumn: () => void;
-};
+import { AttributeListProps } from "./types";
 
 const typeDisplay = (column: Column) => {
   if (!column.columnType) {
@@ -40,7 +28,7 @@ const typeDisplay = (column: Column) => {
 };
 
 export function AttributeList({
-  data,
+  columns,
   selectedColumnIndex,
   onSelectColumn,
   onOpenDetail,
@@ -64,7 +52,7 @@ export function AttributeList({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 bg-white text-slate-700">
-            {data?.columns?.map((column, index) => {
+            {columns.map((column, index) => {
               const isSelected = selectedColumnIndex === index;
               return (
                 <tr
@@ -87,7 +75,9 @@ export function AttributeList({
                   <td className="px-2 py-2 text-center">
                     {column.referredColumn ? "✓" : ""}
                   </td>
-                  <td className="px-2 py-2 font-medium">{column.physicalName}</td>
+                  <td className="px-2 py-2 font-medium">
+                    {column.physicalName}
+                  </td>
                   <td className="px-2 py-2">{column.logicalName ?? ""}</td>
                   <td className="px-2 py-2">{typeDisplay(column)}</td>
                   <td className="px-2 py-2 text-center">
@@ -115,7 +105,7 @@ export function AttributeList({
                 </tr>
               );
             })}
-            {data?.columns?.length === 0 && (
+            {columns.length === 0 && (
               <tr>
                 <td
                   className="px-4 py-6 text-center text-sm text-slate-400"
@@ -129,7 +119,12 @@ export function AttributeList({
         </table>
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
-        <Button type="button" variant="outline" size="sm" onClick={onAddColumn}>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onAddColumn}
+        >
           Add
         </Button>
         <Button

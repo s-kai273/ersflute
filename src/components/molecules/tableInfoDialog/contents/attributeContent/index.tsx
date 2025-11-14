@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { Column } from "@/components/molecules/tableNode/types";
 import { Input } from "@/components/ui/input";
 import { AttributeDetail } from "./detail";
+import { useAttributeContentHandlers } from "./handlers";
 import { AttributeList } from "./list";
 import { AttributeContentProps } from "./types";
 
@@ -12,96 +12,34 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
   );
 
   useEffect(() => {
-    if (!open) {
-      return;
-    }
     setSelectedColumnIndex(null);
     setAttributeView("list");
-  }, [open]);
+  }, []);
+
+  const columns = useMemo(() => data.columns ?? [], [data.columns]);
 
   const selectedColumn = useMemo(
     () =>
       selectedColumnIndex != null
-        ? data?.columns?.[selectedColumnIndex]
+        ? columns[selectedColumnIndex]
         : undefined,
-    [data, selectedColumnIndex],
+    [columns, selectedColumnIndex],
   );
-  const handleSelectColumn = (index: number) => {
-    setSelectedColumnIndex(index);
-  };
 
-  const openColumnDetail = (index: number) => {
-    setSelectedColumnIndex(index);
-    setAttributeView("detail");
-  };
-
-  const handleAddColumn = () => {
-    const newColumn: Column = {
-      physicalName: "",
-      notNull: false,
-    };
-
-    const nextColumns = [
-      ...(data && data.columns ? data.columns : []),
-      newColumn,
-    ];
-    setData({
-      ...data,
-      columns: nextColumns,
-    });
-    openColumnDetail(nextColumns.length - 1);
-  };
-
-  const handleEditColumn = () => {
-    if (selectedColumnIndex == null) {
-      return;
-    }
-
-    openColumnDetail(selectedColumnIndex);
-  };
-
-  const handleDeleteColumn = () => {
-    if (selectedColumnIndex == null) {
-      return;
-    }
-
-    const columnIndex = selectedColumnIndex;
-    setData((current) => {
-      const nextColumns = current.columns?.filter(
-        (_, index) => index !== columnIndex,
-      );
-      if (nextColumns && nextColumns.length === 0) {
-        setSelectedColumnIndex(null);
-      } else {
-        const nextIndex = Math.min(
-          columnIndex,
-          nextColumns ? nextColumns.length - 1 : 0,
-        );
-        setSelectedColumnIndex(nextIndex);
-      }
-      return {
-        ...current,
-        columns: nextColumns,
-      };
-    });
-    setAttributeView("list");
-  };
-
-  const handleBackToColumnList = (column: Column) => {
-    setData((current) => {
-      const nextColumns = current.columns?.map((col, index) => {
-        if (index === selectedColumnIndex) {
-          return column;
-        }
-        return col;
-      });
-      return {
-        ...current,
-        columns: nextColumns,
-      };
-    });
-    setAttributeView("list");
-  };
+  const {
+    handleSelectColumn,
+    handleOpenDetail,
+    handleAddColumn,
+    handleEditColumn,
+    handleDeleteColumn,
+    handleBackToColumnList,
+  } = useAttributeContentHandlers({
+    columns,
+    selectedColumnIndex,
+    setSelectedColumnIndex,
+    setAttributeView,
+    setData,
+  });
 
   return (
     <>
@@ -149,10 +87,10 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
 
       {attributeView === "list" ? (
         <AttributeList
-          data={data}
+          columns={columns}
           selectedColumnIndex={selectedColumnIndex}
           onSelectColumn={handleSelectColumn}
-          onOpenDetail={openColumnDetail}
+          onOpenDetail={handleOpenDetail}
           onAddColumn={handleAddColumn}
           onEditColumn={handleEditColumn}
           onDeleteColumn={handleDeleteColumn}

@@ -1,17 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { TableNodeData } from "@/components/molecules/tableNode/types";
 import { ColumnType } from "@/types/columnType";
-import { AttributeList } from "./list";
-
-function createTableData(columns: TableNodeData["columns"]): TableNodeData {
-  return {
-    physicalName: "TEST",
-    logicalName: "Test",
-    color: { r: 0, g: 0, b: 0 },
-    columns,
-  };
-}
+import { AttributeList } from ".";
 
 function getColumnRow(physicalName: string): HTMLTableRowElement {
   const cell = screen.getByText(physicalName);
@@ -26,7 +16,7 @@ describe("AttributeList", () => {
   it("renders each column with its indicators", () => {
     render(
       <AttributeList
-        data={createTableData([
+        columns={[
           {
             physicalName: "MEMBER_ID",
             logicalName: "Member",
@@ -43,7 +33,7 @@ describe("AttributeList", () => {
             notNull: false,
             unique: false,
           },
-        ])}
+        ]}
         selectedColumnIndex={0}
         onSelectColumn={jest.fn()}
         onOpenDetail={jest.fn()}
@@ -78,7 +68,7 @@ describe("AttributeList", () => {
 
     render(
       <AttributeList
-        data={createTableData([
+        columns={[
           {
             physicalName: "FIRST",
             columnType: ColumnType.Int,
@@ -89,7 +79,7 @@ describe("AttributeList", () => {
             columnType: ColumnType.Int,
             notNull: false,
           },
-        ])}
+        ]}
         selectedColumnIndex={1}
         onSelectColumn={onSelectColumn}
         onOpenDetail={onOpenDetail}
@@ -119,7 +109,7 @@ describe("AttributeList", () => {
   it("renders the empty state message when no columns exist", () => {
     render(
       <AttributeList
-        data={createTableData([])}
+        columns={[]}
         selectedColumnIndex={null}
         onSelectColumn={jest.fn()}
         onOpenDetail={jest.fn()}
@@ -137,7 +127,7 @@ describe("AttributeList", () => {
   it("formats the type cell based on length and decimal metadata", () => {
     render(
       <AttributeList
-        data={createTableData([
+        columns={[
           {
             physicalName: "FULL",
             columnType: ColumnType.Decimal,
@@ -160,7 +150,7 @@ describe("AttributeList", () => {
             physicalName: "TYPELESS",
             notNull: false,
           },
-        ])}
+        ]}
         selectedColumnIndex={null}
         onSelectColumn={jest.fn()}
         onOpenDetail={jest.fn()}
@@ -182,14 +172,14 @@ describe("AttributeList", () => {
   it("renders a checkmark for foreign key references", () => {
     render(
       <AttributeList
-        data={createTableData([
+        columns={[
           {
             physicalName: "FK_COLUMN",
             columnType: ColumnType.Int,
             notNull: false,
             referredColumn: "OTHER_TABLE.ID",
           },
-        ])}
+        ]}
         selectedColumnIndex={0}
         onSelectColumn={jest.fn()}
         onOpenDetail={jest.fn()}
