@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/16/solid";
 import { Handle, Node, NodeProps, Position, useReactFlow } from "@xyflow/react";
-import { ColumnTypeConfigMap } from "@/types/columnType";
 import { TableInfoDialog } from "../tableInfoDialog";
 import { formatColumnType } from "./format";
 import { TableNodeData } from "./types";
