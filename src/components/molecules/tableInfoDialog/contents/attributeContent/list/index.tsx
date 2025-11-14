@@ -1,31 +1,9 @@
 import { KeyIcon } from "@heroicons/react/16/solid";
-import type { Column } from "@/components/molecules/tableNode/types";
+import { formatColumnType } from "@/components/molecules/tableNode/format";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { ColumnTypeConfigMap } from "@/types/columnType";
 import { AttributeListProps } from "./types";
-
-const typeDisplay = (column: Column) => {
-  if (!column.columnType) {
-    return "";
-  }
-
-  const labelWithougArgs =
-    ColumnTypeConfigMap[column.columnType].labelWithoutArgs;
-  if (column.length != null && column.length >= 0) {
-    if (column.decimal != null && column.decimal >= 0) {
-      return `${labelWithougArgs}(${column.length}, ${column.decimal})`;
-    }
-    return `${labelWithougArgs}(${column.length})`;
-  }
-
-  if (column.decimal != null && column.decimal >= 0) {
-    return `${labelWithougArgs}(${column.decimal})`;
-  }
-
-  return ColumnTypeConfigMap[column.columnType].label;
-};
 
 export function AttributeList({
   columns,
@@ -79,7 +57,7 @@ export function AttributeList({
                     {column.physicalName}
                   </td>
                   <td className="px-2 py-2">{column.logicalName ?? ""}</td>
-                  <td className="px-2 py-2">{typeDisplay(column)}</td>
+                  <td className="px-2 py-2">{formatColumnType(column)}</td>
                   <td className="px-2 py-2 text-center">
                     <div className="flex justify-center">
                       <Checkbox
@@ -119,12 +97,7 @@ export function AttributeList({
         </table>
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={onAddColumn}
-        >
+        <Button type="button" variant="outline" size="sm" onClick={onAddColumn}>
           Add
         </Button>
         <Button
