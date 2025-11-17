@@ -65,7 +65,7 @@ export function AttributeList({
                         checked={column.notNull}
                         tabIndex={-1}
                         aria-readonly="true"
-                        className="pointer-events-none data-[state=checked]:border-blue-500 data-[state=checked]:bg-blue-500"
+                        className="pointer-events-none data-[state=checked]:border-blue-500"
                       />
                     </div>
                   </td>
@@ -76,7 +76,7 @@ export function AttributeList({
                         checked={column.unique ?? false}
                         tabIndex={-1}
                         aria-readonly="true"
-                        className="pointer-events-none data-[state=checked]:border-blue-500 data-[state=checked]:bg-blue-500"
+                        className="pointer-events-none data-[state=checked]:border-blue-500"
                       />
                     </div>
                   </td>
