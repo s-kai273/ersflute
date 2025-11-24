@@ -4,6 +4,7 @@ import type { Column } from "@/components/molecules/tableNode/types";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useReadOnlyStore } from "@/stores/readOnlyStore";
 import {
   ColumnType,
@@ -517,9 +518,9 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
               htmlFor="table-info-column-description"
             >
               <span className="font-medium text-slate-600">Description</span>
-              <textarea
+              <Textarea
                 id="table-info-column-description"
-                className="min-h-24 rounded border border-slate-300 px-2 py-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
+                className="min-h-24 rounded px-2 py-2"
                 value={currentColumn.description ?? ""}
                 readOnly={isReadOnly}
                 onChange={(event) =>
