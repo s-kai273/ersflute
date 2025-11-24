@@ -457,61 +457,45 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
               <span className="font-medium text-slate-600">
                 Args of enum/set Type
               </span>
-              {isReadOnly ? (
-                <p
-                  id="table-info-column-enum-args"
-                  className="px-2 h-8 text-sm"
-                >
-                  {currentColumn.enumArgs ?? "-"}
-                </p>
-              ) : (
-                <Input
-                  id="table-info-column-enum-args"
-                  className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                  type="text"
-                  value={currentColumn.enumArgs ?? ""}
-                  disabled={!typeSupportsEnumArgs}
-                  onChange={(event) =>
-                    setCurrentColumn({
-                      ...currentColumn,
-                      enumArgs:
-                        event.target.value === ""
-                          ? undefined
-                          : event.target.value,
-                    })
-                  }
-                />
-              )}
+              <Input
+                id="table-info-column-enum-args"
+                className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
+                type="text"
+                value={currentColumn.enumArgs ?? ""}
+                disabled={!typeSupportsEnumArgs}
+                readOnly={isReadOnly}
+                onChange={(event) =>
+                  setCurrentColumn({
+                    ...currentColumn,
+                    enumArgs:
+                      event.target.value === ""
+                        ? undefined
+                        : event.target.value,
+                  })
+                }
+              />
             </label>
             <label
               className="flex flex-col gap-1 sm:col-span-1"
               htmlFor="table-info-column-default-value"
             >
               <span className="font-medium text-slate-600">Default Value</span>
-              {isReadOnly ? (
-                <p
-                  id="table-info-column-default-value"
-                  className="px-2 h-8 text-sm"
-                >
-                  {currentColumn.defaultValue ?? "-"}
-                </p>
-              ) : (
-                <Input
-                  id="table-info-column-default-value"
-                  className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                  type="text"
-                  value={currentColumn.defaultValue ?? ""}
-                  onChange={(event) =>
-                    setCurrentColumn({
-                      ...currentColumn,
-                      defaultValue:
-                        event.target.value === ""
-                          ? undefined
-                          : event.target.value,
-                    })
-                  }
-                />
-              )}
+              <Input
+                id="table-info-column-default-value"
+                className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
+                type="text"
+                value={currentColumn.defaultValue ?? ""}
+                readOnly={isReadOnly}
+                onChange={(event) =>
+                  setCurrentColumn({
+                    ...currentColumn,
+                    defaultValue:
+                      event.target.value === ""
+                        ? undefined
+                        : event.target.value,
+                  })
+                }
+              />
             </label>
             <label
               className="flex flex-col gap-1 sm:col-span-2"
