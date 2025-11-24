@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { useReadOnlyStore } from "@/stores/readOnlyStore";
 import { AttributeDetail } from "./detail";
 import { useAttributeContentHandlers } from "./handlers";
 import { AttributeList } from "./list";
 import { AttributeContentProps } from "./types";
 
 export function AttributeContent({ data, setData }: AttributeContentProps) {
+  const isReadOnly = useReadOnlyStore((s) => s.isReadOnly);
   const [attributeView, setAttributeView] = useState<"list" | "detail">("list");
   const [selectedColumnIndex, setSelectedColumnIndex] = useState<number | null>(
     null,
@@ -20,9 +22,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
 
   const selectedColumn = useMemo(
     () =>
-      selectedColumnIndex != null
-        ? columns[selectedColumnIndex]
-        : undefined,
+      selectedColumnIndex != null ? columns[selectedColumnIndex] : undefined,
     [columns, selectedColumnIndex],
   );
 
@@ -51,37 +51,50 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
           >
             Physical Name
           </label>
-          <Input
-            id="table-info-physical-name"
-            className="h-8 rounded border border-slate-300 px-2 text-sm shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-            type="text"
-            value={data.physicalName}
-            onChange={(event) =>
-              setData({
-                ...data,
-                physicalName: event.target.value,
-              })
-            }
-          />
+          {isReadOnly ? (
+            <p id="table-info-physical-name" className="text-sm">
+              {data.physicalName}
+            </p>
+          ) : (
+            <Input
+              id="table-info-physical-name"
+              className="h-8 rounded border border-slate-300 px-2 text-sm shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
+              type="text"
+              value={data.physicalName}
+              onChange={(event) =>
+                setData({
+                  ...data,
+                  physicalName: event.target.value,
+                })
+              }
+            />
+          )}
           <label
             className="font-medium text-slate-600"
             htmlFor="table-info-logical-name"
           >
             Logical Name
           </label>
-          <Input
-            id="table-info-logical-name"
-            className="h-8 rounded border border-slate-300 px-2 text-sm shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-            type="text"
-            value={data.logicalName ?? ""}
-            onChange={(event) =>
-              setData({
-                ...data,
-                logicalName:
-                  event.target.value === "" ? undefined : event.target.value,
-              })
-            }
-          />
+          {isReadOnly ? (
+            <p id="table-info-logical-name" className="text-sm">
+              {data.logicalName}
+            </p>
+          ) : (
+            <Input
+              id="table-info-logical-name"
+              className="h-8 rounded border border-slate-300 px-2 text-sm shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
+              type="text"
+              value={data.logicalName ?? ""}
+              readOnly={isReadOnly}
+              onChange={(event) =>
+                setData({
+                  ...data,
+                  logicalName:
+                    event.target.value === "" ? undefined : event.target.value,
+                })
+              }
+            />
+          )}
         </div>
       </section>
 
