@@ -274,62 +274,42 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
               htmlFor="table-info-column-physical-name"
             >
               <span className="font-medium text-slate-600">Physical Name</span>
-              {isReadOnly ? (
-                <div className="flex h-8 items-center">
-                  <p
-                    id="table-info-column-physical-name"
-                    className="px-2 text-sm"
-                  >
-                    {currentColumn.physicalName}
-                  </p>
-                </div>
-              ) : (
-                <Input
-                  id="table-info-column-physical-name"
-                  ref={physicalNameInputRef}
-                  className="text-sm h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                  type="text"
-                  value={currentColumn.physicalName}
-                  onChange={(event) =>
-                    setCurrentColumn({
-                      ...currentColumn,
-                      physicalName: event.target.value,
-                    })
-                  }
-                />
-              )}
+              <Input
+                id="table-info-column-physical-name"
+                ref={physicalNameInputRef}
+                className="text-sm h-8 rounded px-2"
+                type="text"
+                value={currentColumn.physicalName}
+                readOnly={isReadOnly}
+                onChange={(event) =>
+                  setCurrentColumn({
+                    ...currentColumn,
+                    physicalName: event.target.value,
+                  })
+                }
+              />
             </label>
             <label
               className="flex flex-col gap-1"
               htmlFor="table-info-column-logical-name"
             >
               <span className="font-medium text-slate-600">Logical Name</span>
-              {isReadOnly ? (
-                <div className="flex h-8 items-center">
-                  <p
-                    id="table-info-column-logical-name"
-                    className="px-2 text-sm"
-                  >
-                    {currentColumn.logicalName ?? "-"}
-                  </p>
-                </div>
-              ) : (
-                <Input
-                  id="table-info-column-logical-name"
-                  className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                  type="text"
-                  value={currentColumn.logicalName ?? ""}
-                  onChange={(event) =>
-                    setCurrentColumn({
-                      ...currentColumn,
-                      logicalName:
-                        event.target.value === ""
-                          ? undefined
-                          : event.target.value,
-                    })
-                  }
-                />
-              )}
+              <Input
+                id="table-info-column-logical-name"
+                className="h-8 rounded px-2"
+                type="text"
+                value={currentColumn.logicalName ?? ""}
+                readOnly={isReadOnly}
+                onChange={(event) =>
+                  setCurrentColumn({
+                    ...currentColumn,
+                    logicalName:
+                      event.target.value === ""
+                        ? undefined
+                        : event.target.value,
+                  })
+                }
+              />
             </label>
             <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
               <label
@@ -396,59 +376,46 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                 htmlFor="table-info-column-length"
               >
                 <span className="font-medium text-slate-600">Length</span>
-                {isReadOnly ? (
-                  <p id="table-info-column-length" className="px-2 h-8 text-sm">
-                    {currentColumn.length ?? "-"}
-                  </p>
-                ) : (
-                  <Input
-                    id="table-info-column-length"
-                    className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                    type="number"
-                    value={currentColumn.length ?? ""}
-                    disabled={!typeSupportsLength}
-                    onChange={(event) =>
-                      setCurrentColumn({
-                        ...currentColumn,
-                        length:
-                          event.target.value === ""
-                            ? undefined
-                            : Number(event.target.value),
-                      })
-                    }
-                  />
-                )}
+                <Input
+                  id="table-info-column-length"
+                  className="h-8 rounded px-2"
+                  type="number"
+                  value={currentColumn.length ?? ""}
+                  disabled={!typeSupportsLength}
+                  readOnly={isReadOnly}
+                  onChange={(event) =>
+                    setCurrentColumn({
+                      ...currentColumn,
+                      length:
+                        event.target.value === ""
+                          ? undefined
+                          : Number(event.target.value),
+                    })
+                  }
+                />
               </label>
               <label
                 className="flex flex-col w-30 gap-1"
                 htmlFor="table-info-column-decimal"
               >
                 <span className="font-medium text-slate-600">Decimal</span>
-                {isReadOnly ? (
-                  <p
-                    id="table-info-column-decimal"
-                    className="px-2 h-8 text-sm"
-                  >
-                    {currentColumn.decimal ?? "-"}
-                  </p>
-                ) : (
-                  <Input
-                    id="table-info-column-decimal"
-                    className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                    type="number"
-                    value={currentColumn.decimal ?? ""}
-                    disabled={!typeSupportsDecimal}
-                    onChange={(event) =>
-                      setCurrentColumn({
-                        ...currentColumn,
-                        decimal:
-                          event.target.value === ""
-                            ? undefined
-                            : Number(event.target.value),
-                      })
-                    }
-                  />
-                )}
+                <Input
+                  id="table-info-column-decimal"
+                  className="h-8 rounded px-2"
+                  type="number"
+                  value={currentColumn.decimal ?? ""}
+                  disabled={!typeSupportsDecimal}
+                  readOnly={isReadOnly}
+                  onChange={(event) =>
+                    setCurrentColumn({
+                      ...currentColumn,
+                      decimal:
+                        event.target.value === ""
+                          ? undefined
+                          : Number(event.target.value),
+                    })
+                  }
+                />
               </label>
               <label
                 className="flex items-center gap-2 pb-1"

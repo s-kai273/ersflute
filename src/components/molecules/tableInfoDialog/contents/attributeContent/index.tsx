@@ -51,50 +51,39 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
           >
             Physical Name
           </label>
-          {isReadOnly ? (
-            <p id="table-info-physical-name" className="text-sm">
-              {data.physicalName}
-            </p>
-          ) : (
-            <Input
-              id="table-info-physical-name"
-              className="h-8 rounded border border-slate-300 px-2 text-sm shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-              type="text"
-              value={data.physicalName}
-              onChange={(event) =>
-                setData({
-                  ...data,
-                  physicalName: event.target.value,
-                })
-              }
-            />
-          )}
+          <Input
+            id="table-info-physical-name"
+            className="h-8 rounded px-2 text-sm"
+            type="text"
+            value={data.physicalName}
+            readOnly={isReadOnly}
+            onChange={(event) =>
+              setData({
+                ...data,
+                physicalName: event.target.value,
+              })
+            }
+          />
           <label
             className="font-medium text-slate-600"
             htmlFor="table-info-logical-name"
           >
             Logical Name
           </label>
-          {isReadOnly ? (
-            <p id="table-info-logical-name" className="text-sm">
-              {data.logicalName}
-            </p>
-          ) : (
-            <Input
-              id="table-info-logical-name"
-              className="h-8 rounded border border-slate-300 px-2 text-sm shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-              type="text"
-              value={data.logicalName ?? ""}
-              readOnly={isReadOnly}
-              onChange={(event) =>
-                setData({
-                  ...data,
-                  logicalName:
-                    event.target.value === "" ? undefined : event.target.value,
-                })
-              }
-            />
-          )}
+          <Input
+            id="table-info-logical-name"
+            className="h-8 rounded px-2 text-sm"
+            type="text"
+            value={data.logicalName ?? ""}
+            readOnly={isReadOnly}
+            onChange={(event) =>
+              setData({
+                ...data,
+                logicalName:
+                  event.target.value === "" ? undefined : event.target.value,
+              })
+            }
+          />
         </div>
       </section>
 
