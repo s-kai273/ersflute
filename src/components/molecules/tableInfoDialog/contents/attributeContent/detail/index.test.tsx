@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ColumnType } from "@/types/columnType";
+import { ColumnType } from "@/types/domain/columnType";
 import { AttributeDetail } from ".";
 
 describe("AttributeDetail", () => {
@@ -73,12 +73,8 @@ describe("AttributeDetail", () => {
     );
 
     const typeSelect = screen.getByLabelText("Type");
-    const lengthInput = screen.getByLabelText(
-      "Length",
-    ) as HTMLInputElement;
-    const decimalInput = screen.getByLabelText(
-      "Decimal",
-    ) as HTMLInputElement;
+    const lengthInput = screen.getByLabelText("Length") as HTMLInputElement;
+    const decimalInput = screen.getByLabelText("Decimal") as HTMLInputElement;
     const unsignedCheckbox = screen.getByLabelText("Unsigned");
 
     expect(lengthInput).toBeEnabled();

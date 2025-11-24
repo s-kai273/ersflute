@@ -6,6 +6,6 @@ type ReadOnlyStore = {
 };
 
 export const useReadOnlyStore = create<ReadOnlyStore>((set) => ({
-  isReadOnly: false,
+  isReadOnly: true,
   setReadOnly: (value) => set({ isReadOnly: value }),
 }));

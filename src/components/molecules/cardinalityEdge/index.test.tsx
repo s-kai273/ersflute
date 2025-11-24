@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { getStraightPath, useStore } from "@xyflow/react";
-import { Cardinality } from "../../../types/table";
+import { Cardinality } from "../../../types/api/table";
 import { getEdgeParams } from "./edgeParams";
 import { CardinalityEdge } from "./index";
 import { buildSymbols, cardinalityToSymbolPartKinds } from "./symbol";

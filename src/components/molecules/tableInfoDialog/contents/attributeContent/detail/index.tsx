@@ -8,7 +8,7 @@ import {
   ColumnType,
   ColumnTypeConfigMap,
   parseColumnType,
-} from "@/types/columnType";
+} from "@/types/domain/columnType";
 import { AttributeDetailProps } from "./types";
 
 const COLUMN_TYPE_LIST: ColumnType[] = [

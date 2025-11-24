@@ -6,20 +6,14 @@ import {
   Node,
   ReactFlow,
   useNodesState,
-  useReactFlow,
 } from "@xyflow/react";
-import { cn } from "@/lib/utils";
 import { tables } from "@/test/testData";
-import { Table } from "@/types/api/table";
 import { parseColumnType } from "@/types/domain/columnType";
-import { DiagramMode } from "@/types/domain/diagramMode";
+import { Table } from "../../../types/api/table";
 import { CardinalityEdge } from "../../molecules/cardinalityEdge";
 import { CardinalityEdgeData } from "../../molecules/cardinalityEdge/types";
 import { TableNode } from "../../molecules/tableNode";
 import { Column, TableNodeData } from "../../molecules/tableNode/types";
-import { createClickInTableModeHandler } from "./handlers";
-import { modeSettings } from "./modeSettings";
-import { DbDiagramProps } from "./types";
 
 function createNodes(tables: Table[]): Node[] {
   return tables.map((table) => {
@@ -77,30 +71,13 @@ function createEdges(tables: Table[]): Edge[] {
     });
 }
 
-export const DbDiagram = ({ activeMode }: DbDiagramProps) => {
+export const ReadOnlyDiagram = () => {
   const [nodes, _, onNodesChange] = useNodesState(createNodes(tables));
   const initialEdges = createEdges(tables);
-  const activeModeSettings = modeSettings[activeMode];
-  const { addNodes, screenToFlowPosition } = useReactFlow();
-  const handleClickInTableMode = createClickInTableModeHandler(
-    addNodes,
-    screenToFlowPosition,
-  );
-
-  const handlePaneClick = (event: React.MouseEvent) => {
-    switch (activeMode) {
-      case DiagramMode.Table:
-        handleClickInTableMode(event.clientX, event.clientY);
-        break;
-      default:
-        break;
-    }
-  };
-
   return (
     <div className="relative flex h-full w-full">
       <ReactFlow
-        className={cn("flex-1", activeModeSettings.cursorClass)}
+        className="flex-1 cursor-default"
         style={{ width: "100%", height: "100%" }}
         nodes={nodes}
         edges={initialEdges}
@@ -110,12 +87,11 @@ export const DbDiagram = ({ activeMode }: DbDiagramProps) => {
         edgeTypes={{
           cardinality: CardinalityEdge,
         }}
-        onPaneClick={handlePaneClick}
         onNodesChange={onNodesChange}
-        nodesDraggable={activeModeSettings.nodesDraggable}
-        nodesConnectable={activeModeSettings.nodesConnectable}
-        elementsSelectable={activeModeSettings.elementsSelectable}
-        selectionOnDrag={activeModeSettings.selectionOnDrag}
+        nodesDraggable={false}
+        nodesConnectable={false}
+        elementsSelectable={false}
+        selectionOnDrag={false}
         fitView
       >
         <Background variant={BackgroundVariant.Lines} gap={16} size={1} />

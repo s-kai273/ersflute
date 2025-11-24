@@ -1,6 +1,6 @@
-import type { DiagramMode } from "../../../types/diagramMode";
+import type { DiagramMode } from "@/types/domain/diagramMode";
 
 export type ToolbarProps = {
-  activeMode: DiagramMode;
+  activeMode: DiagramMode | null;
   onModeChange: (mode: DiagramMode) => void;
 };

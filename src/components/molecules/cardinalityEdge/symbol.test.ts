@@ -1,4 +1,4 @@
-import { Cardinality } from "../../../types/table";
+import { Cardinality } from "../../../types/api/table";
 import { buildSymbols, cardinalityToSymbolPartKinds } from "./symbol";
 
 describe("cardinalityToSymbolPartKinds", () => {

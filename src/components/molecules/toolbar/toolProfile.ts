@@ -8,7 +8,7 @@ import {
   Square3Stack3DIcon,
   TableCellsIcon,
 } from "@heroicons/react/24/outline";
-import { DiagramMode } from "../../../types/diagramMode";
+import { DiagramMode } from "@/types/domain/diagramMode";
 
 export const toolProfiles = [
   {
