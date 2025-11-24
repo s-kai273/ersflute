@@ -88,7 +88,7 @@ export const ReadOnlyDiagram = () => {
           cardinality: CardinalityEdge,
         }}
         onNodesChange={onNodesChange}
-        nodesDraggable={false}
+        nodesDraggable={true}
         nodesConnectable={false}
         elementsSelectable={false}
         selectionOnDrag={false}
