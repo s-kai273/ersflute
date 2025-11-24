@@ -9,6 +9,7 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import { cn } from "@/lib/utils";
+import { useReadOnlyStore } from "@/stores/readOnlyStore";
 import { tables } from "@/test/testData";
 import { Table } from "@/types/api/table";
 import { parseColumnType } from "@/types/domain/columnType";
@@ -77,10 +78,24 @@ function createEdges(tables: Table[]): Edge[] {
     });
 }
 
+function getSettings(isReadOnly: boolean, activeMode: DiagramMode | null) {
+  if (isReadOnly || !activeMode) {
+    return {
+      cursorClass: "cursor-default",
+      nodesDraggable: true,
+      nodesConnectable: false,
+      elementsSelectable: false,
+      selectionOnDrag: false,
+    };
+  }
+  return modeSettings[activeMode];
+}
+
 export const DbDiagram = ({ activeMode }: DbDiagramProps) => {
+  const isReadOnly = useReadOnlyStore((s) => s.isReadOnly);
   const [nodes, _, onNodesChange] = useNodesState(createNodes(tables));
   const initialEdges = createEdges(tables);
-  const activeModeSettings = modeSettings[activeMode];
+  const settings = getSettings(isReadOnly, activeMode);
   const { addNodes, screenToFlowPosition } = useReactFlow();
   const handleClickInTableMode = createClickInTableModeHandler(
     addNodes,
@@ -88,6 +103,9 @@ export const DbDiagram = ({ activeMode }: DbDiagramProps) => {
   );
 
   const handlePaneClick = (event: React.MouseEvent) => {
+    if (isReadOnly) {
+      return () => {};
+    }
     switch (activeMode) {
       case DiagramMode.Table:
         handleClickInTableMode(event.clientX, event.clientY);
@@ -100,7 +118,7 @@ export const DbDiagram = ({ activeMode }: DbDiagramProps) => {
   return (
     <div className="relative flex h-full w-full">
       <ReactFlow
-        className={cn("flex-1", activeModeSettings.cursorClass)}
+        className={cn("flex-1", settings.cursorClass)}
         style={{ width: "100%", height: "100%" }}
         nodes={nodes}
         edges={initialEdges}
@@ -112,10 +130,10 @@ export const DbDiagram = ({ activeMode }: DbDiagramProps) => {
         }}
         onPaneClick={handlePaneClick}
         onNodesChange={onNodesChange}
-        nodesDraggable={activeModeSettings.nodesDraggable}
-        nodesConnectable={activeModeSettings.nodesConnectable}
-        elementsSelectable={activeModeSettings.elementsSelectable}
-        selectionOnDrag={activeModeSettings.selectionOnDrag}
+        nodesDraggable={settings.nodesDraggable}
+        nodesConnectable={settings.nodesConnectable}
+        elementsSelectable={settings.elementsSelectable}
+        selectionOnDrag={settings.selectionOnDrag}
         fitView
       >
         <Background variant={BackgroundVariant.Lines} gap={16} size={1} />

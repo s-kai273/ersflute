@@ -6,13 +6,12 @@ import { DiagramMode } from "@/types/domain/diagramMode";
 import type { DiagramMode as DiagramModeValue } from "@/types/domain/diagramMode";
 import { Toolbar } from "./components/molecules/toolbar";
 import { DbDiagram } from "./components/organisms/dbDiagram";
-import { ReadOnlyDiagram } from "./components/organisms/ReadOnlyDiagram";
 import { useReadOnlyStore } from "./stores/readOnlyStore";
 
 function App() {
   const isReadOnly = useReadOnlyStore((s) => s.isReadOnly);
-  const [activeMode, setActiveMode] = useState<DiagramModeValue>(
-    DiagramMode.Select,
+  const [activeMode, setActiveMode] = useState<DiagramModeValue | null>(
+    isReadOnly ? null : DiagramMode.Select,
   );
 
   return (
@@ -22,11 +21,7 @@ function App() {
       )}
       <main className="flex flex-1">
         <ReactFlowProvider>
-          {isReadOnly ? (
-            <ReadOnlyDiagram />
-          ) : (
-            <DbDiagram activeMode={activeMode} />
-          )}
+          <DbDiagram activeMode={activeMode} />
         </ReactFlowProvider>
       </main>
     </div>
