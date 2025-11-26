@@ -1,4 +1,4 @@
-import { DiagramMode } from "../../../types/diagramMode";
+import { DiagramMode } from "@/types/domain/diagramMode";
 
 type ModeSettings = {
   cursorClass: string;

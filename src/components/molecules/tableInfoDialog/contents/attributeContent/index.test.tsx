@@ -2,7 +2,7 @@ import { useState } from "react";
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { TableNodeData } from "@/components/molecules/tableNode/types";
-import { ColumnType } from "@/types/columnType";
+import { ColumnType } from "@/types/domain/columnType";
 import { AttributeContent } from ".";
 
 let latestAttributeListProps: any;

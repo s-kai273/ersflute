@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { useReadOnlyStore } from "@/stores/readOnlyStore";
 import { AttributeDetail } from "./detail";
 import { useAttributeContentHandlers } from "./handlers";
 import { AttributeList } from "./list";
 import { AttributeContentProps } from "./types";
 
 export function AttributeContent({ data, setData }: AttributeContentProps) {
+  const isReadOnly = useReadOnlyStore((s) => s.isReadOnly);
   const [attributeView, setAttributeView] = useState<"list" | "detail">("list");
   const [selectedColumnIndex, setSelectedColumnIndex] = useState<number | null>(
     null,
@@ -20,9 +22,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
 
   const selectedColumn = useMemo(
     () =>
-      selectedColumnIndex != null
-        ? columns[selectedColumnIndex]
-        : undefined,
+      selectedColumnIndex != null ? columns[selectedColumnIndex] : undefined,
     [columns, selectedColumnIndex],
   );
 
@@ -53,9 +53,10 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
           </label>
           <Input
             id="table-info-physical-name"
-            className="h-8 rounded border border-slate-300 px-2 text-sm shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
+            className="h-8 rounded px-2 text-sm"
             type="text"
             value={data.physicalName}
+            readOnly={isReadOnly}
             onChange={(event) =>
               setData({
                 ...data,
@@ -71,9 +72,10 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
           </label>
           <Input
             id="table-info-logical-name"
-            className="h-8 rounded border border-slate-300 px-2 text-sm shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
+            className="h-8 rounded px-2 text-sm"
             type="text"
             value={data.logicalName ?? ""}
+            readOnly={isReadOnly}
             onChange={(event) =>
               setData({
                 ...data,

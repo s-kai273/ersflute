@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/16/solid";
 import { Handle, Node, NodeProps, Position, useReactFlow } from "@xyflow/react";
-import { TableInfoDialog } from "../tableInfoDialog";
+import { TableInfoDialog } from "@/components/molecules/tableInfoDialog";
+import { cn } from "@/lib/utils";
+import { useReadOnlyStore } from "@/stores/readOnlyStore";
 import { formatColumnType } from "./format";
 import { TableNodeData } from "./types";
 
@@ -11,11 +13,15 @@ export function TableNode({
   height,
   data,
 }: NodeProps<Node<TableNodeData>>) {
+  const isReadOnly = useReadOnlyStore((s) => s.isReadOnly);
   const { setNodes } = useReactFlow();
   const [tableInfoDialogOpen, setTableInfoDialogOpen] = useState(false);
   return (
     <div
-      className="flex flex-col min-h-0 rounded-sm"
+      className={cn(
+        "flex flex-col min-h-0 rounded-sm",
+        isReadOnly && "nopan nodrag cursor-default",
+      )}
       style={{
         width,
         height,
@@ -26,7 +32,7 @@ export function TableNode({
         onDoubleClick={() => {
           setTableInfoDialogOpen(true);
         }}
-        className="flex items-center justify-center h-5"
+        className="flex items-center justify-center h-5 cursor-pointer"
       >
         <h1 className="text-sm">{data.physicalName}</h1>
       </div>

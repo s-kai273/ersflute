@@ -1,6 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ColumnType } from "@/types/columnType";
+import { ColumnType } from "@/types/domain/columnType";
 import { AttributeList } from ".";
 
 function getColumnRow(physicalName: string): HTMLTableRowElement {

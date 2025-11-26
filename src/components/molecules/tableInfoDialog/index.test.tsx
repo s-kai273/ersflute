@@ -1,9 +1,9 @@
 import type { ComponentProps } from "react";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { ColumnType } from "@/types/domain/columnType";
 import { TableInfoDialog } from ".";
 import type { TableNodeData } from "../tableNode/types";
-import { ColumnType } from "@/types/columnType";
 
 function createTableData(): TableNodeData {
   return {
@@ -28,12 +28,7 @@ function renderDialog(
 ) {
   const data = createTableData();
   return render(
-    <TableInfoDialog
-      open
-      onOpenChange={() => {}}
-      data={data}
-      {...overrides}
-    />,
+    <TableInfoDialog open onOpenChange={() => {}} data={data} {...overrides} />,
   );
 }
 
@@ -82,9 +77,8 @@ describe("TableInfoDialog", () => {
       name: "Column Details",
     });
 
-    const columnPhysicalNameInput = within(detailRegion).getByLabelText(
-      "Physical Name",
-    );
+    const columnPhysicalNameInput =
+      within(detailRegion).getByLabelText("Physical Name");
     await user.clear(columnPhysicalNameInput);
     await user.type(columnPhysicalNameInput, "LAST_NAME");
 

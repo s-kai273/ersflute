@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { ColumnType } from "@/types/columnType";
+import { ColumnType } from "@/types/domain/columnType";
 import { TableNode } from ".";
 import type { TableNodeData } from "./types";
 

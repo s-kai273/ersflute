@@ -1,4 +1,4 @@
-import { ColumnTypeConfigMap } from "@/types/columnType";
+import { ColumnTypeConfigMap } from "@/types/domain/columnType";
 import { Column } from "./types";
 
 export const formatColumnType = (column: Column) => {
