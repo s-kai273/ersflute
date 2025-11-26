@@ -169,7 +169,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                     primaryKey: checked === true,
                   })
                 }
-                className="pointer-events-none data-[state=checked]:border-blue-500"
+                className="data-[state=checked]:border-blue-500"
               />
             )}
             <span>Primary Key</span>
@@ -199,7 +199,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                     notNull: checked === true,
                   })
                 }
-                className="pointer-events-none data-[state=checked]:border-blue-500"
+                className="data-[state=checked]:border-blue-500"
               />
             )}
             <span>Not Null</span>
@@ -229,7 +229,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                     unique: checked === true,
                   })
                 }
-                className="pointer-events-none data-[state=checked]:border-blue-500"
+                className="data-[state=checked]:border-blue-500"
               />
             )}
             <span>Unique</span>
@@ -259,7 +259,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                     autoIncrement: checked === true,
                   })
                 }
-                className="pointer-events-none data-[state=checked]:border-blue-500"
+                className="data-[state=checked]:border-blue-500"
               />
             )}
             <span>Auto Increment</span>

@@ -74,7 +74,7 @@ export function AttributeList({
                           aria-label={`Column ${column.physicalName} is not null`}
                           checked={column.notNull}
                           tabIndex={-1}
-                          className="pointer-events-none data-[state=checked]:border-blue-500"
+                          className="data-[state=checked]:border-blue-500"
                         />
                       )}
                     </div>
@@ -93,7 +93,7 @@ export function AttributeList({
                           aria-label={`Column ${column.physicalName} is unique`}
                           checked={column.unique ?? false}
                           tabIndex={-1}
-                          className="pointer-events-none data-[state=checked]:border-blue-500"
+                          className="data-[state=checked]:border-blue-500"
                         />
                       )}
                     </div>
