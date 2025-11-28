@@ -1,5 +1,5 @@
 import type { ReactFlowInstance } from "@xyflow/react";
-import { TableNodeData } from "../../molecules/tableNode/types";
+import { type TableNodeData } from "../../molecules/tableNode/types";
 
 type AddNodes = ReactFlowInstance["addNodes"];
 type ScreenToFlowPosition = ReactFlowInstance["screenToFlowPosition"];

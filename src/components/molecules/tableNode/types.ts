@@ -1,4 +1,4 @@
-import { ColumnType } from "@/types/domain/columnType";
+import { type ColumnType } from "@/types/domain/columnType";
 
 type Color = {
   r: number;

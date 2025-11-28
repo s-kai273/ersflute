@@ -1,4 +1,4 @@
-import { Node } from "@xyflow/react";
+import { type Node } from "@xyflow/react";
 
 function getNodeCenter(node: Node) {
   const x = node.position.x + (node.measured?.width ?? node.width ?? 0) / 2;

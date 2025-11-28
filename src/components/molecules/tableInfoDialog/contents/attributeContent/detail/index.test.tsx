@@ -73,8 +73,8 @@ describe("AttributeDetail", () => {
     );
 
     const typeSelect = screen.getByLabelText("Type");
-    const lengthInput = screen.getByLabelText("Length") as HTMLInputElement;
-    const decimalInput = screen.getByLabelText("Decimal") as HTMLInputElement;
+    const lengthInput = screen.getByLabelText("Length");
+    const decimalInput = screen.getByLabelText("Decimal");
     const unsignedCheckbox = screen.getByLabelText("Unsigned");
 
     expect(lengthInput).toBeEnabled();
@@ -123,7 +123,7 @@ describe("AttributeDetail", () => {
 
     const enumArgsInput = screen.getByLabelText(
       "Args of enum/set Type",
-    ) as HTMLInputElement;
+    );
     const typeSelect = screen.getByLabelText("Type");
 
     expect(enumArgsInput).toBeEnabled();

@@ -11,7 +11,7 @@ import {
   ColumnTypeConfigMap,
   parseColumnType,
 } from "@/types/domain/columnType";
-import { AttributeDetailProps } from "./types";
+import { type AttributeDetailProps } from "./types";
 
 const COLUMN_TYPE_LIST: ColumnType[] = [
   ColumnType.BigInt,

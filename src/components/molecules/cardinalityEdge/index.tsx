@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import {
   BaseEdge,
-  Edge,
-  EdgeProps,
+  type Edge,
+  type EdgeProps,
   getStraightPath,
   useStore,
 } from "@xyflow/react";
@@ -12,7 +12,7 @@ import {
   buildSymbols as buildSymbolSpec,
   cardinalityToSymbolPartKinds,
 } from "./symbol";
-import { CardinalityEdgeData } from "./types";
+import { type CardinalityEdgeData } from "./types";
 
 export function CardinalityEdge({
   id,

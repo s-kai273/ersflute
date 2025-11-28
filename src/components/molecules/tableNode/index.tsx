@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/16/solid";
-import { Handle, Node, NodeProps, Position, useReactFlow } from "@xyflow/react";
+import { Handle, type Node, type NodeProps, Position, useReactFlow } from "@xyflow/react";
 import { TableInfoDialog } from "@/components/molecules/tableInfoDialog";
 import { cn } from "@/lib/utils";
 import { useReadOnlyStore } from "@/stores/readOnlyStore";
 import { formatColumnType } from "./format";
-import { TableNodeData } from "./types";
+import { type TableNodeData } from "./types";
 
 export function TableNode({
   id,

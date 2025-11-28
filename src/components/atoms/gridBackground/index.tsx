@@ -1,6 +1,6 @@
 import { useId } from "react";
 import { cn } from "@/lib/utils";
-import { GridBackgroundProps } from "./type";
+import { type GridBackgroundProps } from "./type";
 
 export function GridBackground({ className, ...props }: GridBackgroundProps) {
   const uid = useId();

@@ -8,9 +8,9 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Column, TableNodeData } from "../tableNode/types";
+import { type Column, type TableNodeData } from "../tableNode/types";
 import { AttributeContent } from "./contents/attributeContent";
-import { TableInfoDialogProps } from "./types";
+import { type TableInfoDialogProps } from "./types";
 
 export function TableInfoDialog({
   data,

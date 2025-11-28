@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { useReadOnlyStore } from "@/stores/readOnlyStore";
-import { AttributeListProps } from "./types";
+import { type AttributeListProps } from "./types";
 
 export function AttributeList({
   columns,
