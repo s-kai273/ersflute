@@ -1,4 +1,4 @@
-import { TableNodeData } from "@/components/molecules/tableNode/types";
+import { type TableNodeData } from "@/components/molecules/tableNode/types";
 
 export type AttributeContentProps = {
   data: TableNodeData;

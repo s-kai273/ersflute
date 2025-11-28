@@ -4,7 +4,7 @@ import { useReadOnlyStore } from "@/stores/readOnlyStore";
 import { AttributeDetail } from "./detail";
 import { useAttributeContentHandlers } from "./handlers";
 import { AttributeList } from "./list";
-import { AttributeContentProps } from "./types";
+import { type AttributeContentProps } from "./types";
 
 export function AttributeContent({ data, setData }: AttributeContentProps) {
   const isReadOnly = useReadOnlyStore((s) => s.isReadOnly);

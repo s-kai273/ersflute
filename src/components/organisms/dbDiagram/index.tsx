@@ -2,25 +2,28 @@ import "@xyflow/react/dist/style.css";
 import {
   Background,
   BackgroundVariant,
-  Edge,
-  Node,
   ReactFlow,
   useNodesState,
   useReactFlow,
+  type Edge,
+  type Node,
 } from "@xyflow/react";
 import { cn } from "@/lib/utils";
 import { useReadOnlyStore } from "@/stores/readOnlyStore";
 import { tables } from "@/test/testData";
-import { Table } from "@/types/api/table";
+import { type Table } from "@/types/api/table";
 import { parseColumnType } from "@/types/domain/columnType";
 import { DiagramMode } from "@/types/domain/diagramMode";
 import { CardinalityEdge } from "../../molecules/cardinalityEdge";
-import { CardinalityEdgeData } from "../../molecules/cardinalityEdge/types";
+import { type CardinalityEdgeData } from "../../molecules/cardinalityEdge/types";
 import { TableNode } from "../../molecules/tableNode";
-import { Column, TableNodeData } from "../../molecules/tableNode/types";
+import {
+  type Column,
+  type TableNodeData,
+} from "../../molecules/tableNode/types";
 import { createClickInTableModeHandler } from "./handlers";
 import { modeSettings } from "./modeSettings";
-import { DbDiagramProps } from "./types";
+import { type DbDiagramProps } from "./types";
 
 function createNodes(tables: Table[]): Node[] {
   return tables.map((table) => {
@@ -60,7 +63,7 @@ function createNodes(tables: Table[]): Node[] {
 
 function createEdges(tables: Table[]): Edge[] {
   return tables
-    .filter((table) => !!table.connections && !!table.connections!.relationship)
+    .filter((table) => !!table.connections && !!table.connections.relationship)
     .flatMap((table) => table.connections!.relationship!)
     .map((relationship) => {
       const source = relationship.source;
