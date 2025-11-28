@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "test": "jest",
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "eslint src",
     "prepare": "husky"
   },
   "dependencies": {
