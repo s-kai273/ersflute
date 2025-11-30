@@ -19,8 +19,8 @@ import { CardinalityEdge } from "../cardinalityEdge";
 import { TableNode } from "../tableNode";
 import { createClickInTableModeHandler } from "./handlers";
 
-function getSettings(isReadOnly: boolean, activeMode: DiagramMode | null) {
-  if (isReadOnly || !activeMode) {
+function getSettings(isReadOnly: boolean, diagramMode: DiagramMode | null) {
+  if (isReadOnly || !diagramMode) {
     return {
       cursorClass: "cursor-default",
       nodesDraggable: true,
@@ -29,15 +29,14 @@ function getSettings(isReadOnly: boolean, activeMode: DiagramMode | null) {
       selectionOnDrag: false,
     };
   }
-  return modeSettings[activeMode];
+  return modeSettings[diagramMode];
 }
 
 export const Internal = () => {
-  const isReadOnly = useViewModeStore((s) => s.isReadOnly);
-  const activeMode = useViewModeStore((s) => s.diagramMode);
+  const { isReadOnly, diagramMode } = useViewModeStore();
   const [nodes, _, onNodesChange] = useNodesState(createNodes(tables));
   const initialEdges = createEdges(tables);
-  const settings = getSettings(isReadOnly, activeMode);
+  const settings = getSettings(isReadOnly, diagramMode);
   const { addNodes, screenToFlowPosition } = useReactFlow();
   const handleClickInTableMode = createClickInTableModeHandler(
     addNodes,
@@ -48,7 +47,7 @@ export const Internal = () => {
     if (isReadOnly) {
       return () => {};
     }
-    switch (activeMode) {
+    switch (diagramMode) {
       case DiagramMode.Table:
         handleClickInTableMode(event.clientX, event.clientY);
         break;

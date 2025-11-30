@@ -74,7 +74,7 @@ const initialColumn = {
 };
 
 export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
-  const isReadOnly = useViewModeStore((s) => s.isReadOnly);
+  const { isReadOnly } = useViewModeStore();
   const [currentColumn, setCurrentColumn] = useState<Column>(
     column ? column : initialColumn,
   );

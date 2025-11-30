@@ -7,7 +7,7 @@ import { AttributeList } from "./list";
 import { type AttributeContentProps } from "./types";
 
 export function AttributeContent({ data, setData }: AttributeContentProps) {
-  const isReadOnly = useViewModeStore((s) => s.isReadOnly);
+  const { isReadOnly } = useViewModeStore();
   const [attributeView, setAttributeView] = useState<"list" | "detail">("list");
   const [selectedColumnIndex, setSelectedColumnIndex] = useState<number | null>(
     null,

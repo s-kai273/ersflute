@@ -15,7 +15,7 @@ export function AttributeList({
   onEditColumn,
   onDeleteColumn,
 }: AttributeListProps) {
-  const isReadOnly = useViewModeStore((s) => s.isReadOnly);
+  const { isReadOnly } = useViewModeStore();
   return (
     <section className="rounded-md border border-slate-200 bg-white px-4 py-3 text-sm">
       <div className="h-[150px] overflow-y-auto rounded border border-slate-200">
