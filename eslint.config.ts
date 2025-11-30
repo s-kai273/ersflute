@@ -21,6 +21,7 @@ export default defineConfig([
         "warn",
         { prefer: "type-imports", fixStyle: "inline-type-imports" },
       ],
+      "@typescript-eslint/unbound-method": "off",
     },
   },
 ]);
