@@ -1,5 +1,5 @@
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/16/solid";
-import { formatColumnType } from "@/features/dbdiagram/services/formatColumnType";
+import { formatColumnType } from "@/features/dbDiagram/services/formatColumnType";
 import { cn } from "@/lib/utils";
 import { useViewModeStore } from "@/stores/viewModeStore";
 import type { TableCardProps } from "./types";

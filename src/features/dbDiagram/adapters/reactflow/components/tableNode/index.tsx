@@ -6,8 +6,8 @@ import {
   type Node,
   type NodeProps,
 } from "@xyflow/react";
-import { TableCard } from "@/features/dbdiagram/components/tableCard";
-import { TableInfoDialog } from "@/features/dbdiagram/components/tableInfoDialog";
+import { TableCard } from "@/features/dbDiagram/components/tableCard";
+import { TableInfoDialog } from "@/features/dbDiagram/components/tableInfoDialog";
 import type { TableNodeData } from "@/types/domain/tableNodeData";
 
 export function TableNode({

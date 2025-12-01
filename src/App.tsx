@@ -1,4 +1,4 @@
-import { DbDiagram } from "@/features/dbdiagram";
+import { DbDiagram } from "@/features/dbDiagram";
 import { Toolbar } from "@/features/toolbar";
 import "./App.css";
 

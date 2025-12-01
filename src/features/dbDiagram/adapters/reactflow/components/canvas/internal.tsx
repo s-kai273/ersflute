@@ -9,8 +9,8 @@ import {
 import {
   createEdges,
   createNodes,
-} from "@/features/dbdiagram/adapters/reactflow/mapping";
-import { modeSettings } from "@/features/dbdiagram/adapters/reactflow/modeSettings";
+} from "@/features/dbDiagram/adapters/reactflow/mapping";
+import { modeSettings } from "@/features/dbDiagram/adapters/reactflow/modeSettings";
 import { cn } from "@/lib/utils";
 import { useViewModeStore } from "@/stores/viewModeStore";
 import { tables } from "@/test/testData";
