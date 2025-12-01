@@ -1,11 +1,8 @@
 import { type Edge, type Node } from "@xyflow/react";
-import { type CardinalityEdgeData } from "@/components/molecules/cardinalityEdge/types";
-import {
-  type Column,
-  type TableNodeData,
-} from "@/components/molecules/tableNode/types";
 import { type Table } from "@/types/api/table";
 import { parseColumnType } from "@/types/domain/columnType";
+import { type Column, type TableNodeData } from "@/types/domain/tableNodeData";
+import { type CardinalityEdgeData } from "./components/cardinalityEdge/types";
 
 export function createNodes(tables: Table[]): Node[] {
   return tables.map((table) => {

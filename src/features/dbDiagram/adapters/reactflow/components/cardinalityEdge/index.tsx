@@ -8,10 +8,7 @@ import {
 } from "@xyflow/react";
 import { Cardinality } from "@/types/api/table";
 import { getEdgeParams } from "./edgeParams";
-import {
-  buildSymbols as buildSymbolSpec,
-  cardinalityToSymbolPartKinds,
-} from "./symbol";
+import { buildSymbols, cardinalityToSymbolPartKinds } from "./symbol";
 import { type CardinalityEdgeData } from "./types";
 
 export function CardinalityEdge({
@@ -70,12 +67,16 @@ export function CardinalityEdge({
 
   const strokeColor =
     (style && typeof style.stroke === "string" ? style.stroke : undefined) ??
-    "#111";
+    "var(--xy-edge-stroke, var(--xy-edge-stroke-default))";
+  const strokeWidth =
+    style && typeof style.strokeWidth === "number"
+      ? style.strokeWidth
+      : undefined;
 
   const parentCardinality = data?.parentCardinality ?? Cardinality.One;
   const childCardinality = data?.childCardinality ?? Cardinality.One;
 
-  const sourceSymbols = buildSymbolSpec(
+  const sourceSymbols = buildSymbols(
     sx,
     sy,
     dirX,
@@ -84,9 +85,10 @@ export function CardinalityEdge({
     "source",
     length,
     strokeColor,
+    strokeWidth,
   );
 
-  const targetSymbols = buildSymbolSpec(
+  const targetSymbols = buildSymbols(
     tx,
     ty,
     -dirX,
@@ -95,20 +97,20 @@ export function CardinalityEdge({
     "target",
     length,
     strokeColor,
+    strokeWidth,
   );
 
-  const pathWithSymbols = `${straightPath}${sourceSymbols.path}${targetSymbols.path}`;
-  const extraElements = [...sourceSymbols.elements, ...targetSymbols.elements];
+  const symbols = [...sourceSymbols, ...targetSymbols];
 
   return (
     <>
       <BaseEdge
         id={id}
-        path={pathWithSymbols}
+        path={straightPath}
         style={style}
         markerEnd={markerEnd}
       />
-      {extraElements}
+      {symbols}
     </>
   );
 }

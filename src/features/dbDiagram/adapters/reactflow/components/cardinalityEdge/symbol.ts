@@ -12,11 +12,6 @@ const ADJACENT_SPACING = 2;
 
 type SymbolPartKind = "line" | "circle" | "crowfoot";
 
-type SymbolSpec = {
-  path: string;
-  elements: ReactElement[];
-};
-
 export const cardinalityToSymbolPartKinds = (
   value: Cardinality,
 ): SymbolPartKind[] => {
@@ -41,11 +36,12 @@ export function buildSymbols(
   keyPrefix: string,
   pathLength: number,
   strokeColor: string,
-): SymbolSpec {
-  const result: SymbolSpec = { path: "", elements: [] };
+  strokeWidth?: number,
+): ReactElement[] {
+  const symbols: ReactElement[] = [];
 
   if (!symbolPartKinds.length) {
-    return result;
+    return symbols;
   }
 
   const maxReach = Math.max(0, pathLength / 2 - 2);
@@ -62,7 +58,7 @@ export function buildSymbols(
   const startOffset = Math.min(DEFAULT_OFFSET, maxReach - totalSpan);
 
   if (!Number.isFinite(startOffset) || startOffset <= 0) {
-    return result;
+    return symbols;
   }
 
   const perpX = -dirY;
@@ -82,11 +78,19 @@ export function buildSymbols(
         const startY = centerY + perpY * halfLine;
         const endX = centerX - perpX * halfLine;
         const endY = centerY - perpY * halfLine;
-        result.path += ` M ${startX} ${startY} L ${endX} ${endY}`;
+        symbols.push(
+          createElement("path", {
+            key: `${keyPrefix}-line-${index}`,
+            d: `M ${startX} ${startY} L ${endX} ${endY}`,
+            stroke: strokeColor,
+            strokeWidth,
+            fill: "none",
+          }),
+        );
         break;
       }
       case "circle": {
-        result.elements.push(
+        symbols.push(
           createElement("circle", {
             key: `${keyPrefix}-circle-${index}`,
             cx: centerX,
@@ -107,7 +111,16 @@ export function buildSymbols(
         const leftY = baseY + perpY * halfSpread;
         const rightX = baseX - perpX * halfSpread;
         const rightY = baseY - perpY * halfSpread;
-        result.path += ` M ${leftX} ${leftY} L ${tipX} ${tipY} L ${rightX} ${rightY}`;
+        symbols.push(
+          createElement("path", {
+            key: `${keyPrefix}-crowfoot-${index}`,
+            d: `M ${leftX} ${leftY} L ${tipX} ${tipY} L ${rightX} ${rightY}`,
+            stroke: strokeColor,
+            strokeWidth,
+            fill: "none",
+            strokeLinejoin: "round",
+          }),
+        );
         break;
       }
     }
@@ -121,7 +134,7 @@ export function buildSymbols(
     }
   });
 
-  return result;
+  return symbols;
 }
 
 function shouldUseAdjacentSpacing(
