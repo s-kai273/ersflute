@@ -49,7 +49,7 @@ type NormalColumn = {
 };
 
 type Columns = {
-  normalColumn: NormalColumn[];
+  normalColumns: NormalColumn[];
 };
 
 export type Table = {

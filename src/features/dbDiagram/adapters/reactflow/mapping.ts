@@ -22,7 +22,7 @@ export function createNodes(tables: Table[]): Node[] {
           b: table.color.b,
         },
         physicalName: table.physicalName,
-        columns: table.columns?.normalColumn.map((column) => {
+        columns: table.columns?.normalColumns.map((column) => {
           return {
             physicalName: column.physicalName,
             logicalName: column.logicalName,

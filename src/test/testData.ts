@@ -17,7 +17,7 @@ export const tables: Table[] = [
       b: 192,
     },
     columns: {
-      normalColumn: [
+      normalColumns: [
         {
           physicalName: "MEMBER_ID",
           logicalName: "会員ID",
@@ -79,7 +79,7 @@ export const tables: Table[] = [
       ],
     },
     columns: {
-      normalColumn: [
+      normalColumns: [
         {
           physicalName: "MEMBER_PROFILE_ID",
           logicalName: "会員プロフィールID",
