@@ -58,7 +58,7 @@ export const tables: Table[] = [
       b: 192,
     },
     connections: {
-      relationship: [
+      relationships: [
         {
           name: "FK_MEMBER_PROFILES_MEMBERS",
           source: "table.MEMBERS",

@@ -1,19 +1,22 @@
 import "@xyflow/react/dist/style.css";
+import { useEffect } from "react";
 import {
   Background,
   BackgroundVariant,
   ReactFlow,
+  useEdgesState,
   useNodesState,
   useReactFlow,
 } from "@xyflow/react";
+import { loadDiagram } from "@/api/diagram";
 import {
   createEdges,
   createNodes,
 } from "@/features/dbDiagram/adapters/reactflow/mapping";
 import { modeSettings } from "@/features/dbDiagram/adapters/reactflow/modeSettings";
 import { cn } from "@/lib/utils";
+import { useDiagramStore } from "@/stores/diagramStore";
 import { useViewModeStore } from "@/stores/viewModeStore";
-import { tables } from "@/test/testData";
 import { DiagramMode } from "@/types/domain/diagramMode";
 import { CardinalityEdge } from "../cardinalityEdge";
 import { TableNode } from "../tableNode";
@@ -34,10 +37,24 @@ function getSettings(isReadOnly: boolean, diagramMode: DiagramMode | null) {
 
 export const Internal = () => {
   const { isReadOnly, diagramMode } = useViewModeStore();
-  const [nodes, _, onNodesChange] = useNodesState(createNodes(tables));
-  const initialEdges = createEdges(tables);
+  const { tables, setDiagram } = useDiagramStore();
+  const [nodes, setNodes, onNodesChange] = useNodesState(createNodes(tables));
+  const [edges, setEdges] = useEdgesState(createEdges(tables));
   const settings = getSettings(isReadOnly, diagramMode);
   const { addNodes, screenToFlowPosition } = useReactFlow();
+  useEffect(() => {
+    try {
+      loadDiagram(
+        "/home/skai273/Workspaces/ersflute/src-tauri/crates/erm/tests/fixtures/testerd.erm",
+      ).then((diagram) => {
+        setNodes(createNodes(diagram.diagramWalkers.tables));
+        setEdges(createEdges(diagram.diagramWalkers.tables));
+        setDiagram(diagram);
+      });
+    } catch (e) {
+      console.error("Failed to load diagram:", e);
+    }
+  }, []);
   const handleClickInTableMode = createClickInTableModeHandler(
     addNodes,
     screenToFlowPosition,
@@ -62,7 +79,7 @@ export const Internal = () => {
         className={cn("flex-1", settings.cursorClass)}
         style={{ width: "100%", height: "100%" }}
         nodes={nodes}
-        edges={initialEdges}
+        edges={edges}
         nodeTypes={{
           table: TableNode,
         }}

@@ -42,8 +42,8 @@ export function createNodes(tables: Table[]): Node[] {
 
 export function createEdges(tables: Table[]): Edge[] {
   return tables
-    .filter((table) => !!table.connections && !!table.connections.relationship)
-    .flatMap((table) => table.connections!.relationship!)
+    .filter((table) => !!table.connections && !!table.connections.relationships)
+    .flatMap((table) => table.connections!.relationships!)
     .map((relationship) => {
       const source = relationship.source;
       const target = relationship.target;

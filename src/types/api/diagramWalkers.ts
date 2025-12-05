@@ -34,7 +34,7 @@ type Relationship = {
 };
 
 type Connections = {
-  relationship?: Relationship[];
+  relationships?: Relationship[];
 };
 
 type NormalColumn = {
