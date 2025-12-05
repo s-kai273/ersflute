@@ -1,4 +1,4 @@
-import type { Cardinality } from "@/types/api/table";
+import type { Cardinality } from "@/types/api/diagramWalkers";
 
 export type CardinalityEdgeData = {
   parentCardinality: Cardinality;

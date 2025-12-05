@@ -1,5 +1,5 @@
 import { type Edge, type Node } from "@xyflow/react";
-import { type Table } from "@/types/api/table";
+import { type Table } from "@/types/api/diagramWalkers";
 import { parseColumnType } from "@/types/domain/columnType";
 import { type Column, type TableNodeData } from "@/types/domain/tableNodeData";
 import { type CardinalityEdgeData } from "./components/cardinalityEdge/types";

@@ -66,3 +66,7 @@ export type Table = {
   connections?: Connections;
   columns?: Columns;
 };
+
+export type DiagramWalkers = {
+  tables: Table[];
+};

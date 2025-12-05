@@ -6,7 +6,7 @@ import {
   type Edge,
   type EdgeProps,
 } from "@xyflow/react";
-import { Cardinality } from "@/types/api/table";
+import { Cardinality } from "@/types/api/diagramWalkers";
 import { getEdgeParams } from "./edgeParams";
 import { buildSymbols, cardinalityToSymbolPartKinds } from "./symbol";
 import { type CardinalityEdgeData } from "./types";
