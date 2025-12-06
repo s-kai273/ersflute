@@ -1,4 +1,5 @@
-import { Cardinality, type TableResponse } from "../types/api/diagramWalkers";
+import { Cardinality } from "@/types/domain/relationship";
+import { type TableResponse } from "../types/api/diagramWalkers";
 
 export const tables: TableResponse[] = [
   {

@@ -25,6 +25,10 @@ export type Column = {
 
 export type Table = {
   color: Color;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
   physicalName: string;
   logicalName?: string;
   columns?: Column[];
