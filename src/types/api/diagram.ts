@@ -1,5 +1,5 @@
-import type { DiagramWalkers } from "./diagramWalkers";
+import type { DiagramWalkersResponse } from "./diagramWalkers";
 
-export type Diagram = {
-  diagramWalkers: DiagramWalkers;
+export type DiagramResponse = {
+  diagramWalkers: DiagramWalkersResponse;
 };

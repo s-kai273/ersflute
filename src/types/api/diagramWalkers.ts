@@ -52,7 +52,7 @@ type Columns = {
   normalColumns: NormalColumn[];
 };
 
-export type Table = {
+export type TableResponse = {
   physicalName: string;
   logicalName: string;
   description: string;
@@ -67,6 +67,6 @@ export type Table = {
   columns?: Columns;
 };
 
-export type DiagramWalkers = {
-  tables: Table[];
+export type DiagramWalkersResponse = {
+  tables: TableResponse[];
 };

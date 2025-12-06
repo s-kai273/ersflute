@@ -10,7 +10,7 @@ import {
   ColumnTypeConfigMap,
   parseColumnType,
 } from "@/types/domain/columnType";
-import type { Column } from "@/types/domain/tableNodeData";
+import type { Column } from "@/types/domain/table";
 import { type AttributeDetailProps } from "./types";
 
 const COLUMN_TYPE_LIST: ColumnType[] = [

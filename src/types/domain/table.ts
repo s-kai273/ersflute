@@ -23,7 +23,7 @@ export type Column = {
   defaultValue?: string;
 };
 
-export type TableNodeData = {
+export type Table = {
   color: Color;
   physicalName: string;
   logicalName?: string;

@@ -1,14 +1,14 @@
 import { create } from "zustand";
-import type { Diagram } from "@/types/api/diagram";
-import type { Table } from "@/types/api/diagramWalkers";
+import type { DiagramResponse } from "@/types/api/diagram";
+import type { TableResponse } from "@/types/api/diagramWalkers";
 
 type DiagramStore = {
-  tables: Table[];
-  setDiagram: (diagram: Diagram) => void;
+  tables: TableResponse[];
+  setDiagram: (diagram: DiagramResponse) => void;
 };
 
 export const useDiagramStore = create<DiagramStore>((set) => ({
   tables: [],
-  setDiagram: (diagram: Diagram) =>
+  setDiagram: (diagram: DiagramResponse) =>
     set({ tables: diagram.diagramWalkers.tables }),
 }));

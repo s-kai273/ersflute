@@ -1,10 +1,10 @@
 import { type Edge, type Node } from "@xyflow/react";
-import { type Table } from "@/types/api/diagramWalkers";
+import { type TableResponse } from "@/types/api/diagramWalkers";
 import { parseColumnType } from "@/types/domain/columnType";
-import { type Column, type TableNodeData } from "@/types/domain/tableNodeData";
+import { type Column, type Table } from "@/types/domain/table";
 import { type CardinalityEdgeData } from "./components/cardinalityEdge/types";
 
-export function createNodes(tables: Table[]): Node[] {
+export function createNodes(tables: TableResponse[]): Node[] {
   return tables.map((table) => {
     return {
       id: `table.${table.physicalName}`,
@@ -35,12 +35,12 @@ export function createNodes(tables: Table[]): Node[] {
             referredColumn: column.referredColumn,
           } satisfies Column;
         }),
-      } satisfies TableNodeData,
+      } satisfies Table,
     } satisfies Node;
   });
 }
 
-export function createEdges(tables: Table[]): Edge[] {
+export function createEdges(tables: TableResponse[]): Edge[] {
   return tables
     .filter((table) => !!table.connections && !!table.connections.relationships)
     .flatMap((table) => table.connections!.relationships!)

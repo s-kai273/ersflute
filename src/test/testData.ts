@@ -1,6 +1,6 @@
-import { Cardinality, type Table } from "../types/api/diagramWalkers";
+import { Cardinality, type TableResponse } from "../types/api/diagramWalkers";
 
-export const tables: Table[] = [
+export const tables: TableResponse[] = [
   {
     physicalName: "MEMBERS",
     logicalName: "会員",

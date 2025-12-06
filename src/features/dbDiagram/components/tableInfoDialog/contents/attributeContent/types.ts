@@ -1,8 +1,6 @@
-import type { TableNodeData } from "@/types/domain/tableNodeData";
+import type { Table } from "@/types/domain/table";
 
 export type AttributeContentProps = {
-  data: TableNodeData;
-  setData: (
-    data: TableNodeData | ((data: TableNodeData) => TableNodeData),
-  ) => void;
+  data: Table;
+  setData: (data: Table | ((data: Table) => Table)) => void;
 };

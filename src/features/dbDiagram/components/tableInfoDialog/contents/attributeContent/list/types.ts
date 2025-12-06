@@ -1,4 +1,4 @@
-import type { Column } from "@/types/domain/tableNodeData";
+import type { Column } from "@/types/domain/table";
 
 export type AttributeListProps = {
   columns: Column[];

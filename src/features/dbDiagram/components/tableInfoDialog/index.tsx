@@ -8,7 +8,7 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { type Column, type TableNodeData } from "@/types/domain/tableNodeData";
+import { type Column, type Table } from "@/types/domain/table";
 import { AttributeContent } from "./contents/attributeContent";
 import { type TableInfoDialogProps } from "./types";
 
@@ -19,7 +19,7 @@ export function TableInfoDialog({
   ...props
 }: TableInfoDialogProps) {
   const { open, onOpenChange, ...dialogProps } = props;
-  const [tableData, setTableData] = useState<TableNodeData>(data);
+  const [tableData, setTableData] = useState<Table>(data);
   const [description, setDescription] = useState("");
 
   useEffect(() => {
