@@ -1,6 +1,6 @@
 import { DbDiagram } from "@/features/dbDiagram";
 import { Toolbar } from "@/features/toolbar";
-import "./App.css";
+import "./index.css";
 
 function App() {
   return (
