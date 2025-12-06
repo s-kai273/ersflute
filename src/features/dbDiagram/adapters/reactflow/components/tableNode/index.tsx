@@ -8,14 +8,9 @@ import {
 } from "@xyflow/react";
 import { TableCard } from "@/features/dbDiagram/components/tableCard";
 import { TableInfoDialog } from "@/features/dbDiagram/components/tableInfoDialog";
-import type { TableNodeData } from "@/types/domain/tableNodeData";
+import type { Table } from "@/types/domain/table";
 
-export function TableNode({
-  id,
-  width,
-  height,
-  data,
-}: NodeProps<Node<TableNodeData>>) {
+export function TableNode({ id, width, height, data }: NodeProps<Node<Table>>) {
   const { setNodes } = useReactFlow();
   const [tableInfoDialogOpen, setTableInfoDialogOpen] = useState(false);
   return (

@@ -1,6 +1,7 @@
-import { Cardinality, type Table } from "../types/api/table";
+import { Cardinality } from "@/types/domain/relationship";
+import { type TableResponse } from "../types/api/diagramWalkers";
 
-export const tables: Table[] = [
+export const tables: TableResponse[] = [
   {
     physicalName: "MEMBERS",
     logicalName: "会員",
@@ -17,7 +18,7 @@ export const tables: Table[] = [
       b: 192,
     },
     columns: {
-      normalColumn: [
+      normalColumns: [
         {
           physicalName: "MEMBER_ID",
           logicalName: "会員ID",
@@ -58,7 +59,7 @@ export const tables: Table[] = [
       b: 192,
     },
     connections: {
-      relationship: [
+      relationships: [
         {
           name: "FK_MEMBER_PROFILES_MEMBERS",
           source: "table.MEMBERS",
@@ -79,7 +80,7 @@ export const tables: Table[] = [
       ],
     },
     columns: {
-      normalColumn: [
+      normalColumns: [
         {
           physicalName: "MEMBER_PROFILE_ID",
           logicalName: "会員プロフィールID",

@@ -1,11 +1,4 @@
-export const Cardinality = {
-  One: "1",
-  ZeroOne: "0..1",
-  OneN: "1..n",
-  ZeroN: "0..n",
-} as const;
-
-export type Cardinality = (typeof Cardinality)[keyof typeof Cardinality];
+import type { Cardinality } from "../domain/relationship";
 
 export type Color = {
   r: number;
@@ -34,7 +27,7 @@ type Relationship = {
 };
 
 type Connections = {
-  relationship?: Relationship[];
+  relationships?: Relationship[];
 };
 
 type NormalColumn = {
@@ -49,10 +42,10 @@ type NormalColumn = {
 };
 
 type Columns = {
-  normalColumn: NormalColumn[];
+  normalColumns?: NormalColumn[];
 };
 
-export type Table = {
+export type TableResponse = {
   physicalName: string;
   logicalName: string;
   description: string;
@@ -63,6 +56,10 @@ export type Table = {
   x: number;
   y: number;
   color: Color;
-  connections?: Connections;
-  columns?: Columns;
+  connections: Connections;
+  columns: Columns;
+};
+
+export type DiagramWalkersResponse = {
+  tables: TableResponse[];
 };

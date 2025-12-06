@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import type { ReactElement } from "react";
-import { Cardinality } from "@/types/api/table";
+import { Cardinality } from "@/types/domain/relationship";
 
 const DEFAULT_OFFSET = 16;
 const SYMBOL_SPACING = 6;

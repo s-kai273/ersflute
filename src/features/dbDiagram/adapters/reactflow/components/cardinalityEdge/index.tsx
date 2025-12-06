@@ -6,10 +6,9 @@ import {
   type Edge,
   type EdgeProps,
 } from "@xyflow/react";
-import { Cardinality } from "@/types/api/table";
+import { Cardinality, type Relationship } from "@/types/domain/relationship";
 import { getEdgeParams } from "./edgeParams";
 import { buildSymbols, cardinalityToSymbolPartKinds } from "./symbol";
-import { type CardinalityEdgeData } from "./types";
 
 export function CardinalityEdge({
   id,
@@ -18,7 +17,7 @@ export function CardinalityEdge({
   data,
   markerEnd,
   style,
-}: EdgeProps<Edge<CardinalityEdgeData>>) {
+}: EdgeProps<Edge<Relationship>>) {
   const sourceNode = useStore((s) => s.nodeLookup.get(source));
   const targetNode = useStore((s) => s.nodeLookup.get(target));
   if (!sourceNode || !targetNode) {

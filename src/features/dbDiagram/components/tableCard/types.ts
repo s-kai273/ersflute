@@ -1,9 +1,9 @@
 import type { ComponentProps } from "react";
-import type { TableNodeData } from "@/types/domain/tableNodeData";
+import type { Table } from "@/types/domain/table";
 
 export type TableCardProps = ComponentProps<"div"> & {
   width?: number;
   height?: number;
-  data: TableNodeData;
+  data: Table;
   onHeaderDoubleClick?: (event: React.MouseEvent) => void;
 };

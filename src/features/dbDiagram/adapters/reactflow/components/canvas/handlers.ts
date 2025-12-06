@@ -1,5 +1,5 @@
 import type { ReactFlowInstance } from "@xyflow/react";
-import type { TableNodeData } from "@/types/domain/tableNodeData";
+import type { Table } from "@/types/domain/table";
 
 type AddNodes = ReactFlowInstance["addNodes"];
 type ScreenToFlowPosition = ReactFlowInstance["screenToFlowPosition"];
@@ -27,7 +27,7 @@ export function createClickInTableModeHandler(
         },
         physicalName: defaultTableName,
         logicalName: defaultTableName,
-      } satisfies TableNodeData,
+      } satisfies Table,
     });
   };
 }

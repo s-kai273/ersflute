@@ -15,7 +15,7 @@ fn test_read_erm_file() {
                 database: "MySQL".to_string()
             },
             diagram_walkers: DiagramWalkers {
-                table: vec![
+                tables: vec![
                     Table {
                         physical_name: "MEMBERS".to_string(),
                         logical_name: "会員".to_string(),
@@ -35,7 +35,7 @@ fn test_read_erm_file() {
                             relationship: vec![]
                         },
                         columns: Columns {
-                            normal_column: vec![
+                            normal_columns: vec![
                                 NormalColumn {
                                     physical_name: "MEMBER_ID".to_string(),
                                     logical_name: "会員ID".to_string(),
@@ -96,7 +96,7 @@ fn test_read_erm_file() {
                             }]
                         },
                         columns: Columns {
-                            normal_column: vec![
+                            normal_columns: vec![
                                 NormalColumn {
                                     physical_name: "MEMBER_PROFILE_ID".to_string(),
                                     logical_name: "会員プロフィールID".to_string(),
