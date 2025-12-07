@@ -25,3 +25,4 @@ serde_json = "1"
 erm = { path = "../crates/erm" }
 tauri-plugin-process = "2.3.1"
 tauri-plugin-os = "2.3.2"
+tauri-plugin-dialog = "2.4.2"
