@@ -1,5 +1,6 @@
 import "@xyflow/react/dist/style.css";
 import { useEffect } from "react";
+import type { MouseEvent } from "react";
 import {
   Background,
   BackgroundVariant,
@@ -51,7 +52,7 @@ export const Internal = () => {
     screenToFlowPosition,
   );
 
-  const handlePaneClick = (event: React.MouseEvent) => {
+  const handlePaneClick = (event: MouseEvent) => {
     if (isReadOnly) {
       return () => {};
     }
