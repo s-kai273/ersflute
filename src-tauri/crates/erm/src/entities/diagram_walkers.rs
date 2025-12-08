@@ -73,6 +73,7 @@ pub struct NormalColumn {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct Columns {
+    #[serde(default)]
     #[serde(rename(serialize = "normalColumns", deserialize = "normal_column"))]
     pub normal_columns: Vec<NormalColumn>,
 }
@@ -91,7 +92,6 @@ pub struct Table {
     pub y: u16,
     pub color: Color,
 
-    #[serde(default)]
     pub connections: Connections,
 
     pub columns: Columns,

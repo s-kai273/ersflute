@@ -9,11 +9,6 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import {
-  mapRelationshipsFrom,
-  mapTablesFrom,
-} from "@/adapters/api/tableMapper";
-import { loadDiagram } from "@/api/diagram";
-import {
   createEdges,
   createNodes,
 } from "@/features/dbDiagram/adapters/reactflow/mapping";
@@ -41,33 +36,16 @@ function getSettings(isReadOnly: boolean, diagramMode: DiagramMode | null) {
 
 export const Internal = () => {
   const { isReadOnly, diagramMode } = useViewModeStore();
-  const { tables, relationships, setTables, setRelationships } =
-    useDiagramStore();
+  const tables = useDiagramStore((state) => state.tables);
+  const relationships = useDiagramStore((state) => state.relationships);
   const [nodes, setNodes, onNodesChange] = useNodesState(createNodes(tables));
   const [edges, setEdges] = useEdgesState(createEdges(relationships));
   const settings = getSettings(isReadOnly, diagramMode);
   const { addNodes, screenToFlowPosition } = useReactFlow();
   useEffect(() => {
-    loadDiagram(
-      // TODO: Remove full path specified here
-      // This will cause error on other developers environment
-      // It is temporary specified and to be fixed in https://github.com/s-kai273/ersflute/issues/24
-      "/home/skai273/Workspaces/ersflute/src-tauri/crates/erm/tests/fixtures/testerd.erm",
-    )
-      .then((diagram) => {
-        const tables = mapTablesFrom(diagram.diagramWalkers.tables);
-        const relationships = mapRelationshipsFrom(
-          diagram.diagramWalkers.tables,
-        );
-        setNodes(createNodes(tables));
-        setEdges(createEdges(relationships));
-        setTables(tables);
-        setRelationships(relationships);
-      })
-      .catch((e) => {
-        console.error("Failed to load diagram:", e);
-      });
-  }, [setNodes, setEdges, setTables, setRelationships]);
+    setNodes(createNodes(tables));
+    setEdges(createEdges(relationships));
+  }, [tables, relationships]);
   const handleClickInTableMode = createClickInTableModeHandler(
     addNodes,
     screenToFlowPosition,
