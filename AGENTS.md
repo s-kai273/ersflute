@@ -19,13 +19,21 @@ component_name/
 
 ## Tests
 
+### General
+
+- Avoid using component or function names in `describe` blocks.
+  `describe` should group tests only by user-visible behavior or scenario, not by implementation details.
+  Use it sparingly to express situations (e.g., “when the dialog is open”, “with invalid input”).
+
 ### Testing library
 
-- Avoid selecting elements by passing `id` values to `getByLabelText`.  
-  Tests should rely on user-facing attributes (roles, labels, text) rather than internal implementation details.
-- Maintain a clear Given–When–Then structure in unit tests.  
-  Do not include multiple `user` interactions in one test case.  
-  The `When` step should be a single, concise action whenever possible.
-- Avoid using DOM navigation helpers such as `closest`.  
-  These approaches rely on implementation details and do not align with Testing Library’s user-centric philosophy.  
-  Use `closest` only as a last resort when no user-facing selectors or accessible queries are available.
+- Avoid selecting elements by passing `id` values to `getByLabelText`.
+  Prefer user-facing attributes such as roles, labels, and visible text rather than internal implementation details.
+
+- Maintain a clear Given–When–Then structure conceptually in unit tests.
+  This structure guides test clarity, but does not require explicit comments in the code.
+  Keep each test focused, and limit interactions to a single user action when possible.
+
+- Avoid using DOM navigation helpers such as `closest`.
+  These patterns depend on non-user-visible implementation details and conflict with Testing Library’s user-centric approach.
+  Use them only when no accessible queries or user-facing selectors are viable.
