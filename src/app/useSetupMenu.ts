@@ -3,6 +3,8 @@ import { setupWindowMenu } from "@/adapters/tauri/menu";
 
 export function useSetupMenu() {
   useEffect(() => {
-    setupWindowMenu();
+    void (async () => {
+      await setupWindowMenu();
+    })();
   }, []);
 }
