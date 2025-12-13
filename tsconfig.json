@@ -24,6 +24,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "eslint.config.ts"],
+  "include": ["src", "eslint.config.ts", "jest.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
