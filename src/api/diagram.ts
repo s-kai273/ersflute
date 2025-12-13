@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import {
   mapRelationshipsFrom,
   mapTablesFrom,
-} from "@/adapters/api/tableMapper";
+} from "@/domain/mappers/tableMapper";
 import type { DiagramResponse } from "@/types/api/diagram";
 import type { Relationship } from "@/types/domain/relationship";
 import type { Table } from "@/types/domain/table";
