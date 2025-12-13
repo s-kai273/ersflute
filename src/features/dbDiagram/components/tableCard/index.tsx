@@ -2,7 +2,15 @@ import { CheckCircleIcon, KeyIcon } from "@heroicons/react/16/solid";
 import { formatColumnType } from "@/features/dbDiagram/services/formatColumnType";
 import { cn } from "@/lib/utils";
 import { useViewModeStore } from "@/stores/viewModeStore";
+import type { Column } from "@/types/domain/table";
 import type { TableCardProps } from "./types";
+
+function formatColumnLabel(column: Column) {
+  if (column.columnType) {
+    return `${column.physicalName}: ${formatColumnType(column)}`;
+  }
+  return column.physicalName;
+}
 
 export function TableCard({
   width,
@@ -38,22 +46,25 @@ export function TableCard({
             >
               <span className="flex items-center justify-center w-4 h-4">
                 {column.primaryKey && (
-                  <KeyIcon width={10} height={10} className="text-yellow-500" />
+                  <KeyIcon
+                    aria-label={`Column ${column.physicalName} is primary key`}
+                    width={10}
+                    height={10}
+                    className="text-yellow-500"
+                  />
                 )}
               </span>
               <span className="flex items-center justify-center w-4 h-4">
                 {column.notNull && (
                   <CheckCircleIcon
+                    aria-label={`Column ${column.physicalName} is not null`}
                     width={10}
                     height={10}
                     className="text-green-400"
                   />
                 )}
               </span>
-              <span>
-                {column.physicalName && <span>{column.physicalName}</span>}
-                {column.columnType && <span>: {formatColumnType(column)}</span>}
-              </span>
+              <span>{formatColumnLabel(column)}</span>
             </p>
           ))}
         </div>

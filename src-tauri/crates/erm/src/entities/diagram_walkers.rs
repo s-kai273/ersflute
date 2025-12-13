@@ -52,7 +52,7 @@ pub struct NormalColumn {
     pub logical_name: String,
 
     #[serde(default)]
-    #[serde(rename = "type")]
+    #[serde(rename(serialize = "columnType", deserialize = "type"))]
     pub column_type: String,
 
     #[serde(default)]

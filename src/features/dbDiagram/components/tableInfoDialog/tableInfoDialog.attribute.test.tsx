@@ -70,7 +70,7 @@ async function openDetailFor(
   return screen.findByRole("region", { name: "Column Details" });
 }
 
-afterEach(() => {
+beforeEach(() => {
   useViewModeStore.setState(initialViewModeState);
 });
 
