@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { type Column, type Table } from "@/types/domain/table";
-import { AttributeContent } from "./contents/attributeContent";
+import { AttributeContent } from "./contents/attribute";
 import { type TableInfoDialogProps } from "./types";
 
 export function TableInfoDialog({
