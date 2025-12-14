@@ -21,9 +21,16 @@ component_name/
 
 ### General
 
-- Avoid using component or function names in `describe` blocks.
+- Do not wrap test files in a top-level `describe` block.  
+  A `describe` block must be used only when it meaningfully expresses a user-facing scenario or condition.
+
+- Avoid using component or function names in `describe` blocks.  
   `describe` should group tests only by user-visible behavior or scenario, not by implementation details.
-  Use it sparingly to express situations (e.g., “when the dialog is open”, “with invalid input”).
+
+- Use `describe` sparingly.  
+  Add a `describe` block only when multiple tests share the same user-facing situation  
+  (e.g., “when the dialog is open”, “with invalid input”).  
+  If a single test can stand alone, do not create a wrapping `describe` at all.
 
 ### Testing library
 
