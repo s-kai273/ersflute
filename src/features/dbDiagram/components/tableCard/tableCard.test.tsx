@@ -24,8 +24,7 @@ const createTable = (overrides?: Partial<Table>): Table => ({
     },
     {
       physicalName: "name",
-      columnType: ColumnType.VarCharN,
-      length: 255,
+      columnType: undefined,
       notNull: false,
     },
   ],
@@ -43,7 +42,7 @@ it("renders the table header and columns with formatted types", () => {
 
   expect(screen.getByRole("heading", { name: "users" })).toBeInTheDocument();
   expect(screen.getByText("id: int(11)")).toBeInTheDocument();
-  expect(screen.getByText("name: varchar(255)")).toBeInTheDocument();
+  expect(screen.getByText("name")).toBeInTheDocument();
 });
 
 it("shows primary key and not-null indicators for flagged columns", () => {

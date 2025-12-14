@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,14 +21,6 @@ export function TableInfoDialog({
   const { open, onOpenChange, ...dialogProps } = props;
   const [tableData, setTableData] = useState<Table>(data);
   const [description, setDescription] = useState("");
-
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-
-    setDescription("");
-  }, [data, open]);
 
   const handleApply = () => {
     const columns = tableData.columns || [];
