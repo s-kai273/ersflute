@@ -17,6 +17,7 @@ const config: Config = {
     "!src/**/*.d.ts",
     "!src/components/ui/**",
     "!src/features/**/adapters/**/*.{ts,tsx}",
+    "src/features/dbDiagram/adapters/reactflow/mappers.ts",
   ],
 };
 
