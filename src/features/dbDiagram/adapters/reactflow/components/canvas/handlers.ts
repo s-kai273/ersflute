@@ -10,21 +10,31 @@ export function createClickInTableModeHandler(
 ) {
   return (clientX: number, clientY: number) => {
     const defaultTableName = "NEW_TABLE";
+    const { x, y } = screenToFlowPosition({
+      x: clientX,
+      y: clientY,
+    });
+    const width = 120;
+    const height = 75;
     addNodes({
       id: `table.${crypto.randomUUID()}`,
       type: "table",
-      position: screenToFlowPosition({
-        x: clientX,
-        y: clientY,
-      }),
-      width: 120,
-      height: 75,
+      position: {
+        x,
+        y,
+      },
+      width,
+      height,
       data: {
         color: {
           r: 128,
           g: 128,
           b: 192,
         },
+        x,
+        y,
+        width,
+        height,
         physicalName: defaultTableName,
         logicalName: defaultTableName,
       } satisfies Table,

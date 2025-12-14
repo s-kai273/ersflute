@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 export function EntryScreen() {
   return (
     <div className="flex h-screen w-screen bg-slate-100">

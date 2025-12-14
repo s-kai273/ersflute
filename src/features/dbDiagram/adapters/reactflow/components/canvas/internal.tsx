@@ -12,7 +12,7 @@ import {
 import {
   createEdges,
   createNodes,
-} from "@/features/dbDiagram/adapters/reactflow/mapping";
+} from "@/features/dbDiagram/adapters/reactflow/mappers";
 import { modeSettings } from "@/features/dbDiagram/adapters/reactflow/modeSettings";
 import { cn } from "@/lib/utils";
 import { useDiagramStore } from "@/stores/diagramStore";

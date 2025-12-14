@@ -12,8 +12,12 @@ const config: Config = {
   clearMocks: true,
   collectCoverageFrom: [
     "src/components/**/*.{ts,tsx}",
+    "src/domain/**/*.{ts,tsx}",
+    "src/features/**/*.{ts,tsx}",
     "!src/**/*.d.ts",
     "!src/components/ui/**",
+    "!src/features/**/adapters/**/*.{ts,tsx}",
+    "src/features/dbDiagram/adapters/reactflow/mappers.ts",
   ],
 };
 

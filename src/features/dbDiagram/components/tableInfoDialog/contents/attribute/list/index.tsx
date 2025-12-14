@@ -1,7 +1,7 @@
 import { CheckIcon, KeyIcon } from "@heroicons/react/16/solid";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { formatColumnType } from "@/features/dbDiagram/services/formatColumnType";
+import { formatColumnType } from "@/features/dbDiagram/domain/formatColumnType";
 import { cn } from "@/lib/utils";
 import { useViewModeStore } from "@/stores/viewModeStore";
 import { type AttributeListProps } from "./types";
