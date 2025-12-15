@@ -97,7 +97,7 @@ export function ErrorDialog() {
             <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
               Details
             </p>
-            <pre className="max-h-60 overflow-auto whitespace-pre-wrap text-xs leading-5 text-slate-700">
+            <pre className="max-h-60 overflow-auto whitespace-pre-wrap break-all text-xs leading-5 text-slate-700">
               {content.details}
             </pre>
           </div>
