@@ -1,6 +1,7 @@
 import { MenuItem } from "@tauri-apps/api/menu";
 import { type } from "@tauri-apps/plugin-os";
 import { exit } from "@tauri-apps/plugin-process";
+import { showErrorDialog } from "@/features/errorDialog";
 
 function getAccelerator() {
   const osType = type();
@@ -18,8 +19,13 @@ export const quitMenu = await MenuItem.new({
   text: "Quit",
   accelerator: getAccelerator(),
   action: () => {
-    exit(0).catch((e) => {
-      console.error("Failed to quit the application:", e);
+    exit(0).catch((error) => {
+      showErrorDialog(error, {
+        title: "Unable to quit",
+        message:
+          "The application could not exit. Please close the window manually.",
+        context: "Quitting the application from the File menu",
+      });
     });
   },
 });
