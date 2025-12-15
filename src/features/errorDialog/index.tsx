@@ -72,7 +72,6 @@ export function showErrorDialog(
 
 export function ErrorDialog() {
   const { isOpen, content, closeDialog } = useErrorDialogStore();
-  const descriptionId = useId();
   const detailId = useId();
 
   if (!content) {
@@ -80,23 +79,13 @@ export function ErrorDialog() {
   }
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(open) => {
-        if (!open) {
-          closeDialog();
-        }
-      }}
-    >
-      <DialogContent
-        className="sm:max-w-xl"
-        aria-describedby={content.details ? detailId : descriptionId}
-      >
+    <Dialog open={isOpen}>
+      <DialogContent className="sm:max-w-xl" showCloseButton={false}>
         <DialogHeader className="text-left">
           <DialogTitle className="text-lg font-semibold text-red-700">
             {content.title}
           </DialogTitle>
-          <DialogDescription id={descriptionId} className="text-left">
+          <DialogDescription className="text-left">
             {content.message}
           </DialogDescription>
         </DialogHeader>
