@@ -1,5 +1,6 @@
 import { MenuItem } from "@tauri-apps/api/menu";
 import { open } from "@tauri-apps/plugin-dialog";
+import { showErrorDialog } from "@/features/errorDialog";
 import { applyDiagramFromFile } from "@/usecases/applyDiagramFromFile";
 
 function getAccelerator() {
@@ -17,8 +18,12 @@ export const openFileMenu = await MenuItem.new({
           await applyDiagramFromFile(filePath);
         }
       })
-      .catch((e) => {
-        console.error("Failed to open file:", e);
+      .catch((error) => {
+        showErrorDialog(error, {
+          title: "Failed to open file",
+          message: "The ER diagram could not be opened.",
+          context: "Opening a file from the menu",
+        });
       });
   },
 });
