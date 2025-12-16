@@ -27,7 +27,7 @@ type Relationship = {
 };
 
 type Connections = {
-  relationships?: Relationship[];
+  relationships: Relationship[];
 };
 
 type NormalColumn = {

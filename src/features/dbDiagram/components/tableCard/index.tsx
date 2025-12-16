@@ -53,6 +53,14 @@ export function TableCard({
                     className="text-yellow-500"
                   />
                 )}
+                {column.foreignKey && (
+                  <KeyIcon
+                    aria-label={`Column ${column.physicalName} is foreign key`}
+                    width={10}
+                    height={10}
+                    className="text-gray-400"
+                  />
+                )}
               </span>
               <span className="flex items-center justify-center w-4 h-4">
                 {column.notNull && (

@@ -23,9 +23,10 @@ const createTable = (overrides?: Partial<Table>): Table => ({
       primaryKey: true,
     },
     {
-      physicalName: "name",
+      physicalName: "companyId",
       columnType: undefined,
       notNull: false,
+      referredColumn: "companies.id",
     },
   ],
   ...overrides,
@@ -42,21 +43,27 @@ it("renders the table header and columns with formatted types", () => {
 
   expect(screen.getByRole("heading", { name: "users" })).toBeInTheDocument();
   expect(screen.getByText("id: int(11)")).toBeInTheDocument();
-  expect(screen.getByText("name")).toBeInTheDocument();
+  expect(screen.getByText("companyId")).toBeInTheDocument();
 });
 
-it("shows primary key and not-null indicators for flagged columns", () => {
+it("shows primary key, foreign key and not-null indicators for flagged columns", () => {
   const table = createTable();
 
   render(<TableCard data={table} />);
 
   expect(screen.getByLabelText("Column id is primary key")).toBeInTheDocument();
+  expect(
+    screen.queryByLabelText("Column id is foreigin key"),
+  ).not.toBeInTheDocument();
   expect(screen.getByLabelText("Column id is not null")).toBeInTheDocument();
   expect(
-    screen.queryByLabelText("Column name is primary key"),
+    screen.queryByLabelText("Column companyId is primary key"),
   ).not.toBeInTheDocument();
   expect(
-    screen.queryByLabelText("Column name is not null"),
+    screen.getByLabelText("Column companyId is foreign key"),
+  ).toBeInTheDocument();
+  expect(
+    screen.queryByLabelText("Column companyId is not null"),
   ).not.toBeInTheDocument();
 });
 

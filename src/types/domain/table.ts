@@ -14,6 +14,7 @@ export type Column = {
   decimal?: number;
   notNull: boolean;
   primaryKey?: boolean;
+  foreignKey?: boolean;
   autoIncrement?: boolean;
   referredColumn?: string;
   unique?: boolean;

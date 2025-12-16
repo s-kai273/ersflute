@@ -121,7 +121,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
     <section
       role="region"
       aria-labelledby="table-info-column-details-heading"
-      className="flex flex-1 flex-col overflow-hidden rounded-md border border-slate-200 bg-white px-4 py-4 text-sm"
+      className="flex flex-1 flex-col h-95 overflow-hidden rounded-md border border-slate-200 bg-white px-4 py-4 text-sm"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
@@ -504,7 +504,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
               <span className="font-medium text-slate-600">Description</span>
               <Textarea
                 id="table-info-column-description"
-                className="min-h-24 rounded px-2 py-2"
+                className="min-h-18 rounded px-2 py-2"
                 value={currentColumn.description ?? ""}
                 readOnly={isReadOnly}
                 onChange={(event) =>
