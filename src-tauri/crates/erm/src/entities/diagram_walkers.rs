@@ -76,6 +76,10 @@ pub struct Columns {
     #[serde(default)]
     #[serde(rename(serialize = "normalColumns", deserialize = "normal_column"))]
     pub normal_columns: Vec<NormalColumn>,
+
+    #[serde(default)]
+    #[serde(rename(serialize = "columnGroups", deserialize = "column_group"))]
+    pub column_groups: Vec<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
