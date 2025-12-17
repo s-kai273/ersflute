@@ -53,7 +53,7 @@ export function TableCard({
                     className="text-yellow-500"
                   />
                 )}
-                {column.foreignKey && (
+                {!!column.referredColumn && (
                   <KeyIcon
                     aria-label={`Column ${column.physicalName} is foreign key`}
                     width={10}

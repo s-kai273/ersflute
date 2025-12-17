@@ -5,10 +5,6 @@ import type { Column, Table } from "@/types/domain/table";
 
 export function mapTablesFrom(tableResponses: TableResponse[]): Table[] {
   return tableResponses.map((table) => {
-    const fkColumnNames = table.connections.relationships.flatMap(
-      (relationship) =>
-        relationship.fkColumns.fkColumn.map((column) => column.fkColumnName),
-    );
     return {
       color: {
         r: table.color.r,
@@ -30,7 +26,6 @@ export function mapTablesFrom(tableResponses: TableResponse[]): Table[] {
           length: column.length,
           notNull: column.notNull,
           primaryKey: column.primaryKey,
-          foreignKey: fkColumnNames.includes(column.physicalName),
           referredColumn: column.referredColumn,
         } satisfies Column;
       }),
