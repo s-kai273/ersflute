@@ -53,7 +53,12 @@ export function AttributeList({
                     )}
                   </td>
                   <td className="px-2 py-2 text-center">
-                    {column.referredColumn ? "✓" : ""}
+                    {!!column.referredColumn && (
+                      <KeyIcon
+                        aria-label="Foreign key"
+                        className="mx-auto h-4 w-4 text-gray-400"
+                      />
+                    )}
                   </td>
                   <td className="px-2 py-2 font-medium">
                     {column.physicalName}
