@@ -1,15 +1,14 @@
 use erm::entities::{
-    Color, Columns, Connections, Diagram, DiagramSettings, DiagramWalkers, FkColumn, FkColumns,
-    NormalColumn, Relationship, Table,
+    Color, ColumnGroups, Columns, Connections, Diagram, DiagramSettings, DiagramWalkers, FkColumn,
+    FkColumns, NormalColumn, Relationship, Table,
 };
 use erm::open;
 
 #[test]
 fn test_read_erm_file() {
-    let result = open("./tests/fixtures/testerd.erm");
-    assert!(result.is_ok());
+    let diagram = open("./tests/fixtures/testerd.erm").expect("failed to parse");
     assert_eq!(
-        result.unwrap(),
+        diagram,
         Diagram {
             diagram_settings: DiagramSettings {
                 database: "MySQL".to_string()
@@ -60,8 +59,9 @@ fn test_read_erm_file() {
                                     not_null: true,
                                     ..Default::default()
                                 },
-                            ]
-                        }
+                            ],
+                            column_groups: vec![],
+                        },
                     },
                     Table {
                         physical_name: "MEMBER_PROFILES".to_string(),
@@ -120,10 +120,14 @@ fn test_read_erm_file() {
                                     not_null: true,
                                     ..Default::default()
                                 },
-                            ]
+                            ],
+                            column_groups: vec![],
                         }
                     }
                 ]
+            },
+            column_groups: ColumnGroups {
+                column_groups: vec![]
             }
         }
     )

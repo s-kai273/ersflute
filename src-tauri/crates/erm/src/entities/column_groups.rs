@@ -35,6 +35,7 @@ pub struct ColumnGroup {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct ColumnGroups {
+    #[serde(default)]
     #[serde(rename(serialize = "columnGroups", deserialize = "column_group"))]
     pub column_groups: Vec<ColumnGroup>,
 }
