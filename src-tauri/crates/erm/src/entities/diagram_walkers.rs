@@ -52,16 +52,32 @@ pub struct NormalColumn {
     pub logical_name: String,
 
     #[serde(default)]
+    pub description: String,
+
+    #[serde(default)]
     #[serde(rename(serialize = "columnType", deserialize = "type"))]
     pub column_type: String,
 
     #[serde(default)]
     pub length: u16,
 
+    #[serde(default)]
+    pub unsigned: bool,
+
+    #[serde(default)]
     pub not_null: bool,
 
     #[serde(default)]
+    pub unique_key: bool,
+
+    #[serde(default)]
+    pub default_value: String,
+
+    #[serde(default)]
     pub primary_key: bool,
+
+    #[serde(default)]
+    pub auto_increment: bool,
 
     #[serde(default)]
     pub referred_column: String,

@@ -1,9 +1,12 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct NormalColumn {
     pub physical_name: String,
+
+    #[serde(default)]
+    pub logical_name: String,
 
     #[serde(rename(serialize = "columnType", deserialize = "type"))]
     pub column_type: String,

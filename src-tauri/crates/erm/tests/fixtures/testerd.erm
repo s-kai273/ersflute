@@ -127,23 +127,26 @@
 					<physical_name>MEMBER_ID</physical_name>
 					<logical_name>会員ID</logical_name>
 					<type>bigint</type>
+					<unsigned>true</unsigned>
 					<not_null>true</not_null>
 					<primary_key>true</primary_key>
+					<auto_increment>true</auto_increment>
 				</normal_column>
 				<normal_column>
 					<physical_name>LAST_NAME</physical_name>
 					<logical_name>苗字</logical_name>
 					<type>varchar(n)</type>
-					<length>0</length>
+					<length>32</length>
 					<not_null>true</not_null>
 				</normal_column>
 				<normal_column>
 					<physical_name>FIRST_NAME</physical_name>
 					<logical_name>名前</logical_name>
 					<type>varchar(n)</type>
-					<length>0</length>
+					<length>32</length>
 					<not_null>true</not_null>
 				</normal_column>
+				<column_group>COMMON</column_group>
 			</columns>
 			<indexes>
 			</indexes>
@@ -156,12 +159,12 @@
 			<physical_name>MEMBER_PROFILES</physical_name>
 			<logical_name>会員プロフィール</logical_name>
 			<description></description>
-			<height>89</height>
+			<height>161</height>
 			<width>245</width>
 			<font_name>Ubuntu</font_name>
 			<font_size>9</font_size>
-			<x>488</x>
-			<y>113</y>
+			<x>502</x>
+			<y>103</y>
 			<color>
 				<r>128</r>
 				<g>128</g>
@@ -178,7 +181,22 @@
 						</fk_column>
 					</fk_columns>
 					<parent_cardinality>1</parent_cardinality>
-					<child_cardinality>1</child_cardinality>
+					<child_cardinality>0..1</child_cardinality>
+					<reference_for_pk>true</reference_for_pk>
+					<on_delete_action>RESTRICT</on_delete_action>
+					<on_update_action>RESTRICT</on_update_action>
+				</relationship>
+				<relationship>
+					<name>FK_MEMBER_PROFILES_MST_GENDER</name>
+					<source>table.MST_GENDER</source>
+					<target>table.MEMBER_PROFILES</target>
+					<fk_columns>
+						<fk_column>
+							<fk_column_name>GENDER_ID</fk_column_name>
+						</fk_column>
+					</fk_columns>
+					<parent_cardinality>1</parent_cardinality>
+					<child_cardinality>0..n</child_cardinality>
 					<reference_for_pk>true</reference_for_pk>
 					<on_delete_action>RESTRICT</on_delete_action>
 					<on_update_action>RESTRICT</on_update_action>
@@ -188,10 +206,11 @@
 				<normal_column>
 					<physical_name>MEMBER_PROFILE_ID</physical_name>
 					<logical_name>会員プロフィールID</logical_name>
-					<type>bigint(n)</type>
-					<length>0</length>
+					<type>bigint</type>
+					<unsigned>true</unsigned>
 					<not_null>true</not_null>
 					<primary_key>true</primary_key>
+					<auto_increment>true</auto_increment>
 				</normal_column>
 				<normal_column>
 					<physical_name>MEMBER_ID</physical_name>
@@ -205,6 +224,325 @@
 					<type>text</type>
 					<not_null>true</not_null>
 				</normal_column>
+				<normal_column>
+					<physical_name>PROFILE_IMG_URL</physical_name>
+					<logical_name>プロフィール画像URL</logical_name>
+					<type>varchar(n)</type>
+					<length>2048</length>
+					<not_null>true</not_null>
+				</normal_column>
+				<normal_column>
+					<physical_name>GENDER_ID</physical_name>
+					<referred_column>table.MST_GENDER.GENDER_ID</referred_column>
+					<relationship>FK_MEMBER_PROFILES_MST_GENDER</relationship>
+				</normal_column>
+				<column_group>COMMON</column_group>
+			</columns>
+			<indexes>
+			</indexes>
+			<compound_unique_key_list>
+			</compound_unique_key_list>
+			<table_properties>
+			</table_properties>
+		</table>
+		<table>
+			<physical_name>MST_GENDER</physical_name>
+			<logical_name>マスター性別</logical_name>
+			<description></description>
+			<height>75</height>
+			<width>190</width>
+			<font_name>Ubuntu</font_name>
+			<font_size>9</font_size>
+			<x>829</x>
+			<y>99</y>
+			<color>
+				<r>128</r>
+				<g>128</g>
+				<b>192</b>
+			</color>
+			<connections>
+			</connections>
+			<columns>
+				<normal_column>
+					<physical_name>GENDER_ID</physical_name>
+					<logical_name>性別ID</logical_name>
+					<type>integer</type>
+					<unsigned>true</unsigned>
+					<not_null>true</not_null>
+					<primary_key>true</primary_key>
+					<auto_increment>true</auto_increment>
+				</normal_column>
+				<normal_column>
+					<physical_name>GENDER</physical_name>
+					<logical_name>性別</logical_name>
+					<type>character(n)</type>
+					<length>2</length>
+					<description>「男性」または「女性」</description>
+					<not_null>true</not_null>
+				</normal_column>
+			</columns>
+			<indexes>
+			</indexes>
+			<compound_unique_key_list>
+			</compound_unique_key_list>
+			<table_properties>
+			</table_properties>
+		</table>
+		<table>
+			<physical_name>POSTS</physical_name>
+			<logical_name>投稿</logical_name>
+			<description></description>
+			<height>233</height>
+			<width>215</width>
+			<font_name>Ubuntu</font_name>
+			<font_size>9</font_size>
+			<x>159</x>
+			<y>364</y>
+			<color>
+				<r>128</r>
+				<g>128</g>
+				<b>192</b>
+			</color>
+			<connections>
+				<relationship>
+					<name>FK_MEMBER_POSTS_MEMBERS</name>
+					<source>table.MEMBERS</source>
+					<target>table.POSTS</target>
+					<fk_columns>
+						<fk_column>
+							<fk_column_name>MEMBER_ID</fk_column_name>
+						</fk_column>
+					</fk_columns>
+					<parent_cardinality>0..1</parent_cardinality>
+					<child_cardinality>0..n</child_cardinality>
+					<reference_for_pk>true</reference_for_pk>
+					<on_delete_action>RESTRICT</on_delete_action>
+					<on_update_action>RESTRICT</on_update_action>
+				</relationship>
+			</connections>
+			<columns>
+				<normal_column>
+					<physical_name>POST_ID</physical_name>
+					<logical_name>投稿ID</logical_name>
+					<type>bigint</type>
+					<unsigned>true</unsigned>
+					<not_null>true</not_null>
+					<primary_key>true</primary_key>
+					<auto_increment>true</auto_increment>
+				</normal_column>
+				<normal_column>
+					<physical_name>MEMBER_ID</physical_name>
+					<referred_column>table.MEMBERS.MEMBER_ID</referred_column>
+					<relationship>FK_MEMBER_POSTS_MEMBERS</relationship>
+					<not_null>true</not_null>
+				</normal_column>
+				<normal_column>
+					<physical_name>TITLE</physical_name>
+					<logical_name>タイトル</logical_name>
+					<type>varchar(n)</type>
+					<length>128</length>
+					<not_null>true</not_null>
+				</normal_column>
+				<normal_column>
+					<physical_name>TEXT</physical_name>
+					<logical_name>本文</logical_name>
+					<type>text</type>
+				</normal_column>
+				<normal_column>
+					<physical_name>IMG_URL</physical_name>
+					<logical_name>画像URL</logical_name>
+					<type>varchar(n)</type>
+					<length>2048</length>
+				</normal_column>
+				<normal_column>
+					<physical_name>VIEW_COUNT</physical_name>
+					<logical_name>閲覧数</logical_name>
+					<type>bigint</type>
+					<not_null>true</not_null>
+					<default_value>0</default_value>
+				</normal_column>
+				<normal_column>
+					<physical_name>LIKE_COUNT</physical_name>
+					<logical_name>いいね数</logical_name>
+					<type>bigint</type>
+					<not_null>true</not_null>
+					<default_value>0</default_value>
+				</normal_column>
+				<normal_column>
+					<physical_name>PUBLIC_START_AT</physical_name>
+					<logical_name>公開開始時間</logical_name>
+					<type>datetime</type>
+					<not_null>true</not_null>
+				</normal_column>
+				<normal_column>
+					<physical_name>PUBLIC_END_AT</physical_name>
+					<logical_name>公開終了時間</logical_name>
+					<type>datetime</type>
+				</normal_column>
+				<normal_column>
+					<physical_name>DELETED</physical_name>
+					<logical_name>削除済</logical_name>
+					<type>boolean</type>
+					<not_null>true</not_null>
+					<default_value>FALSE</default_value>
+				</normal_column>
+				<column_group>COMMON</column_group>
+			</columns>
+			<indexes>
+			</indexes>
+			<compound_unique_key_list>
+			</compound_unique_key_list>
+			<table_properties>
+			</table_properties>
+		</table>
+		<table>
+			<physical_name>POST_REPLIES</physical_name>
+			<logical_name>投稿返信</logical_name>
+			<description></description>
+			<height>75</height>
+			<width>120</width>
+			<font_name>Ubuntu</font_name>
+			<font_size>9</font_size>
+			<x>782</x>
+			<y>391</y>
+			<color>
+				<r>128</r>
+				<g>128</g>
+				<b>192</b>
+			</color>
+			<connections>
+				<relationship>
+					<name>FK_POST_REPLIES_POST_THREADS</name>
+					<source>table.POST_THREADS</source>
+					<target>table.POST_REPLIES</target>
+					<fk_columns>
+						<fk_column>
+							<fk_column_name>POST_THREAD_ID</fk_column_name>
+						</fk_column>
+					</fk_columns>
+					<parent_cardinality>1</parent_cardinality>
+					<child_cardinality>1..n</child_cardinality>
+					<reference_for_pk>true</reference_for_pk>
+					<on_delete_action>RESTRICT</on_delete_action>
+					<on_update_action>RESTRICT</on_update_action>
+				</relationship>
+				<relationship>
+					<name>FK_POST_REPLIES_MEMBERS</name>
+					<source>table.MEMBERS</source>
+					<target>table.POST_REPLIES</target>
+					<fk_columns>
+						<fk_column>
+							<fk_column_name>MEMBER_ID</fk_column_name>
+						</fk_column>
+					</fk_columns>
+					<parent_cardinality>0..1</parent_cardinality>
+					<child_cardinality>0..n</child_cardinality>
+					<reference_for_pk>true</reference_for_pk>
+					<on_delete_action>RESTRICT</on_delete_action>
+					<on_update_action>RESTRICT</on_update_action>
+				</relationship>
+			</connections>
+			<columns>
+				<normal_column>
+					<physical_name>POST_REPLY_ID</physical_name>
+					<logical_name>投稿返信ID</logical_name>
+					<type>bigint</type>
+					<unsigned>true</unsigned>
+					<not_null>true</not_null>
+					<primary_key>true</primary_key>
+					<auto_increment>true</auto_increment>
+				</normal_column>
+				<normal_column>
+					<physical_name>POST_THREAD_ID</physical_name>
+					<referred_column>table.POST_THREADS.POST_THREAD_ID</referred_column>
+					<relationship>FK_POST_REPLIES_POST_THREADS</relationship>
+					<not_null>true</not_null>
+				</normal_column>
+				<normal_column>
+					<physical_name>MEMBER_ID</physical_name>
+					<referred_column>table.MEMBERS.MEMBER_ID</referred_column>
+					<relationship>FK_POST_REPLIES_MEMBERS</relationship>
+					<not_null>true</not_null>
+				</normal_column>
+				<normal_column>
+					<physical_name>TEXT</physical_name>
+					<logical_name>本文</logical_name>
+					<type>text</type>
+					<not_null>true</not_null>
+				</normal_column>
+				<normal_column>
+					<physical_name>VIEW_COUNT</physical_name>
+					<logical_name>閲覧数</logical_name>
+					<type>bigint</type>
+					<not_null>true</not_null>
+					<default_value>0</default_value>
+				</normal_column>
+				<normal_column>
+					<physical_name>LIKE_COUNT</physical_name>
+					<logical_name>いいね数</logical_name>
+					<type>bigint</type>
+					<not_null>true</not_null>
+					<default_value>0</default_value>
+				</normal_column>
+				<column_group>COMMON</column_group>
+			</columns>
+			<indexes>
+			</indexes>
+			<compound_unique_key_list>
+			</compound_unique_key_list>
+			<table_properties>
+			</table_properties>
+		</table>
+		<table>
+			<physical_name>POST_THREADS</physical_name>
+			<logical_name>投稿スレッド</logical_name>
+			<description></description>
+			<height>75</height>
+			<width>203</width>
+			<font_name>Ubuntu</font_name>
+			<font_size>9</font_size>
+			<x>481</x>
+			<y>474</y>
+			<color>
+				<r>128</r>
+				<g>128</g>
+				<b>192</b>
+			</color>
+			<connections>
+				<relationship>
+					<name>FK_POST_THREADS_MEMBER_POSTS</name>
+					<source>table.POSTS</source>
+					<target>table.POST_THREADS</target>
+					<fk_columns>
+						<fk_column>
+							<fk_column_name>POST_ID</fk_column_name>
+						</fk_column>
+					</fk_columns>
+					<parent_cardinality>1</parent_cardinality>
+					<child_cardinality>0..1</child_cardinality>
+					<reference_for_pk>true</reference_for_pk>
+					<on_delete_action>RESTRICT</on_delete_action>
+					<on_update_action>RESTRICT</on_update_action>
+				</relationship>
+			</connections>
+			<columns>
+				<normal_column>
+					<physical_name>POST_THREAD_ID</physical_name>
+					<logical_name>投稿スレッドID</logical_name>
+					<type>bigint</type>
+					<unsigned>true</unsigned>
+					<not_null>true</not_null>
+					<primary_key>true</primary_key>
+					<auto_increment>true</auto_increment>
+				</normal_column>
+				<normal_column>
+					<physical_name>POST_ID</physical_name>
+					<referred_column>table.POSTS.POST_ID</referred_column>
+					<relationship>FK_POST_THREADS_MEMBER_POSTS</relationship>
+					<not_null>true</not_null>
+					<unique_key>true</unique_key>
+				</normal_column>
+				<column_group>COMMON</column_group>
 			</columns>
 			<indexes>
 			</indexes>
@@ -215,8 +553,53 @@
 		</table>
 	</diagram_walkers>
 	<vdiagrams>
+		<vdiagram>
+			<vdiagram_name>sample</vdiagram_name>
+			<vtables>
+				<vtable>
+					<table_id>table.MEMBERS</table_id>
+					<x>264</x>
+					<y>182</y>
+					<font_name>Ubuntu</font_name>
+					<font_size>9</font_size>
+				</vtable>
+			</vtables>
+			<walker_notes>
+			</walker_notes>
+			<walker_groups>
+			</walker_groups>
+		</vdiagram>
 	</vdiagrams>
 	<column_groups>
+		<column_group>
+			<column_group_name>COMMON</column_group_name>
+			<columns>
+				<normal_column>
+					<physical_name>CREATED_AT</physical_name>
+					<logical_name>作成時間</logical_name>
+					<type>datetime</type>
+					<not_null>true</not_null>
+				</normal_column>
+				<normal_column>
+					<physical_name>CREATED_BY</physical_name>
+					<logical_name>作成会員ID</logical_name>
+					<type>bigint</type>
+					<not_null>true</not_null>
+				</normal_column>
+				<normal_column>
+					<physical_name>UPDATED_AT</physical_name>
+					<logical_name>更新時間</logical_name>
+					<type>datetime</type>
+					<not_null>true</not_null>
+				</normal_column>
+				<normal_column>
+					<physical_name>UPDATED_BY</physical_name>
+					<logical_name>更新会員ID</logical_name>
+					<type>bigint</type>
+					<not_null>true</not_null>
+				</normal_column>
+			</columns>
+		</column_group>
 	</column_groups>
 	<sequence_set>
 	</sequence_set>
