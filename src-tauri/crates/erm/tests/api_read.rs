@@ -53,7 +53,7 @@ fn test_read_erm_file() {
                                     physical_name: "LAST_NAME".to_string(),
                                     logical_name: "苗字".to_string(),
                                     column_type: "varchar(n)".to_string(),
-                                    length: 32,
+                                    length: Some(32),
                                     not_null: true,
                                     ..Default::default()
                                 },
@@ -61,7 +61,7 @@ fn test_read_erm_file() {
                                     physical_name: "FIRST_NAME".to_string(),
                                     logical_name: "名前".to_string(),
                                     column_type: "varchar(n)".to_string(),
-                                    length: 32,
+                                    length: Some(32),
                                     not_null: true,
                                     ..Default::default()
                                 },
@@ -148,7 +148,7 @@ fn test_read_erm_file() {
                                     physical_name: "PROFILE_IMG_URL".to_string(),
                                     logical_name: "プロフィール画像URL".to_string(),
                                     column_type: "varchar(n)".to_string(),
-                                    length: 2048,
+                                    length: Some(2048),
                                     not_null: true,
                                     ..Default::default()
                                 },
@@ -196,7 +196,7 @@ fn test_read_erm_file() {
                                     physical_name: "GENDER".to_string(),
                                     logical_name: "性別".to_string(),
                                     column_type: "character(n)".to_string(),
-                                    length: 2,
+                                    length: Some(2),
                                     description: "「男性」または「女性」".to_string(),
                                     not_null: true,
                                     ..Default::default()
@@ -260,7 +260,7 @@ fn test_read_erm_file() {
                                     physical_name: "TITLE".to_string(),
                                     logical_name: "タイトル".to_string(),
                                     column_type: "varchar(n)".to_string(),
-                                    length: 128,
+                                    length: Some(128),
                                     not_null: true,
                                     ..Default::default()
                                 },
@@ -274,7 +274,7 @@ fn test_read_erm_file() {
                                     physical_name: "IMG_URL".to_string(),
                                     logical_name: "画像URL".to_string(),
                                     column_type: "varchar(n)".to_string(),
-                                    length: 2048,
+                                    length: Some(2048),
                                     ..Default::default()
                                 },
                                 NormalColumn {
