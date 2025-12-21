@@ -1,7 +1,11 @@
+mod column_groups;
 mod diagram;
 mod diagram_settings;
 mod diagram_walkers;
 
+pub use column_groups::{
+    ColumnGroup, ColumnGroups, Columns as CGColumns, NormalColumn as CGNormalColumn,
+};
 pub use diagram::Diagram;
 pub use diagram_settings::DiagramSettings;
 pub use diagram_walkers::{

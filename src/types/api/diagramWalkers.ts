@@ -27,7 +27,7 @@ type Relationship = {
 };
 
 type Connections = {
-  relationships?: Relationship[];
+  relationships: Relationship[];
 };
 
 type NormalColumn = {
@@ -35,6 +35,7 @@ type NormalColumn = {
   logicalName?: string;
   columnType?: string;
   length?: number;
+  decimal?: number;
   notNull: boolean;
   primaryKey?: boolean;
   referredColumn?: string;

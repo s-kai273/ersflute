@@ -1,4 +1,4 @@
-use super::{DiagramSettings, DiagramWalkers};
+use super::{ColumnGroups, DiagramSettings, DiagramWalkers};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -6,4 +6,5 @@ use serde::{Deserialize, Serialize};
 pub struct Diagram {
     pub diagram_settings: DiagramSettings,
     pub diagram_walkers: DiagramWalkers,
+    pub column_groups: ColumnGroups,
 }

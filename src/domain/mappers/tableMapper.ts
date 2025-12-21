@@ -24,6 +24,7 @@ export function mapTablesFrom(tableResponses: TableResponse[]): Table[] {
             ? parseColumnType(column.columnType)
             : undefined,
           length: column.length,
+          decimal: column.decimal,
           notNull: column.notNull,
           primaryKey: column.primaryKey,
           referredColumn: column.referredColumn,
@@ -37,8 +38,7 @@ export function mapRelationshipsFrom(
   tableResponses: TableResponse[],
 ): Relationship[] {
   return tableResponses
-    .filter((table) => !!table.connections.relationships)
-    .flatMap((table) => table.connections.relationships!)
+    .flatMap((table) => table.connections.relationships)
     .map((relationship) => {
       return {
         name: relationship.name,

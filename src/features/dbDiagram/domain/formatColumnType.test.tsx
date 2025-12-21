@@ -25,20 +25,25 @@ it("formats length and decimal when both are provided", () => {
   expect(formatColumnType(column)).toBe("decimal(12, 3)");
 });
 
-it("formats only length when decimal is not provided", () => {
-  const column = createColumn({ columnType: ColumnType.VarCharN, length: 255 });
+it("formats length and decimal when both are provided, but values are not provided", () => {
+  const column = createColumn({
+    columnType: ColumnType.DecimalPS,
+  });
 
-  expect(formatColumnType(column)).toBe("varchar(255)");
+  expect(formatColumnType(column)).toBe("decimal(0, 0)");
 });
 
-it("formats only decimal when length is not provided", () => {
-  const column = createColumn({ columnType: ColumnType.Decimal, decimal: 5 });
+it("formats only length when decimal is not provided", () => {
+  const column = createColumn({
+    columnType: ColumnType.DecimalP,
+    length: 255,
+  });
 
-  expect(formatColumnType(column)).toBe("decimal(5)");
+  expect(formatColumnType(column)).toBe("decimal(255)");
 });
 
 it("falls back to the default label when no length or decimal exists", () => {
-  const column = createColumn({ columnType: ColumnType.CharN });
+  const column = createColumn({ columnType: ColumnType.Char });
 
-  expect(formatColumnType(column)).toBe("char(n)");
+  expect(formatColumnType(column)).toBe("char");
 });

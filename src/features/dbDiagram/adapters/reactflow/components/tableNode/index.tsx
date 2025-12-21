@@ -18,6 +18,24 @@ export function TableNode({ id, width, height, data }: NodeProps<Node<Table>>) {
       <TableCard
         width={width}
         height={height}
+        setWidth={(width) => {
+          setNodes((nds) =>
+            nds.map((node) =>
+              node.id === id
+                ? { ...node, width, data: { ...data, width } }
+                : node,
+            ),
+          );
+        }}
+        setHeight={(height) => {
+          setNodes((nds) =>
+            nds.map((node) =>
+              node.id === id
+                ? { ...node, height, data: { ...data, height } }
+                : node,
+            ),
+          );
+        }}
         data={data}
         onHeaderDoubleClick={() => setTableInfoDialogOpen(true)}
       />

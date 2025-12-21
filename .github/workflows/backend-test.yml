@@ -1,0 +1,27 @@
+name: Backend Test
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+          pkg-config \
+          libglib2.0-dev \
+          libgtk-3-dev \
+          libwebkit2gtk-4.1-dev \
+          librsvg2-dev \
+          patchelf
+
+      - name: Run logic tests only
+        run: cargo test --locked
+        working-directory: src-tauri/

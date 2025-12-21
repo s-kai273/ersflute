@@ -53,6 +53,22 @@ function renderAttributeTab(overrides?: Partial<Table>) {
   return { onApply, onOpenChange };
 }
 
+function renderEditableAttributeTab(overrides?: Partial<Table>) {
+  useViewModeStore.setState({ ...initialViewModeState, isReadOnly: false });
+  return renderAttributeTab(overrides);
+}
+
+function renderReadOnlyAttributeTab(overrides?: Partial<Table>) {
+  useViewModeStore.setState({ ...initialViewModeState, isReadOnly: true });
+  return renderAttributeTab(overrides);
+}
+
+function renderEditableAttributeTabWithUser(overrides?: Partial<Table>) {
+  const user = userEvent.setup();
+  renderEditableAttributeTab(overrides);
+  return user;
+}
+
 function getColumnRow(physicalName: string): HTMLTableRowElement {
   return screen.getByRole("row", {
     name: (_name, element) =>
@@ -74,11 +90,9 @@ beforeEach(() => {
   useViewModeStore.setState(initialViewModeState);
 });
 
-describe("TableInfoDialog Attribute tab", () => {
+describe("when editing is allowed", () => {
   it("renders the Attribute tab content with table metadata and columns", () => {
-    useViewModeStore.setState({ ...initialViewModeState, isReadOnly: false });
-
-    renderAttributeTab();
+    renderEditableAttributeTab();
 
     const physicalNameInput = screen.getByLabelText("Physical Name");
     expect(physicalNameInput).toHaveValue("MEMBERS");
@@ -122,9 +136,7 @@ describe("TableInfoDialog Attribute tab", () => {
   });
 
   it("opens the column detail view on double-click", async () => {
-    useViewModeStore.setState({ ...initialViewModeState, isReadOnly: false });
-    const user = userEvent.setup();
-    renderAttributeTab();
+    const user = renderEditableAttributeTabWithUser();
 
     const detailRegion = await openDetailFor(user, "EMAIL");
 
@@ -134,9 +146,7 @@ describe("TableInfoDialog Attribute tab", () => {
   });
 
   it("returns to the list when back is clicked from the detail view", async () => {
-    useViewModeStore.setState({ ...initialViewModeState, isReadOnly: false });
-    const user = userEvent.setup();
-    renderAttributeTab();
+    const user = renderEditableAttributeTabWithUser();
     await openDetailFor(user, "EMAIL");
 
     await user.click(screen.getByRole("button", { name: "Back to Columns" }));
@@ -148,17 +158,50 @@ describe("TableInfoDialog Attribute tab", () => {
   });
 
   it("shows a placeholder message when no columns are defined", () => {
-    useViewModeStore.setState({ ...initialViewModeState, isReadOnly: false });
-    renderAttributeTab({ columns: [] });
+    renderEditableAttributeTab({ columns: [] });
 
     expect(
       screen.getByText("Columns will appear here once added."),
     ).toBeInTheDocument();
   });
 
+  it("shows a foreign key indicator when a referred column is set", () => {
+    renderEditableAttributeTab({
+      columns: [
+        {
+          physicalName: "PROFILE_ID",
+          logicalName: "Profile Id",
+          columnType: ColumnType.Int,
+          referredColumn: "PROFILES.ID",
+          notNull: false,
+          primaryKey: false,
+          unique: false,
+        },
+        {
+          physicalName: "EMAIL",
+          logicalName: "Email",
+          columnType: ColumnType.VarCharN,
+          length: 150,
+          notNull: false,
+          primaryKey: false,
+          unique: false,
+        },
+      ],
+    });
+
+    const profileRow = getColumnRow("PROFILE_ID");
+    expect(
+      within(profileRow).getByLabelText("Foreign key"),
+    ).toBeInTheDocument();
+
+    const emailRow = getColumnRow("EMAIL");
+    expect(
+      within(emailRow).queryByLabelText("Foreign key"),
+    ).not.toBeInTheDocument();
+  });
+
   it("keeps Edit/Delete disabled before any row is selected", () => {
-    useViewModeStore.setState({ ...initialViewModeState, isReadOnly: false });
-    renderAttributeTab();
+    renderEditableAttributeTab();
 
     expect(screen.getByRole("button", { name: "Add" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Edit" })).toBeDisabled();
@@ -166,9 +209,7 @@ describe("TableInfoDialog Attribute tab", () => {
   });
 
   it("enables Edit/Delete after a row is selected", async () => {
-    useViewModeStore.setState({ ...initialViewModeState, isReadOnly: false });
-    const user = userEvent.setup();
-    renderAttributeTab();
+    const user = renderEditableAttributeTabWithUser();
 
     await user.click(getColumnRow("EMAIL"));
 
@@ -177,9 +218,7 @@ describe("TableInfoDialog Attribute tab", () => {
   });
 
   it("opens the detail view when Add is clicked", async () => {
-    useViewModeStore.setState({ ...initialViewModeState, isReadOnly: false });
-    const user = userEvent.setup();
-    renderAttributeTab();
+    const user = renderEditableAttributeTabWithUser();
 
     await user.click(screen.getByRole("button", { name: "Add" }));
 
@@ -192,9 +231,7 @@ describe("TableInfoDialog Attribute tab", () => {
   });
 
   it("opens the detail view for the selected row when Edit is clicked", async () => {
-    useViewModeStore.setState({ ...initialViewModeState, isReadOnly: false });
-    const user = userEvent.setup();
-    renderAttributeTab();
+    const user = renderEditableAttributeTabWithUser();
     await user.click(getColumnRow("EMAIL"));
 
     await user.click(screen.getByRole("button", { name: "Edit" }));
@@ -208,9 +245,7 @@ describe("TableInfoDialog Attribute tab", () => {
   });
 
   it("deletes the selected row when Delete is clicked", async () => {
-    useViewModeStore.setState({ ...initialViewModeState, isReadOnly: false });
-    const user = userEvent.setup();
-    renderAttributeTab();
+    const user = renderEditableAttributeTabWithUser();
     await user.click(getColumnRow("EMAIL"));
 
     await user.click(screen.getByRole("button", { name: "Delete" }));
@@ -220,11 +255,9 @@ describe("TableInfoDialog Attribute tab", () => {
   });
 });
 
-describe("TableInfoDialog Attribute tab (Read only)", () => {
+describe("in read-only mode", () => {
   it("renders the Attribute tab content with table metadata and columns", () => {
-    useViewModeStore.setState({ ...initialViewModeState, isReadOnly: true });
-
-    renderAttributeTab();
+    renderReadOnlyAttributeTab();
 
     const physicalNameInput = screen.getByLabelText("Physical Name");
     expect(physicalNameInput).toHaveValue("MEMBERS");
@@ -256,9 +289,8 @@ describe("TableInfoDialog Attribute tab (Read only)", () => {
   });
 
   it("keeps Add/Delete disabled while enabling Edit after selection", async () => {
-    useViewModeStore.setState({ ...initialViewModeState, isReadOnly: true });
     const user = userEvent.setup();
-    renderAttributeTab();
+    renderReadOnlyAttributeTab();
 
     await user.click(getColumnRow("EMAIL"));
 
@@ -268,9 +300,8 @@ describe("TableInfoDialog Attribute tab (Read only)", () => {
   });
 
   it("opens the detail view for the selected row when Edit is clicked", async () => {
-    useViewModeStore.setState({ ...initialViewModeState, isReadOnly: true });
     const user = userEvent.setup();
-    renderAttributeTab();
+    renderReadOnlyAttributeTab();
     await user.click(getColumnRow("EMAIL"));
 
     await user.click(screen.getByRole("button", { name: "Edit" }));
