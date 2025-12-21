@@ -58,8 +58,11 @@ pub struct NormalColumn {
     #[serde(rename(serialize = "columnType", deserialize = "type"))]
     pub column_type: String,
 
-    #[serde(default)]
-    pub length: u16,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub length: Option<u16>,
+
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub decimal: Option<u16>,
 
     #[serde(default)]
     pub unsigned: bool,

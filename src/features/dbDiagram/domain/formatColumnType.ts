@@ -6,18 +6,17 @@ export const formatColumnType = (column: Column) => {
     return "";
   }
 
-  const labelWithougArgs =
-    ColumnTypeConfigMap[column.columnType].labelWithoutArgs;
-  if (column.length != null && column.length >= 0) {
-    if (column.decimal != null && column.decimal >= 0) {
-      return `${labelWithougArgs}(${column.length}, ${column.decimal})`;
-    }
-    return `${labelWithougArgs}(${column.length})`;
+  const config = ColumnTypeConfigMap[column.columnType];
+  const labelWithougArgs = config.labelWithoutArgs;
+  // By design, there is no columnType that supports decimal only.
+  // If decimal is specified without an explicit length, length is set to 0 to indicate an unspecified precision,
+  // meaning the column is still treated as supporting both length and decimal.
+  // Hence, a case where supportsDecimal is true and supportsLength is false does not exist.
+  if (config.supportsLength && config.supportsDecimal) {
+    return `${labelWithougArgs}(${column.length ?? 0}, ${column.decimal ?? 0})`;
   }
-
-  if (column.decimal != null && column.decimal >= 0) {
-    return `${labelWithougArgs}(${column.decimal})`;
+  if (config.supportsLength) {
+    return `${labelWithougArgs}(${column.length ?? 0})`;
   }
-
   return ColumnTypeConfigMap[column.columnType].label;
 };
