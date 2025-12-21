@@ -1,4 +1,4 @@
-name: Typecheck
+name: Frontend Lint
 
 on:
   push:
@@ -19,5 +19,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Typecheck
-        run: npm run typecheck
+      - name: Run Lint
+        run: npm run lint
