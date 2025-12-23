@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct Color {
     pub r: u8,
     pub g: u8,
@@ -9,20 +8,17 @@ pub struct Color {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct FkColumn {
     pub fk_column_name: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct FkColumns {
     #[serde(default)]
     pub fk_column: Vec<FkColumn>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct Relationship {
     pub name: String,
     pub source: String,
@@ -36,15 +32,13 @@ pub struct Relationship {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct Connections {
     #[serde(default)]
-    #[serde(rename(serialize = "relationships", deserialize = "relationship"))]
+    #[serde(rename = "relationship")]
     pub relationship: Vec<Relationship>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct NormalColumn {
     pub physical_name: String,
 
@@ -90,19 +84,17 @@ pub struct NormalColumn {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct Columns {
     #[serde(default)]
-    #[serde(rename(serialize = "normalColumns", deserialize = "normal_column"))]
+    #[serde(rename = "normal_column")]
     pub normal_columns: Vec<NormalColumn>,
 
     #[serde(default)]
-    #[serde(rename(serialize = "columnGroups", deserialize = "column_group"))]
+    #[serde(rename = "column_group")]
     pub column_groups: Vec<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct Table {
     pub physical_name: String,
     pub logical_name: String,
@@ -121,8 +113,7 @@ pub struct Table {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct DiagramWalkers {
-    #[serde(rename(serialize = "tables", deserialize = "table"))]
+    #[serde(rename = "table")]
     pub tables: Vec<Table>,
 }

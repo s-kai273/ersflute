@@ -1,14 +1,13 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct NormalColumn {
     pub physical_name: String,
 
     #[serde(default)]
     pub logical_name: String,
 
-    #[serde(rename(serialize = "columnType", deserialize = "type"))]
+    #[serde(rename = "type")]
     pub column_type: String,
 
     #[serde(default)]
@@ -22,23 +21,20 @@ pub struct NormalColumn {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct Columns {
-    #[serde(rename(serialize = "normalColumns", deserialize = "normal_column"))]
+    #[serde(rename = "normal_column")]
     pub normal_columns: Vec<NormalColumn>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct ColumnGroup {
     pub column_group_name: String,
     pub columns: Columns,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct ColumnGroups {
     #[serde(default)]
-    #[serde(rename(serialize = "columnGroups", deserialize = "column_group"))]
+    #[serde(rename = "column_group")]
     pub column_groups: Vec<ColumnGroup>,
 }

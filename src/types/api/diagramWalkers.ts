@@ -33,6 +33,7 @@ type Connections = {
 type NormalColumn = {
   physicalName: string;
   logicalName?: string;
+  description?: string;
   columnType?: string;
   length?: number;
   decimal?: number;
