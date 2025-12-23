@@ -4,26 +4,27 @@ use serde::{Deserialize, Serialize};
 pub struct NormalColumn {
     pub physical_name: String,
 
-    #[serde(default)]
-    pub logical_name: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub logical_name: Option<String>,
 
     #[serde(rename = "type")]
     pub column_type: String,
 
-    #[serde(default)]
-    pub not_null: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub not_null: Option<bool>,
 
-    #[serde(default)]
-    pub unique_key: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unique_key: Option<bool>,
 
-    #[serde(default)]
-    pub unsigned: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unsigned: Option<bool>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Columns {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "normal_column")]
-    pub normal_columns: Vec<NormalColumn>,
+    pub normal_columns: Option<Vec<NormalColumn>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -34,7 +35,7 @@ pub struct ColumnGroup {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ColumnGroups {
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "column_group")]
-    pub column_groups: Vec<ColumnGroup>,
+    pub column_groups: Option<Vec<ColumnGroup>>,
 }

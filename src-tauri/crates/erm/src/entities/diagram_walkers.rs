@@ -106,9 +106,7 @@ pub struct Table {
     pub x: u16,
     pub y: u16,
     pub color: Color,
-
     pub connections: Connections,
-
     pub columns: Columns,
 }
 

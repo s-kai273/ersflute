@@ -480,41 +480,41 @@ fn test_read_erm_file() {
                 ],
             },
             column_groups: column_groups::ColumnGroups {
-                column_groups: vec![column_groups::ColumnGroup {
+                column_groups: Some(vec![column_groups::ColumnGroup {
                     column_group_name: "COMMON".to_string(),
                     columns: column_groups::Columns {
-                        normal_columns: vec![
+                        normal_columns: Some(vec![
                             column_groups::NormalColumn {
                                 physical_name: "CREATED_AT".to_string(),
-                                logical_name: "作成時間".to_string(),
+                                logical_name: Some("作成時間".to_string()),
                                 column_type: "datetime".to_string(),
-                                not_null: true,
+                                not_null: Some(true),
                                 ..Default::default()
                             },
                             column_groups::NormalColumn {
                                 physical_name: "CREATED_BY".to_string(),
-                                logical_name: "作成会員ID".to_string(),
+                                logical_name: Some("作成会員ID".to_string()),
                                 column_type: "bigint".to_string(),
-                                not_null: true,
+                                not_null: Some(true),
                                 ..Default::default()
                             },
                             column_groups::NormalColumn {
                                 physical_name: "UPDATED_AT".to_string(),
-                                logical_name: "更新時間".to_string(),
+                                logical_name: Some("更新時間".to_string()),
                                 column_type: "datetime".to_string(),
-                                not_null: true,
+                                not_null: Some(true),
                                 ..Default::default()
                             },
                             column_groups::NormalColumn {
                                 physical_name: "UPDATED_BY".to_string(),
-                                logical_name: "更新会員ID".to_string(),
+                                logical_name: Some("更新会員ID".to_string()),
                                 column_type: "bigint".to_string(),
-                                not_null: true,
+                                not_null: Some(true),
                                 ..Default::default()
                             }
-                        ]
+                        ])
                     }
-                },]
+                }])
             }
         }
     )
