@@ -80,14 +80,16 @@ impl From<crate::entities::diagram_walkers::Relationship> for Relationship {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Connections {
-    #[serde(default)]
-    pub relationships: Vec<Relationship>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub relationships: Option<Vec<Relationship>>,
 }
 
 impl From<crate::entities::diagram_walkers::Connections> for Connections {
     fn from(entity: crate::entities::diagram_walkers::Connections) -> Self {
         Self {
-            relationships: entity.relationship.into_iter().map(Into::into).collect(),
+            relationships: entity
+                .relationships
+                .map(|v| v.into_iter().map(Into::into).collect()),
         }
     }
 }
@@ -97,14 +99,14 @@ impl From<crate::entities::diagram_walkers::Connections> for Connections {
 pub struct NormalColumn {
     pub physical_name: String,
 
-    #[serde(default)]
-    pub logical_name: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub logical_name: Option<String>,
 
-    #[serde(default)]
-    pub description: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
 
-    #[serde(default)]
-    pub column_type: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub column_type: Option<String>,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub length: Option<u16>,
@@ -112,29 +114,29 @@ pub struct NormalColumn {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub decimal: Option<u16>,
 
-    #[serde(default)]
-    pub unsigned: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unsigned: Option<bool>,
 
-    #[serde(default)]
-    pub not_null: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub not_null: Option<bool>,
 
-    #[serde(default)]
-    pub unique_key: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unique_key: Option<bool>,
 
-    #[serde(default)]
-    pub default_value: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub default_value: Option<String>,
 
-    #[serde(default)]
-    pub primary_key: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub primary_key: Option<bool>,
 
-    #[serde(default)]
-    pub auto_increment: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub auto_increment: Option<bool>,
 
-    #[serde(default)]
-    pub referred_column: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub referred_column: Option<String>,
 
-    #[serde(default)]
-    pub relationship: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub relationship: Option<String>,
 }
 
 impl From<crate::entities::diagram_walkers::NormalColumn> for NormalColumn {
@@ -161,17 +163,19 @@ impl From<crate::entities::diagram_walkers::NormalColumn> for NormalColumn {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Columns {
-    #[serde(default)]
-    pub normal_columns: Vec<NormalColumn>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub normal_columns: Option<Vec<NormalColumn>>,
 
-    #[serde(default)]
-    pub column_groups: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub column_groups: Option<Vec<String>>,
 }
 
 impl From<crate::entities::diagram_walkers::Columns> for Columns {
     fn from(entity: crate::entities::diagram_walkers::Columns) -> Self {
         Self {
-            normal_columns: entity.normal_columns.into_iter().map(Into::into).collect(),
+            normal_columns: entity
+                .normal_columns
+                .map(|v| v.into_iter().map(Into::into).collect()),
             column_groups: entity.column_groups,
         }
     }
@@ -216,13 +220,16 @@ impl From<crate::entities::diagram_walkers::Table> for Table {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DiagramWalkers {
-    pub tables: Vec<Table>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tables: Option<Vec<Table>>,
 }
 
 impl From<crate::entities::diagram_walkers::DiagramWalkers> for DiagramWalkers {
     fn from(entity: crate::entities::diagram_walkers::DiagramWalkers) -> Self {
         Self {
-            tables: entity.tables.into_iter().map(Into::into).collect(),
+            tables: entity
+                .tables
+                .map(|v| v.into_iter().map(Into::into).collect()),
         }
     }
 }

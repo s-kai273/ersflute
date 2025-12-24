@@ -38,6 +38,7 @@ export function mapRelationshipsFrom(
   tableResponses: TableResponse[],
 ): Relationship[] {
   return tableResponses
+    .filter((table) => !!table.connections.relationships)
     .flatMap((table) => table.connections.relationships)
     .map((relationship) => {
       return {
