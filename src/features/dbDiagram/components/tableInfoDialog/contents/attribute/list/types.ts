@@ -1,7 +1,8 @@
-import type { Column } from "@/types/domain/table";
+import type { Column } from "@/types/domain/column";
+import type { ColumnGroupName } from "@/types/domain/table";
 
 export type AttributeListProps = {
-  columns: Column[];
+  columns: (Column | ColumnGroupName)[];
   selectedColumnIndex: number | null;
   onSelectColumn: (index: number) => void;
   onOpenDetail: (index: number) => void;

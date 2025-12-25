@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useViewModeStore } from "@/stores/viewModeStore";
+import { isColumnGroupName } from "@/types/domain/table";
 import { AttributeDetail } from "./detail";
 import { useAttributeContentHandlers } from "./handlers";
 import { AttributeList } from "./list";
@@ -99,7 +100,11 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
         />
       ) : (
         <AttributeDetail
-          column={selectedColumn}
+          column={
+            selectedColumn && !isColumnGroupName(selectedColumn)
+              ? selectedColumn
+              : undefined
+          }
           onBack={handleBackToColumnList}
         />
       )}

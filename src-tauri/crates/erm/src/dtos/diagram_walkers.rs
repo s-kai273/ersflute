@@ -161,11 +161,9 @@ impl From<crate::entities::diagram_walkers::NormalColumn> for NormalColumn {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum Column {
-    #[serde(rename = "normal_column")]
     Normal(NormalColumn),
-
-    #[serde(rename = "column_group")]
     Group(String),
 }
 
@@ -173,7 +171,6 @@ pub enum Column {
 #[serde(rename_all = "camelCase")]
 pub struct Columns {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "$value")]
     pub items: Option<Vec<Column>>,
 }
 

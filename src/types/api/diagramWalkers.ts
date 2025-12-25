@@ -44,7 +44,7 @@ type NormalColumn = {
 };
 
 type Columns = {
-  normalColumns?: NormalColumn[];
+  items?: (NormalColumn | string)[];
 };
 
 export type TableResponse = {

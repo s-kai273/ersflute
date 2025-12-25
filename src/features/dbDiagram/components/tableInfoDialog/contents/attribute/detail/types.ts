@@ -1,4 +1,4 @@
-import type { Column } from "@/types/domain/table";
+import type { Column } from "@/types/domain/column";
 
 export type AttributeDetailProps = {
   column?: Column;

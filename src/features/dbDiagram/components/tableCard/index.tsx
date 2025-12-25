@@ -1,9 +1,13 @@
 import { useRef } from "react";
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/16/solid";
 import { formatColumnType } from "@/features/dbDiagram/domain/formatColumnType";
+import { getColumnsFromGroupName } from "@/features/dbDiagram/domain/getColumnsFromGroupName";
 import { cn } from "@/lib/utils";
+import { useDiagramStore } from "@/stores/diagramStore";
 import { useViewModeStore } from "@/stores/viewModeStore";
-import type { Column } from "@/types/domain/table";
+import type { Column } from "@/types/domain/column";
+import type { ColumnGroup } from "@/types/domain/columnGroup";
+import { isColumnGroupName, type ColumnGroupName } from "@/types/domain/table";
 import type { TableCardProps } from "./types";
 import { useMinTableSize } from "./useMinTableSize";
 
@@ -12,6 +16,18 @@ function formatColumnLabel(column: Column) {
     return `${column.physicalName}: ${formatColumnType(column)}`;
   }
   return column.physicalName;
+}
+
+function flatColumnsFrom(
+  columns: (Column | ColumnGroupName)[],
+  columnGroups: ColumnGroup[],
+): Column[] {
+  return columns.flatMap((column) => {
+    if (isColumnGroupName(column)) {
+      return getColumnsFromGroupName(column, columnGroups);
+    }
+    return [column];
+  });
 }
 
 export function TableCard({
@@ -23,6 +39,7 @@ export function TableCard({
   onHeaderDoubleClick,
 }: TableCardProps) {
   const { isReadOnly } = useViewModeStore();
+  const columnGroups = useDiagramStore((state) => state.columnGroups);
 
   // Ref to the variable table content used to determine the TableCard size.
   // Only the content area is measured to keep the TableCard dimensions
@@ -50,7 +67,7 @@ export function TableCard({
       <div className="nodrag flex-1 w-full h-full px-1 pb-1">
         <div className="w-full h-full bg-white">
           <div ref={contentRef} className="w-fit h-fit">
-            {data.columns?.map((column) => (
+            {flatColumnsFrom(data.columns ?? [], columnGroups).map((column) => (
               <p
                 key={column.physicalName}
                 className="flex items-center text-[0.625rem] leading-5 whitespace-nowrap"

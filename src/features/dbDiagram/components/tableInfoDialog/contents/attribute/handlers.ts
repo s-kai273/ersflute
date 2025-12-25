@@ -1,9 +1,10 @@
 import { useCallback } from "react";
-import type { Column } from "@/types/domain/table";
+import type { Column } from "@/types/domain/column";
+import { isColumnGroupName, type ColumnGroupName } from "@/types/domain/table";
 import type { AttributeContentProps } from "./types";
 
 type UseAttributeContentHandlersParams = {
-  columns: Column[];
+  columns: (Column | ColumnGroupName)[];
   selectedColumnIndex: number | null;
   setSelectedColumnIndex: (index: number | null) => void;
   setAttributeView: (view: "list" | "detail") => void;
@@ -26,8 +27,11 @@ export function useAttributeContentHandlers({
 
   const handleOpenDetail = useCallback(
     (index: number) => {
-      setSelectedColumnIndex(index);
-      setAttributeView("detail");
+      // Just in case of normal column selected, move to detail view
+      if (!isColumnGroupName(columns[index])) {
+        setSelectedColumnIndex(index);
+        setAttributeView("detail");
+      }
     },
     [setAttributeView, setSelectedColumnIndex],
   );

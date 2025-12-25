@@ -1,5 +1,5 @@
+import type { Column } from "@/types/domain/column";
 import { ColumnType } from "@/types/domain/columnType";
-import type { Column } from "@/types/domain/table";
 import { formatColumnType } from "./formatColumnType";
 
 const createColumn = (overrides: Partial<Column> = {}): Column => ({

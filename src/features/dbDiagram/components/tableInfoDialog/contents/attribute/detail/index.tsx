@@ -5,12 +5,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useViewModeStore } from "@/stores/viewModeStore";
+import type { Column } from "@/types/domain/column";
 import {
   ColumnType,
   ColumnTypeConfigMap,
   parseColumnType,
 } from "@/types/domain/columnType";
-import type { Column } from "@/types/domain/table";
 import { type AttributeDetailProps } from "./types";
 
 const COLUMN_TYPE_LIST: ColumnType[] = [

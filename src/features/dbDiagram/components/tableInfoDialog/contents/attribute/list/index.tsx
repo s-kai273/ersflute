@@ -2,9 +2,26 @@ import { CheckIcon, KeyIcon } from "@heroicons/react/16/solid";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatColumnType } from "@/features/dbDiagram/domain/formatColumnType";
+import { getColumnsFromGroupName } from "@/features/dbDiagram/domain/getColumnsFromGroupName";
 import { cn } from "@/lib/utils";
+import { useDiagramStore } from "@/stores/diagramStore";
 import { useViewModeStore } from "@/stores/viewModeStore";
+import type { Column } from "@/types/domain/column";
+import type { ColumnGroup } from "@/types/domain/columnGroup";
+import { isColumnGroupName, type ColumnGroupName } from "@/types/domain/table";
 import { type AttributeListProps } from "./types";
+
+function flatColumnsFrom(
+  columns: (Column | ColumnGroupName)[],
+  columnGroups: ColumnGroup[],
+): Column[] {
+  return columns.flatMap((column) => {
+    if (isColumnGroupName(column)) {
+      return getColumnsFromGroupName(column, columnGroups);
+    }
+    return [column];
+  });
+}
 
 export function AttributeList({
   columns,
@@ -16,6 +33,7 @@ export function AttributeList({
   onDeleteColumn,
 }: AttributeListProps) {
   const { isReadOnly } = useViewModeStore();
+  const columnGroups = useDiagramStore((state) => state.columnGroups);
   return (
     <section className="h-95 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm">
       <div className="h-78 overflow-y-auto rounded border border-slate-200">
@@ -32,7 +50,7 @@ export function AttributeList({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 bg-white text-slate-700">
-            {columns.map((column, index) => {
+            {flatColumnsFrom(columns, columnGroups).map((column, index) => {
               const isSelected = selectedColumnIndex === index;
               return (
                 <tr

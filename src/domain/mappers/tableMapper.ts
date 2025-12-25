@@ -1,7 +1,8 @@
 import type { TableResponse } from "@/types/api/diagramWalkers";
+import type { Column } from "@/types/domain/column";
 import { parseColumnType } from "@/types/domain/columnType";
 import type { Relationship } from "@/types/domain/relationship";
-import type { Column, Table } from "@/types/domain/table";
+import { type Table } from "@/types/domain/table";
 
 export function mapTablesFrom(tableResponses: TableResponse[]): Table[] {
   return tableResponses.map((table) => {
@@ -16,18 +17,21 @@ export function mapTablesFrom(tableResponses: TableResponse[]): Table[] {
       width: table.width,
       height: table.height,
       physicalName: table.physicalName,
-      columns: table.columns.normalColumns?.map((column) => {
+      columns: table.columns.items?.map((item) => {
+        if (typeof item === "string") {
+          return item;
+        }
         return {
-          physicalName: column.physicalName,
-          logicalName: column.logicalName,
-          columnType: column.columnType
-            ? parseColumnType(column.columnType)
+          physicalName: item.physicalName,
+          logicalName: item.logicalName,
+          columnType: item.columnType
+            ? parseColumnType(item.columnType)
             : undefined,
-          length: column.length,
-          decimal: column.decimal,
-          notNull: column.notNull,
-          primaryKey: column.primaryKey,
-          referredColumn: column.referredColumn,
+          length: item.length,
+          decimal: item.decimal,
+          notNull: item.notNull,
+          primaryKey: item.primaryKey,
+          referredColumn: item.referredColumn,
         } satisfies Column;
       }),
     } satisfies Table;
