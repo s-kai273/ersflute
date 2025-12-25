@@ -38,8 +38,8 @@ fn test_read_erm_file() {
                             relationships: None,
                         },
                         columns: diagram_walkers::Columns {
-                            normal_columns: Some(vec![
-                                diagram_walkers::NormalColumn {
+                            items: Some(vec![
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "MEMBER_ID".to_string(),
                                     logical_name: Some("会員ID".to_string()),
                                     column_type: Some("bigint".to_string()),
@@ -48,25 +48,25 @@ fn test_read_erm_file() {
                                     primary_key: Some(true),
                                     auto_increment: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "LAST_NAME".to_string(),
                                     logical_name: Some("苗字".to_string()),
                                     column_type: Some("varchar(n)".to_string()),
                                     length: Some(32),
                                     not_null: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "FIRST_NAME".to_string(),
                                     logical_name: Some("名前".to_string()),
                                     column_type: Some("varchar(n)".to_string()),
                                     length: Some(32),
                                     not_null: Some(true),
                                     ..Default::default()
-                                },
+                                }),
+                                diagram_walkers::Column::Group("COMMON".to_string()),
                             ]),
-                            column_groups: Some(vec!["COMMON".to_string()]),
                         },
                     },
                     diagram_walkers::Table {
@@ -119,8 +119,8 @@ fn test_read_erm_file() {
                             ])
                         },
                         columns: diagram_walkers::Columns {
-                            normal_columns: Some(vec![
-                                diagram_walkers::NormalColumn {
+                            items: Some(vec![
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "MEMBER_PROFILE_ID".to_string(),
                                     logical_name: Some("会員プロフィールID".to_string()),
                                     column_type: Some("bigint".to_string()),
@@ -129,37 +129,37 @@ fn test_read_erm_file() {
                                     primary_key: Some(true),
                                     auto_increment: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "MEMBER_ID".to_string(),
                                     referred_column: Some("table.MEMBERS.MEMBER_ID".to_string()),
                                     relationship: Some("FK_MEMBER_PROFILES_MEMBERS".to_string()),
                                     not_null: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "SELF_INTRODUCTION".to_string(),
                                     logical_name: Some("自己紹介".to_string()),
                                     column_type: Some("text".to_string()),
                                     not_null: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "PROFILE_IMG_URL".to_string(),
                                     logical_name: Some("プロフィール画像URL".to_string()),
                                     column_type: Some("varchar(n)".to_string()),
                                     length: Some(2048),
                                     not_null: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "GENDER_ID".to_string(),
                                     referred_column: Some("table.MST_GENDER.GENDER_ID".to_string()),
                                     relationship: Some("FK_MEMBER_PROFILES_MST_GENDER".to_string()),
                                     ..Default::default()
-                                },
+                                }),
+                                diagram_walkers::Column::Group("COMMON".to_string()),
                             ]),
-                            column_groups: Some(vec!["COMMON".to_string()]),
                         }
                     },
                     diagram_walkers::Table {
@@ -181,8 +181,8 @@ fn test_read_erm_file() {
                             relationships: None,
                         },
                         columns: diagram_walkers::Columns {
-                            normal_columns: Some(vec![
-                                diagram_walkers::NormalColumn {
+                            items: Some(vec![
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "GENDER_ID".to_string(),
                                     logical_name: Some("性別ID".to_string()),
                                     column_type: Some("integer".to_string()),
@@ -191,8 +191,8 @@ fn test_read_erm_file() {
                                     primary_key: Some(true),
                                     auto_increment: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "GENDER".to_string(),
                                     logical_name: Some("性別".to_string()),
                                     column_type: Some("character(n)".to_string()),
@@ -200,9 +200,8 @@ fn test_read_erm_file() {
                                     description: Some("「男性」または「女性」".to_string()),
                                     not_null: Some(true),
                                     ..Default::default()
-                                },
+                                }),
                             ]),
-                            column_groups: None,
                         }
                     },
                     diagram_walkers::Table {
@@ -238,8 +237,8 @@ fn test_read_erm_file() {
                             }])
                         },
                         columns: diagram_walkers::Columns {
-                            normal_columns: Some(vec![
-                                diagram_walkers::NormalColumn {
+                            items: Some(vec![
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "POST_ID".to_string(),
                                     logical_name: Some("投稿ID".to_string()),
                                     column_type: Some("bigint".to_string()),
@@ -248,74 +247,74 @@ fn test_read_erm_file() {
                                     primary_key: Some(true),
                                     auto_increment: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "MEMBER_ID".to_string(),
                                     referred_column: Some("table.MEMBERS.MEMBER_ID".to_string()),
                                     relationship: Some("FK_MEMBER_POSTS_MEMBERS".to_string()),
                                     not_null: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "TITLE".to_string(),
                                     logical_name: Some("タイトル".to_string()),
                                     column_type: Some("varchar(n)".to_string()),
                                     length: Some(128),
                                     not_null: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "TEXT".to_string(),
                                     logical_name: Some("本文".to_string()),
                                     column_type: Some("text".to_string()),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "IMG_URL".to_string(),
                                     logical_name: Some("画像URL".to_string()),
                                     column_type: Some("varchar(n)".to_string()),
                                     length: Some(2048),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "VIEW_COUNT".to_string(),
                                     logical_name: Some("閲覧数".to_string()),
                                     column_type: Some("bigint".to_string()),
                                     not_null: Some(true),
                                     default_value: Some("0".to_string()),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "LIKE_COUNT".to_string(),
                                     logical_name: Some("いいね数".to_string()),
                                     column_type: Some("bigint".to_string()),
                                     not_null: Some(true),
                                     default_value: Some("0".to_string()),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "PUBLIC_START_AT".to_string(),
                                     logical_name: Some("公開開始時間".to_string()),
                                     column_type: Some("datetime".to_string()),
                                     not_null: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "PUBLIC_END_AT".to_string(),
                                     logical_name: Some("公開終了時間".to_string()),
                                     column_type: Some("datetime".to_string()),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "DELETED".to_string(),
                                     logical_name: Some("削除済".to_string()),
                                     column_type: Some("boolean".to_string()),
                                     not_null: Some(true),
                                     default_value: Some("FALSE".to_string()),
                                     ..Default::default()
-                                },
+                                }),
+                                diagram_walkers::Column::Group("COMMON".to_string()),
                             ]),
-                            column_groups: Some(vec!["COMMON".to_string()]),
                         },
                     },
                     diagram_walkers::Table {
@@ -368,8 +367,8 @@ fn test_read_erm_file() {
                             ])
                         },
                         columns: diagram_walkers::Columns {
-                            normal_columns: Some(vec![
-                                diagram_walkers::NormalColumn {
+                            items: Some(vec![
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "POST_REPLY_ID".to_string(),
                                     logical_name: Some("投稿返信ID".to_string()),
                                     column_type: Some("bigint".to_string()),
@@ -378,8 +377,8 @@ fn test_read_erm_file() {
                                     primary_key: Some(true),
                                     auto_increment: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "POST_THREAD_ID".to_string(),
                                     referred_column: Some(
                                         "table.POST_THREADS.POST_THREAD_ID".to_string()
@@ -387,39 +386,39 @@ fn test_read_erm_file() {
                                     relationship: Some("FK_POST_REPLIES_POST_THREADS".to_string()),
                                     not_null: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "MEMBER_ID".to_string(),
                                     referred_column: Some("table.MEMBERS.MEMBER_ID".to_string()),
                                     relationship: Some("FK_POST_REPLIES_MEMBERS".to_string()),
                                     not_null: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "TEXT".to_string(),
                                     logical_name: Some("本文".to_string()),
                                     column_type: Some("text".to_string()),
                                     not_null: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "VIEW_COUNT".to_string(),
                                     logical_name: Some("閲覧数".to_string()),
                                     column_type: Some("bigint".to_string()),
                                     not_null: Some(true),
                                     default_value: Some("0".to_string()),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "LIKE_COUNT".to_string(),
                                     logical_name: Some("いいね数".to_string()),
                                     column_type: Some("bigint".to_string()),
                                     not_null: Some(true),
                                     default_value: Some("0".to_string()),
                                     ..Default::default()
-                                },
+                                }),
+                                diagram_walkers::Column::Group("COMMON".to_string()),
                             ]),
-                            column_groups: Some(vec!["COMMON".to_string()]),
                         },
                     },
                     diagram_walkers::Table {
@@ -455,8 +454,8 @@ fn test_read_erm_file() {
                             }])
                         },
                         columns: diagram_walkers::Columns {
-                            normal_columns: Some(vec![
-                                diagram_walkers::NormalColumn {
+                            items: Some(vec![
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "POST_THREAD_ID".to_string(),
                                     logical_name: Some("投稿スレッドID".to_string()),
                                     column_type: Some("bigint".to_string()),
@@ -465,17 +464,17 @@ fn test_read_erm_file() {
                                     primary_key: Some(true),
                                     auto_increment: Some(true),
                                     ..Default::default()
-                                },
-                                diagram_walkers::NormalColumn {
+                                }),
+                                diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
                                     physical_name: "POST_ID".to_string(),
                                     referred_column: Some("table.POSTS.POST_ID".to_string()),
                                     relationship: Some("FK_POST_THREADS_MEMBER_POSTS".to_string()),
                                     not_null: Some(true),
                                     unique_key: Some(true),
                                     ..Default::default()
-                                },
+                                }),
+                                diagram_walkers::Column::Group("COMMON".to_string()),
                             ]),
-                            column_groups: Some(vec!["COMMON".to_string()]),
                         },
                     }
                 ]),

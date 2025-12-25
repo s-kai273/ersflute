@@ -161,22 +161,37 @@ impl From<crate::entities::diagram_walkers::NormalColumn> for NormalColumn {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum Column {
+    #[serde(rename = "normal_column")]
+    Normal(NormalColumn),
+
+    #[serde(rename = "column_group")]
+    Group(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Columns {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub normal_columns: Option<Vec<NormalColumn>>,
-
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub column_groups: Option<Vec<String>>,
+    #[serde(rename = "$value")]
+    pub items: Option<Vec<Column>>,
 }
 
 impl From<crate::entities::diagram_walkers::Columns> for Columns {
     fn from(entity: crate::entities::diagram_walkers::Columns) -> Self {
         Self {
-            normal_columns: entity
-                .normal_columns
-                .map(|v| v.into_iter().map(Into::into).collect()),
-            column_groups: entity.column_groups,
+            items: entity.items.map(|v| {
+                v.into_iter()
+                    .map(|item| match item {
+                        crate::entities::diagram_walkers::Column::Normal(column) => {
+                            Column::Normal(column.into())
+                        }
+                        crate::entities::diagram_walkers::Column::Group(column) => {
+                            Column::Group(column)
+                        }
+                    })
+                    .collect()
+            }),
         }
     }
 }

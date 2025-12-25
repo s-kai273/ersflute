@@ -84,14 +84,19 @@ pub struct NormalColumn {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum Column {
+    #[serde(rename = "normal_column")]
+    Normal(NormalColumn),
+
+    #[serde(rename = "column_group")]
+    Group(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Columns {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "normal_column")]
-    pub normal_columns: Option<Vec<NormalColumn>>,
-
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "column_group")]
-    pub column_groups: Option<Vec<String>>,
+    #[serde(rename = "$value")]
+    pub items: Option<Vec<Column>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
