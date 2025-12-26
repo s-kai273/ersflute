@@ -22,8 +22,17 @@ export function AttributeList({
   return (
     <section className="h-95 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm">
       <div className="h-78 overflow-y-auto rounded border border-slate-200">
-        <table className="min-w-full divide-y divide-slate-200 text-sm">
-          <thead className="bg-slate-100 text-xs uppercase tracking-wide text-slate-600">
+        <table className="min-w-full table-fixed divide-y divide-slate-200 text-sm">
+          <colgroup>
+            <col className="w-10" />
+            <col className="w-10" />
+            <col className="w-40" />
+            <col className="w-40" />
+            <col className="w-36" />
+            <col className="w-24" />
+            <col className="w-20" />
+          </colgroup>
+          <thead className="sticky top-0 z-10 bg-slate-100 text-xs uppercase tracking-wide text-slate-600">
             <tr>
               <th className="w-10 px-2 py-2 text-center">PK</th>
               <th className="w-10 px-2 py-2 text-center">FK</th>

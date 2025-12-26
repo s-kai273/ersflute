@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils";
 import type { ColumnGroupItemProps, ColumnItemProps } from "./types";
 
 export function ColumnItem({
-  key,
   column,
   isSelected,
   isReadOnly,
@@ -20,7 +19,6 @@ export function ColumnItem({
 }: ColumnItemProps) {
   return (
     <tr
-      key={key}
       className={cn(
         "cursor-pointer transition-colors hover:bg-blue-50",
         isSelected && "bg-blue-100/70",
@@ -90,7 +88,6 @@ export function ColumnItem({
 }
 
 export function ColumnGroupItem({
-  key,
   columnGroup,
   index,
   selectedIndex,
@@ -104,7 +101,6 @@ export function ColumnGroupItem({
   return (
     <>
       <tr
-        key={key}
         className={cn(
           "cursor-pointer transition-colors hover:bg-blue-50",
           isGroupSelected && "bg-blue-100/70",
