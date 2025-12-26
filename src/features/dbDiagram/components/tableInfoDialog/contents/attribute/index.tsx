@@ -13,6 +13,9 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
   const [selectedColumnIndex, setSelectedColumnIndex] = useState<number | null>(
     null,
   );
+  const [selectedInGroupIndex, setSelectedInGroupIndex] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     setSelectedColumnIndex(null);
@@ -29,6 +32,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
 
   const {
     handleSelectColumn,
+    handleSelectColumnGroup,
     handleOpenDetail,
     handleAddColumn,
     handleEditColumn,
@@ -37,7 +41,9 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
   } = useAttributeContentHandlers({
     columns,
     selectedColumnIndex,
+    selectedInGroupIndex,
     setSelectedColumnIndex,
+    setSelectedInGroupIndex,
     setAttributeView,
     setData,
   });
@@ -92,7 +98,9 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
         <AttributeList
           columns={columns}
           selectedColumnIndex={selectedColumnIndex}
+          selectedInGroupIndex={selectedInGroupIndex}
           onSelectColumn={handleSelectColumn}
+          onSelectColumnGroup={handleSelectColumnGroup}
           onOpenDetail={handleOpenDetail}
           onAddColumn={handleAddColumn}
           onEditColumn={handleEditColumn}

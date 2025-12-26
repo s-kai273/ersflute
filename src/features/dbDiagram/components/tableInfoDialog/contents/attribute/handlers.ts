@@ -6,7 +6,9 @@ import type { AttributeContentProps } from "./types";
 type UseAttributeContentHandlersParams = {
   columns: (Column | ColumnGroupName)[];
   selectedColumnIndex: number | null;
+  selectedInGroupIndex: number | null;
   setSelectedColumnIndex: (index: number | null) => void;
+  setSelectedInGroupIndex: (index: number | null) => void;
   setAttributeView: (view: "list" | "detail") => void;
   setData: AttributeContentProps["setData"];
 };
@@ -14,15 +16,26 @@ type UseAttributeContentHandlersParams = {
 export function useAttributeContentHandlers({
   columns,
   selectedColumnIndex,
+  selectedInGroupIndex,
   setSelectedColumnIndex,
+  setSelectedInGroupIndex,
   setAttributeView,
   setData,
 }: UseAttributeContentHandlersParams) {
   const handleSelectColumn = useCallback(
-    (index: number) => {
+    (index: number | null) => {
       setSelectedColumnIndex(index);
+      setSelectedInGroupIndex(null);
     },
-    [setSelectedColumnIndex],
+    [setSelectedColumnIndex, setSelectedInGroupIndex],
+  );
+
+  const handleSelectColumnGroup = useCallback(
+    (columnIndex: number | null, inGroupIndex: number | null) => {
+      setSelectedColumnIndex(columnIndex);
+      setSelectedInGroupIndex(inGroupIndex);
+    },
+    [setSelectedColumnIndex, setSelectedInGroupIndex],
   );
 
   const handleOpenDetail = useCallback(
@@ -54,6 +67,9 @@ export function useAttributeContentHandlers({
 
   const handleEditColumn = useCallback(() => {
     if (selectedColumnIndex == null) {
+      return;
+    }
+    if (selectedInGroupIndex !== null) {
       return;
     }
     setAttributeView("detail");
@@ -107,6 +123,7 @@ export function useAttributeContentHandlers({
 
   return {
     handleSelectColumn,
+    handleSelectColumnGroup,
     handleOpenDetail,
     handleAddColumn,
     handleEditColumn,

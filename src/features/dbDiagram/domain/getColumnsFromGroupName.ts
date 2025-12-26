@@ -1,15 +1,14 @@
-import type { Column } from "@/types/domain/column";
 import type { ColumnGroup } from "@/types/domain/columnGroup";
 
-export function getColumnsFromGroupName(
+export function getColumnGroupFromName(
   groupName: string,
   columnGroups: ColumnGroup[],
-): Column[] {
+): ColumnGroup {
   const group = columnGroups.find(
     (group) => group.columnGroupName === groupName,
   );
   if (!group) {
     throw new Error(`Column group name is not found: ${groupName}`);
   }
-  return group.columns;
+  return group;
 }

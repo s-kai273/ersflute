@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/16/solid";
 import { formatColumnType } from "@/features/dbDiagram/domain/formatColumnType";
-import { getColumnsFromGroupName } from "@/features/dbDiagram/domain/getColumnsFromGroupName";
+import { getColumnGroupFromName } from "@/features/dbDiagram/domain/getColumnsFromGroupName";
 import { cn } from "@/lib/utils";
 import { useDiagramStore } from "@/stores/diagramStore";
 import { useViewModeStore } from "@/stores/viewModeStore";
@@ -24,7 +24,7 @@ function flatColumnsFrom(
 ): Column[] {
   return columns.flatMap((column) => {
     if (isColumnGroupName(column)) {
-      return getColumnsFromGroupName(column, columnGroups);
+      return getColumnGroupFromName(column, columnGroups).columns;
     }
     return [column];
   });
