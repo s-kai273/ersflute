@@ -1,12 +1,12 @@
 export const ColumnType = {
   Char: "Char",
-  CharN: "CharN",
+  CharN: "character(n)",
   VarCharN: "VarCharN",
   Text: "Text",
   TinyText: "TinyText",
   MediumText: "MediumText",
   LongText: "LongText",
-  Int: "Int",
+  Int: "integer",
   IntN: "IntN",
   TinyInt: "TinyInt",
   TinyIntN: "TinyIntN",
@@ -59,7 +59,7 @@ export function parseColumnType(value: string): ColumnType | undefined {
   if ((Object.values(ColumnType) as string[]).includes(value)) {
     return value as ColumnType;
   }
-  for (const key of Object.keys(ColumnType)) {
+  for (const key of Object.values(ColumnType)) {
     if (ColumnTypeConfigMap[key as ColumnType].label === value) {
       return key as ColumnType;
     }

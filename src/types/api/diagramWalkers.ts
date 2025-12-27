@@ -37,8 +37,12 @@ type NormalColumn = {
   columnType?: string;
   length?: number;
   decimal?: number;
-  notNull: boolean;
+  unsigned?: boolean;
+  notNull?: boolean;
+  uniqueKey?: boolean;
+  defaultValue?: string;
   primaryKey?: boolean;
+  autoIncrement?: boolean;
   referredColumn?: string;
   relationship?: string;
 };

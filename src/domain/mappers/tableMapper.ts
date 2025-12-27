@@ -24,13 +24,18 @@ export function mapTablesFrom(tableResponses: TableResponse[]): Table[] {
         return {
           physicalName: item.physicalName,
           logicalName: item.logicalName,
+          description: item.description,
           columnType: item.columnType
             ? parseColumnType(item.columnType)
             : undefined,
           length: item.length,
           decimal: item.decimal,
+          unsigned: item.unsigned,
           notNull: item.notNull,
+          unique: item.uniqueKey,
+          defaultValue: item.defaultValue,
           primaryKey: item.primaryKey,
+          autoIncrement: item.autoIncrement,
           referredColumn: item.referredColumn,
         } satisfies Column;
       }),
