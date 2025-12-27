@@ -16,7 +16,7 @@ const createTableResponse = (
   y: 20,
   color: { r: 10, g: 20, b: 30 },
   connections: { relationships: [] },
-  columns: { normalColumns: [] },
+  columns: { items: [] },
   ...overrides,
 });
 

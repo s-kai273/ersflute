@@ -8,7 +8,12 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { type Column, type Table } from "@/types/domain/table";
+import type { Column } from "@/types/domain/column";
+import {
+  isColumnGroupName,
+  type ColumnGroupName,
+  type Table,
+} from "@/types/domain/table";
 import { AttributeContent } from "./contents/attribute";
 import { type TableInfoDialogProps } from "./types";
 
@@ -24,20 +29,25 @@ export function TableInfoDialog({
 
   const handleApply = () => {
     const columns = tableData.columns || [];
-    const preparedColumns = columns.map<Column>((column) => ({
-      physicalName: column.physicalName.trim(),
-      logicalName: column.logicalName?.trim()
-        ? column.logicalName.trim()
-        : undefined,
-      columnType: column.columnType ? column.columnType : undefined,
-      length: column.length,
-      notNull: column.notNull,
-      primaryKey: column.primaryKey,
-      referredColumn: column.referredColumn?.trim()
-        ? column.referredColumn.trim()
-        : undefined,
-      unique: column.unique,
-    }));
+    const preparedColumns = columns.map<Column | ColumnGroupName>((column) => {
+      if (isColumnGroupName(column)) {
+        return column;
+      }
+      return {
+        physicalName: column.physicalName.trim(),
+        logicalName: column.logicalName?.trim()
+          ? column.logicalName.trim()
+          : undefined,
+        columnType: column.columnType ? column.columnType : undefined,
+        length: column.length,
+        notNull: column.notNull,
+        primaryKey: column.primaryKey,
+        referredColumn: column.referredColumn?.trim()
+          ? column.referredColumn.trim()
+          : undefined,
+        unique: column.unique,
+      };
+    });
 
     onApply?.({
       ...data,

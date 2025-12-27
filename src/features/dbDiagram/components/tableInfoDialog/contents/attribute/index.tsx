@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useViewModeStore } from "@/stores/viewModeStore";
+import { isColumnGroupName } from "@/types/domain/table";
 import { AttributeDetail } from "./detail";
 import { useAttributeContentHandlers } from "./handlers";
 import { AttributeList } from "./list";
@@ -12,6 +13,9 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
   const [selectedColumnIndex, setSelectedColumnIndex] = useState<number | null>(
     null,
   );
+  const [selectedInGroupIndex, setSelectedInGroupIndex] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     setSelectedColumnIndex(null);
@@ -28,6 +32,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
 
   const {
     handleSelectColumn,
+    handleSelectColumnGroup,
     handleOpenDetail,
     handleAddColumn,
     handleEditColumn,
@@ -36,7 +41,9 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
   } = useAttributeContentHandlers({
     columns,
     selectedColumnIndex,
+    selectedInGroupIndex,
     setSelectedColumnIndex,
+    setSelectedInGroupIndex,
     setAttributeView,
     setData,
   });
@@ -91,7 +98,9 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
         <AttributeList
           columns={columns}
           selectedColumnIndex={selectedColumnIndex}
+          selectedInGroupIndex={selectedInGroupIndex}
           onSelectColumn={handleSelectColumn}
+          onSelectColumnGroup={handleSelectColumnGroup}
           onOpenDetail={handleOpenDetail}
           onAddColumn={handleAddColumn}
           onEditColumn={handleEditColumn}
@@ -99,7 +108,11 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
         />
       ) : (
         <AttributeDetail
-          column={selectedColumn}
+          column={
+            selectedColumn && !isColumnGroupName(selectedColumn)
+              ? selectedColumn
+              : undefined
+          }
           onBack={handleBackToColumnList}
         />
       )}
