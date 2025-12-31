@@ -51,6 +51,9 @@ export function AttributeList({
                   column,
                   columnGroups,
                 );
+                if (!columnGroup) {
+                  return null;
+                }
                 return (
                   <ColumnGroupItem
                     key={`${columnGroup.columnGroupName}-${index}`}

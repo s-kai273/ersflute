@@ -24,7 +24,8 @@ function flatColumnsFrom(
 ): Column[] {
   return columns.flatMap((column) => {
     if (isColumnGroupName(column)) {
-      return getColumnGroupFromName(column, columnGroups).columns;
+      const group = getColumnGroupFromName(column, columnGroups);
+      return group ? group.columns : [];
     }
     return [column];
   });
