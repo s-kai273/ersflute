@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { getColumnGroupFromName } from "@/features/dbDiagram/domain/getColumnsFromGroupName";
+import { findGroupFromName } from "@/features/dbDiagram/domain/findGroupFromName";
 import { useDiagramStore } from "@/stores/diagramStore";
 import { useViewModeStore } from "@/stores/viewModeStore";
 import { isColumnGroupName } from "@/types/domain/table";
@@ -47,10 +47,7 @@ export function AttributeList({
             {columns.map((column, index) => {
               const isSelected = selectedColumnIndex === index;
               if (isColumnGroupName(column)) {
-                const columnGroup = getColumnGroupFromName(
-                  column,
-                  columnGroups,
-                );
+                const columnGroup = findGroupFromName(column, columnGroups);
                 if (!columnGroup) {
                   return null;
                 }

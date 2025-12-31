@@ -1,6 +1,6 @@
 import type { ColumnGroup } from "@/types/domain/columnGroup";
 
-export function getColumnGroupFromName(
+export function findGroupFromName(
   groupName: string,
   columnGroups: ColumnGroup[],
 ): ColumnGroup | null {
