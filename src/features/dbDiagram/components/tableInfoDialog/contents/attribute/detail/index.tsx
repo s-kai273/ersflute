@@ -159,7 +159,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
               <Checkbox
                 aria-label={`Column ${currentColumn.physicalName} is primary key`}
                 id="table-info-column-primary-key"
-                checked={currentColumn.primaryKey}
+                checked={currentColumn.primaryKey ?? false}
                 onCheckedChange={(checked) =>
                   setCurrentColumn({
                     ...currentColumn,
@@ -189,7 +189,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
               <Checkbox
                 aria-label={`Column ${currentColumn.physicalName} is not null`}
                 id="table-info-column-not-null"
-                checked={currentColumn.notNull}
+                checked={currentColumn.notNull ?? false}
                 onCheckedChange={(checked) =>
                   setCurrentColumn({
                     ...currentColumn,
