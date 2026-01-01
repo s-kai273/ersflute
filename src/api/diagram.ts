@@ -15,9 +15,10 @@ export async function loadDiagram(filename: string): Promise<{
   columnGroups: ColumnGroup[];
 }> {
   const diagram = await invoke<DiagramResponse>("load_diagram", { filename });
+  const columnGroups = diagram.columnGroups?.columnGroups ?? [];
   return {
     tables: mapTablesFrom(diagram.diagramWalkers.tables),
     relationships: mapRelationshipsFrom(diagram.diagramWalkers.tables),
-    columnGroups: mapColumnGroupsFrom(diagram.columnGroups.columnGroups),
+    columnGroups: mapColumnGroupsFrom(columnGroups),
   };
 }
