@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { DialogTitle } from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Column } from "@/types/domain/column";
@@ -34,18 +34,17 @@ export function TableInfoDialog({
         return column;
       }
       return {
+        ...column,
         physicalName: column.physicalName.trim(),
-        logicalName: column.logicalName?.trim()
-          ? column.logicalName.trim()
+        logicalName: column.logicalName ? column.logicalName.trim() : undefined,
+        description: column.description ? column.description.trim() : undefined,
+        defaultValue: column.defaultValue
+          ? column.defaultValue.trim()
           : undefined,
-        columnType: column.columnType ? column.columnType : undefined,
-        length: column.length,
-        notNull: column.notNull,
-        primaryKey: column.primaryKey,
         referredColumn: column.referredColumn?.trim()
           ? column.referredColumn.trim()
           : undefined,
-        unique: column.unique,
+        enumArgs: column.enumArgs ? column.enumArgs.trim() : undefined,
       };
     });
 

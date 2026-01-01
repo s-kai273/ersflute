@@ -7,9 +7,10 @@ export function mapColumnGroupsFrom(
   columnGroupResponses: ColumnGroupResponse[],
 ): ColumnGroup[] {
   return columnGroupResponses.map((columnGroup) => {
+    const normalColumns = columnGroup.columns.normalColumns ?? [];
     return {
       columnGroupName: columnGroup.columnGroupName,
-      columns: columnGroup.columns.normalColumns.map((column) => {
+      columns: normalColumns.map((column) => {
         return {
           physicalName: column.physicalName,
           logicalName: column.logicalName,

@@ -8,7 +8,7 @@ type NormalColumn = {
 };
 
 type Columns = {
-  normalColumns: NormalColumn[];
+  normalColumns?: NormalColumn[];
 };
 
 export type ColumnGroupResponse = {

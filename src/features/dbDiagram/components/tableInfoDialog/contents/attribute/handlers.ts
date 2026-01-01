@@ -66,10 +66,12 @@ export function useAttributeContentHandlers({
   }, [columns, setAttributeView, setData, setSelectedColumnIndex]);
 
   const handleEditColumn = useCallback(() => {
-    if (selectedColumnIndex == null) {
+    const isEditingColumnGroup =
+      !!selectedColumnIndex && !!selectedInGroupIndex;
+    if (isEditingColumnGroup) {
       return;
     }
-    if (selectedInGroupIndex !== null) {
+    if (selectedColumnIndex == null) {
       return;
     }
     setAttributeView("detail");
