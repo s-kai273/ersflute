@@ -67,5 +67,5 @@ export type TableResponse = {
 };
 
 export type DiagramWalkersResponse = {
-  tables: TableResponse[];
+  tables?: TableResponse[];
 };

@@ -17,5 +17,5 @@ export type ColumnGroupResponse = {
 };
 
 export type ColumnGroupsResponse = {
-  columnGroups: ColumnGroupResponse[];
+  columnGroups?: ColumnGroupResponse[];
 };

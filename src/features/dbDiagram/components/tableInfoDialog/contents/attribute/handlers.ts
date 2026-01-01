@@ -67,7 +67,7 @@ export function useAttributeContentHandlers({
 
   const handleEditColumn = useCallback(() => {
     const isEditingColumnGroup =
-      !!selectedColumnIndex && !!selectedInGroupIndex;
+      selectedColumnIndex !== null && selectedInGroupIndex !== null;
     if (isEditingColumnGroup) {
       return;
     }
