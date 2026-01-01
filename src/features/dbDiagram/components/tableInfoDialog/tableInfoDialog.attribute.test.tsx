@@ -1,11 +1,12 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useDiagramStore } from "@/stores/diagramStore";
 import { useViewModeStore } from "@/stores/viewModeStore";
 import { ColumnType } from "@/types/domain/columnType";
 import type { Table } from "@/types/domain/table";
 import { TableInfoDialog } from ".";
 
-// TODO: Add some lack test cases on https://github.com/s-kai273/ersflute/issues/16
+const initialDiagramState = useDiagramStore.getState();
 const initialViewModeState = useViewModeStore.getState();
 
 function createTableData(overrides?: Partial<Table>): Table {
@@ -63,10 +64,36 @@ function renderReadOnlyAttributeTab(overrides?: Partial<Table>) {
   return renderAttributeTab(overrides);
 }
 
-function renderEditableAttributeTabWithUser(overrides?: Partial<Table>) {
-  const user = userEvent.setup();
-  renderEditableAttributeTab(overrides);
-  return user;
+function seedColumnGroups() {
+  const columnGroupName = "PROFILE_GROUP";
+  useDiagramStore.setState({
+    ...initialDiagramState,
+    columnGroups: [
+      {
+        columnGroupName,
+        columns: [
+          {
+            physicalName: "PROFILE_ID",
+            logicalName: "Profile Id",
+            columnType: ColumnType.Int,
+            notNull: true,
+            primaryKey: true,
+            unique: true,
+          },
+          {
+            physicalName: "PROFILE_TYPE",
+            logicalName: "Profile Type",
+            columnType: ColumnType.VarCharN,
+            length: 80,
+            notNull: false,
+            primaryKey: false,
+            unique: false,
+          },
+        ],
+      },
+    ],
+  });
+  return columnGroupName;
 }
 
 function getColumnRow(physicalName: string): HTMLTableRowElement {
@@ -87,6 +114,7 @@ async function openDetailFor(
 }
 
 beforeEach(() => {
+  useDiagramStore.setState(initialDiagramState);
   useViewModeStore.setState(initialViewModeState);
 });
 
@@ -136,7 +164,8 @@ describe("when editing is allowed", () => {
   });
 
   it("opens the column detail view on double-click", async () => {
-    const user = renderEditableAttributeTabWithUser();
+    const user = userEvent.setup();
+    renderEditableAttributeTab();
 
     const detailRegion = await openDetailFor(user, "EMAIL");
 
@@ -146,7 +175,8 @@ describe("when editing is allowed", () => {
   });
 
   it("returns to the list when back is clicked from the detail view", async () => {
-    const user = renderEditableAttributeTabWithUser();
+    const user = userEvent.setup();
+    renderEditableAttributeTab();
     await openDetailFor(user, "EMAIL");
 
     await user.click(screen.getByRole("button", { name: "Back to Columns" }));
@@ -200,6 +230,60 @@ describe("when editing is allowed", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("renders a column group row", () => {
+    renderEditableAttributeTab({
+      columns: [seedColumnGroups(), createTableData().columns![0]],
+    });
+
+    const groupRow = screen.getByRole("button", { name: "PROFILE_GROUP" });
+    expect(groupRow).toBeInTheDocument();
+    expect(screen.queryByText("PROFILE_ID")).not.toBeInTheDocument();
+  });
+
+  it("expands a column group to show grouped columns", async () => {
+    const user = userEvent.setup();
+    renderEditableAttributeTab({
+      columns: [seedColumnGroups(), createTableData().columns![0]],
+    });
+
+    const groupRow = screen.getByRole("button", { name: "PROFILE_GROUP" });
+    await user.click(groupRow);
+
+    const profileIdRow = getColumnRow("PROFILE_ID");
+    expect(profileIdRow).toBeInTheDocument();
+    expect(within(profileIdRow).getByText("int")).toBeInTheDocument();
+    expect(
+      within(profileIdRow).getByRole("checkbox", {
+        name: "Column PROFILE_ID is not null",
+      }),
+    ).toBeChecked();
+    expect(
+      within(profileIdRow).getByRole("checkbox", {
+        name: "Column PROFILE_ID is unique",
+      }),
+    ).toBeChecked();
+
+    const profileTypeRow = getColumnRow("PROFILE_TYPE");
+    expect(profileTypeRow).toBeInTheDocument();
+    expect(within(profileTypeRow).getByText("varchar(80)")).toBeInTheDocument();
+  });
+
+  it("collapses a column group to hide grouped columns", async () => {
+    const user = userEvent.setup();
+    renderEditableAttributeTab({
+      columns: [seedColumnGroups(), createTableData().columns![0]],
+    });
+
+    const groupRow = screen.getByRole("button", { name: "PROFILE_GROUP" });
+    await user.click(groupRow);
+    expect(screen.getByText("PROFILE_ID")).toBeInTheDocument();
+
+    await user.click(groupRow);
+
+    expect(screen.queryByText("PROFILE_ID")).not.toBeInTheDocument();
+    expect(screen.queryByText("PROFILE_TYPE")).not.toBeInTheDocument();
+  });
+
   it("keeps Edit/Delete disabled before any row is selected", () => {
     renderEditableAttributeTab();
 
@@ -209,7 +293,8 @@ describe("when editing is allowed", () => {
   });
 
   it("enables Edit/Delete after a row is selected", async () => {
-    const user = renderEditableAttributeTabWithUser();
+    const user = userEvent.setup();
+    renderEditableAttributeTab();
 
     await user.click(getColumnRow("EMAIL"));
 
@@ -218,7 +303,8 @@ describe("when editing is allowed", () => {
   });
 
   it("opens the detail view when Add is clicked", async () => {
-    const user = renderEditableAttributeTabWithUser();
+    const user = userEvent.setup();
+    renderEditableAttributeTab();
 
     await user.click(screen.getByRole("button", { name: "Add" }));
 
@@ -231,7 +317,8 @@ describe("when editing is allowed", () => {
   });
 
   it("opens the detail view for the selected row when Edit is clicked", async () => {
-    const user = renderEditableAttributeTabWithUser();
+    const user = userEvent.setup();
+    renderEditableAttributeTab();
     await user.click(getColumnRow("EMAIL"));
 
     await user.click(screen.getByRole("button", { name: "Edit" }));
@@ -244,8 +331,116 @@ describe("when editing is allowed", () => {
     );
   });
 
+  it("updates column details and persists them after returning to the list", async () => {
+    const user = userEvent.setup();
+    renderEditableAttributeTab();
+
+    const detailRegion = await openDetailFor(user, "EMAIL");
+
+    await user.clear(within(detailRegion).getByLabelText("Physical Name"));
+    await user.type(
+      within(detailRegion).getByLabelText("Physical Name"),
+      "EMAIL_ADDRESS",
+    );
+    await user.clear(within(detailRegion).getByLabelText("Logical Name"));
+    await user.type(
+      within(detailRegion).getByLabelText("Logical Name"),
+      "Email Address",
+    );
+    await user.selectOptions(
+      within(detailRegion).getByLabelText("Type"),
+      ColumnType.DoubleMD,
+    );
+    await user.clear(within(detailRegion).getByLabelText("Length"));
+    await user.type(within(detailRegion).getByLabelText("Length"), "12");
+    await user.clear(within(detailRegion).getByLabelText("Decimal"));
+    await user.type(within(detailRegion).getByLabelText("Decimal"), "2");
+    await user.click(within(detailRegion).getByLabelText("Unsigned"));
+    await user.click(within(detailRegion).getByLabelText("Primary Key"));
+    await user.click(within(detailRegion).getByLabelText("Not Null"));
+    await user.click(within(detailRegion).getByLabelText("Unique"));
+    await user.click(within(detailRegion).getByLabelText("Auto Increment"));
+    await user.clear(within(detailRegion).getByLabelText("Default Value"));
+    await user.type(within(detailRegion).getByLabelText("Default Value"), "0");
+    await user.clear(within(detailRegion).getByLabelText("Description"));
+    await user.type(
+      within(detailRegion).getByLabelText("Description"),
+      "Billing amount",
+    );
+
+    await user.click(screen.getByRole("button", { name: "Back to Columns" }));
+
+    const updatedDetailRegion = await openDetailFor(user, "EMAIL_ADDRESS");
+
+    expect(
+      within(updatedDetailRegion).getByLabelText("Physical Name"),
+    ).toHaveValue("EMAIL_ADDRESS");
+    expect(
+      within(updatedDetailRegion).getByLabelText("Logical Name"),
+    ).toHaveValue("Email Address");
+    expect(within(updatedDetailRegion).getByLabelText("Type")).toHaveValue(
+      ColumnType.DoubleMD,
+    );
+    expect(within(updatedDetailRegion).getByLabelText("Length")).toHaveValue(
+      12,
+    );
+    expect(within(updatedDetailRegion).getByLabelText("Decimal")).toHaveValue(
+      2,
+    );
+    expect(
+      within(updatedDetailRegion).getByLabelText("Unsigned"),
+    ).toBeChecked();
+    expect(
+      within(updatedDetailRegion).getByLabelText("Primary Key"),
+    ).toBeChecked();
+    expect(
+      within(updatedDetailRegion).getByLabelText("Not Null"),
+    ).toBeChecked();
+    expect(within(updatedDetailRegion).getByLabelText("Unique")).toBeChecked();
+    expect(
+      within(updatedDetailRegion).getByLabelText("Auto Increment"),
+    ).toBeChecked();
+    expect(
+      within(updatedDetailRegion).getByLabelText("Default Value"),
+    ).toHaveValue("0");
+    expect(
+      within(updatedDetailRegion).getByLabelText("Description"),
+    ).toHaveValue("Billing amount");
+  });
+
+  it("updates enum args when the column type supports it", async () => {
+    const user = userEvent.setup();
+    renderEditableAttributeTab();
+
+    const detailRegion = await openDetailFor(user, "EMAIL");
+
+    await user.selectOptions(
+      within(detailRegion).getByLabelText("Type"),
+      ColumnType.Enum,
+    );
+    await user.clear(
+      within(detailRegion).getByLabelText("Args of enum/set Type"),
+    );
+    await user.type(
+      within(detailRegion).getByLabelText("Args of enum/set Type"),
+      "active,inactive,pending",
+    );
+
+    await user.click(screen.getByRole("button", { name: "Back to Columns" }));
+
+    const updatedDetailRegion = await openDetailFor(user, "EMAIL");
+
+    expect(within(updatedDetailRegion).getByLabelText("Type")).toHaveValue(
+      ColumnType.Enum,
+    );
+    expect(
+      within(updatedDetailRegion).getByLabelText("Args of enum/set Type"),
+    ).toHaveValue("active,inactive,pending");
+  });
+
   it("deletes the selected row when Delete is clicked", async () => {
-    const user = renderEditableAttributeTabWithUser();
+    const user = userEvent.setup();
+    renderEditableAttributeTab();
     await user.click(getColumnRow("EMAIL"));
 
     await user.click(screen.getByRole("button", { name: "Delete" }));

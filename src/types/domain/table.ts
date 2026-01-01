@@ -1,26 +1,17 @@
-import { type ColumnType } from "@/types/domain/columnType";
+import type { Column } from "./column";
+
+export type ColumnGroupName = string;
+
+export function isColumnGroupName(
+  value: Column | ColumnGroupName,
+): value is ColumnGroupName {
+  return typeof value === "string";
+}
 
 type Color = {
   r: number;
   g: number;
   b: number;
-};
-
-export type Column = {
-  physicalName: string;
-  logicalName?: string;
-  columnType?: ColumnType;
-  length?: number;
-  decimal?: number;
-  notNull: boolean;
-  primaryKey?: boolean;
-  autoIncrement?: boolean;
-  referredColumn?: string;
-  unique?: boolean;
-  unsigned?: boolean;
-  enumArgs?: string;
-  description?: string;
-  defaultValue?: string;
 };
 
 export type Table = {
@@ -31,5 +22,5 @@ export type Table = {
   height: number;
   physicalName: string;
   logicalName?: string;
-  columns?: Column[];
+  columns?: (Column | ColumnGroupName)[];
 };

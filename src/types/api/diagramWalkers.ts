@@ -33,17 +33,22 @@ type Connections = {
 type NormalColumn = {
   physicalName: string;
   logicalName?: string;
+  description?: string;
   columnType?: string;
   length?: number;
   decimal?: number;
-  notNull: boolean;
+  unsigned?: boolean;
+  notNull?: boolean;
+  uniqueKey?: boolean;
+  defaultValue?: string;
   primaryKey?: boolean;
+  autoIncrement?: boolean;
   referredColumn?: string;
   relationship?: string;
 };
 
 type Columns = {
-  normalColumns?: NormalColumn[];
+  items?: (NormalColumn | string)[];
 };
 
 export type TableResponse = {
@@ -62,5 +67,5 @@ export type TableResponse = {
 };
 
 export type DiagramWalkersResponse = {
-  tables: TableResponse[];
+  tables?: TableResponse[];
 };

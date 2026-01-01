@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct Color {
     pub r: u8,
     pub g: u8,
@@ -9,20 +8,17 @@ pub struct Color {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct FkColumn {
     pub fk_column_name: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct FkColumns {
     #[serde(default)]
     pub fk_column: Vec<FkColumn>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct Relationship {
     pub name: String,
     pub source: String,
@@ -36,27 +32,25 @@ pub struct Relationship {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct Connections {
     #[serde(default)]
-    #[serde(rename(serialize = "relationships", deserialize = "relationship"))]
-    pub relationship: Vec<Relationship>,
+    #[serde(rename = "relationship")]
+    pub relationships: Option<Vec<Relationship>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct NormalColumn {
     pub physical_name: String,
 
-    #[serde(default)]
-    pub logical_name: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub logical_name: Option<String>,
 
-    #[serde(default)]
-    pub description: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
 
-    #[serde(default)]
-    #[serde(rename(serialize = "columnType", deserialize = "type"))]
-    pub column_type: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "type")]
+    pub column_type: Option<String>,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub length: Option<u16>,
@@ -64,45 +58,57 @@ pub struct NormalColumn {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub decimal: Option<u16>,
 
-    #[serde(default)]
-    pub unsigned: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unsigned: Option<bool>,
 
-    #[serde(default)]
-    pub not_null: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub not_null: Option<bool>,
 
-    #[serde(default)]
-    pub unique_key: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unique_key: Option<bool>,
 
-    #[serde(default)]
-    pub default_value: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub default_value: Option<String>,
 
-    #[serde(default)]
-    pub primary_key: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub primary_key: Option<bool>,
 
-    #[serde(default)]
-    pub auto_increment: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub auto_increment: Option<bool>,
 
-    #[serde(default)]
-    pub referred_column: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub referred_column: Option<String>,
 
-    #[serde(default)]
-    pub relationship: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub relationship: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
+pub enum Column {
+    #[serde(rename = "normal_column")]
+    Normal(NormalColumn),
+
+    #[serde(rename = "column_group")]
+    Group(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Columns {
-    #[serde(default)]
-    #[serde(rename(serialize = "normalColumns", deserialize = "normal_column"))]
-    pub normal_columns: Vec<NormalColumn>,
-
-    #[serde(default)]
-    #[serde(rename(serialize = "columnGroups", deserialize = "column_group"))]
-    pub column_groups: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "$value")]
+    pub items: Option<Vec<Column>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
+pub struct Indexes {}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CompoundUniqueKeyList {}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct TableProperties {}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Table {
     pub physical_name: String,
     pub logical_name: String,
@@ -114,15 +120,16 @@ pub struct Table {
     pub x: u16,
     pub y: u16,
     pub color: Color,
-
     pub connections: Connections,
-
     pub columns: Columns,
+    pub indexes: Indexes,
+    pub compound_unique_key_list: CompoundUniqueKeyList,
+    pub table_properties: TableProperties,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct DiagramWalkers {
-    #[serde(rename(serialize = "tables", deserialize = "table"))]
-    pub tables: Vec<Table>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "table")]
+    pub tables: Option<Vec<Table>>,
 }

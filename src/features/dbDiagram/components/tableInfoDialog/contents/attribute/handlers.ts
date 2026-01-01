@@ -1,11 +1,14 @@
 import { useCallback } from "react";
-import type { Column } from "@/types/domain/table";
+import type { Column } from "@/types/domain/column";
+import { isColumnGroupName, type ColumnGroupName } from "@/types/domain/table";
 import type { AttributeContentProps } from "./types";
 
 type UseAttributeContentHandlersParams = {
-  columns: Column[];
+  columns: (Column | ColumnGroupName)[];
   selectedColumnIndex: number | null;
+  selectedInGroupIndex: number | null;
   setSelectedColumnIndex: (index: number | null) => void;
+  setSelectedInGroupIndex: (index: number | null) => void;
   setAttributeView: (view: "list" | "detail") => void;
   setData: AttributeContentProps["setData"];
 };
@@ -13,21 +16,35 @@ type UseAttributeContentHandlersParams = {
 export function useAttributeContentHandlers({
   columns,
   selectedColumnIndex,
+  selectedInGroupIndex,
   setSelectedColumnIndex,
+  setSelectedInGroupIndex,
   setAttributeView,
   setData,
 }: UseAttributeContentHandlersParams) {
   const handleSelectColumn = useCallback(
-    (index: number) => {
+    (index: number | null) => {
       setSelectedColumnIndex(index);
+      setSelectedInGroupIndex(null);
     },
-    [setSelectedColumnIndex],
+    [setSelectedColumnIndex, setSelectedInGroupIndex],
+  );
+
+  const handleSelectColumnGroup = useCallback(
+    (columnIndex: number | null, inGroupIndex: number | null) => {
+      setSelectedColumnIndex(columnIndex);
+      setSelectedInGroupIndex(inGroupIndex);
+    },
+    [setSelectedColumnIndex, setSelectedInGroupIndex],
   );
 
   const handleOpenDetail = useCallback(
     (index: number) => {
-      setSelectedColumnIndex(index);
-      setAttributeView("detail");
+      // Just in case of normal column selected, move to detail view
+      if (!isColumnGroupName(columns[index])) {
+        setSelectedColumnIndex(index);
+        setAttributeView("detail");
+      }
     },
     [setAttributeView, setSelectedColumnIndex],
   );
@@ -49,6 +66,11 @@ export function useAttributeContentHandlers({
   }, [columns, setAttributeView, setData, setSelectedColumnIndex]);
 
   const handleEditColumn = useCallback(() => {
+    const isEditingColumnGroup =
+      selectedColumnIndex !== null && selectedInGroupIndex !== null;
+    if (isEditingColumnGroup) {
+      return;
+    }
     if (selectedColumnIndex == null) {
       return;
     }
@@ -103,6 +125,7 @@ export function useAttributeContentHandlers({
 
   return {
     handleSelectColumn,
+    handleSelectColumnGroup,
     handleOpenDetail,
     handleAddColumn,
     handleEditColumn,

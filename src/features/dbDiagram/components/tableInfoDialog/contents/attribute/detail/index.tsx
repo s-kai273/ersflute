@@ -5,12 +5,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useViewModeStore } from "@/stores/viewModeStore";
+import type { Column } from "@/types/domain/column";
 import {
   ColumnType,
   ColumnTypeConfigMap,
   parseColumnType,
 } from "@/types/domain/columnType";
-import type { Column } from "@/types/domain/table";
 import { type AttributeDetailProps } from "./types";
 
 const COLUMN_TYPE_LIST: ColumnType[] = [
@@ -18,7 +18,6 @@ const COLUMN_TYPE_LIST: ColumnType[] = [
   ColumnType.BigIntN,
   ColumnType.Binary,
   ColumnType.BinaryN,
-  ColumnType.Bit1,
   ColumnType.BitN,
   ColumnType.Blob,
   ColumnType.Boolean,
@@ -29,8 +28,6 @@ const COLUMN_TYPE_LIST: ColumnType[] = [
   ColumnType.Decimal,
   ColumnType.DecimalP,
   ColumnType.DecimalPS,
-  ColumnType.Decimal104,
-  ColumnType.Decimal194,
   ColumnType.Double,
   ColumnType.DoubleMD,
   ColumnType.Enum,
@@ -162,7 +159,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
               <Checkbox
                 aria-label={`Column ${currentColumn.physicalName} is primary key`}
                 id="table-info-column-primary-key"
-                checked={currentColumn.primaryKey}
+                checked={currentColumn.primaryKey ?? false}
                 onCheckedChange={(checked) =>
                   setCurrentColumn({
                     ...currentColumn,
@@ -192,7 +189,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
               <Checkbox
                 aria-label={`Column ${currentColumn.physicalName} is not null`}
                 id="table-info-column-not-null"
-                checked={currentColumn.notNull}
+                checked={currentColumn.notNull ?? false}
                 onCheckedChange={(checked) =>
                   setCurrentColumn({
                     ...currentColumn,

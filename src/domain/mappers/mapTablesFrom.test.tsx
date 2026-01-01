@@ -1,4 +1,5 @@
 import type { TableResponse } from "@/types/api/diagramWalkers";
+import type { Column } from "@/types/domain/column";
 import { ColumnType } from "@/types/domain/columnType";
 import { mapTablesFrom } from "./tableMapper";
 
@@ -16,7 +17,7 @@ const createTableResponse = (
   y: 20,
   color: { r: 10, g: 20, b: 30 },
   connections: { relationships: [] },
-  columns: { normalColumns: [] },
+  columns: { items: [] },
   ...overrides,
 });
 
@@ -27,16 +28,23 @@ describe("with populated columns", () => {
         width: 140,
         height: 90,
         columns: {
-          normalColumns: [
+          items: [
             {
               physicalName: "id",
               logicalName: "ID",
+              description: "Identifier",
               columnType: ColumnType.Int,
               length: 11,
+              decimal: 2,
+              unsigned: true,
               notNull: true,
+              uniqueKey: true,
+              defaultValue: "0",
               primaryKey: true,
+              autoIncrement: true,
               referredColumn: "users.id",
             },
+            "COMMON",
           ],
         },
       }),
@@ -54,12 +62,19 @@ describe("with populated columns", () => {
           {
             physicalName: "id",
             logicalName: "ID",
+            description: "Identifier",
             columnType: ColumnType.Int,
             length: 11,
+            decimal: 2,
+            unsigned: true,
             notNull: true,
+            unique: true,
+            defaultValue: "0",
             primaryKey: true,
+            autoIncrement: true,
             referredColumn: "users.id",
           },
+          "COMMON",
         ],
       },
     ]);
@@ -69,7 +84,7 @@ describe("with populated columns", () => {
     const [table] = mapTablesFrom([
       createTableResponse({
         columns: {
-          normalColumns: [
+          items: [
             {
               physicalName: "email",
               columnType: "varchar(n)",
@@ -81,7 +96,9 @@ describe("with populated columns", () => {
       }),
     ]);
 
-    expect(table.columns?.[0]?.columnType).toBe(ColumnType.VarCharN);
+    expect((table.columns?.[0] as Column)?.columnType).toBe(
+      ColumnType.VarCharN,
+    );
   });
 });
 
@@ -100,7 +117,7 @@ describe("without normal columns", () => {
     const [table] = mapTablesFrom([
       createTableResponse({
         columns: {
-          normalColumns: [
+          items: [
             {
               physicalName: "mystery",
               columnType: "unknown",
@@ -111,6 +128,6 @@ describe("without normal columns", () => {
       }),
     ]);
 
-    expect(table.columns?.[0]?.columnType).toBeUndefined();
+    expect((table.columns?.[0] as Column)?.columnType).toBeUndefined();
   });
 });

@@ -1,4 +1,4 @@
-use super::entities::Diagram;
+use super::entities::diagram::Diagram;
 use quick_xml::de::from_reader;
 use std::fs::File;
 use std::io::BufReader;

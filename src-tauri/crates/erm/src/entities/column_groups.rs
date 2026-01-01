@@ -1,44 +1,41 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct NormalColumn {
     pub physical_name: String,
 
-    #[serde(default)]
-    pub logical_name: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub logical_name: Option<String>,
 
-    #[serde(rename(serialize = "columnType", deserialize = "type"))]
+    #[serde(rename = "type")]
     pub column_type: String,
 
-    #[serde(default)]
-    pub not_null: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub not_null: Option<bool>,
 
-    #[serde(default)]
-    pub unique_key: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unique_key: Option<bool>,
 
-    #[serde(default)]
-    pub unsigned: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unsigned: Option<bool>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct Columns {
-    #[serde(rename(serialize = "normalColumns", deserialize = "normal_column"))]
-    pub normal_columns: Vec<NormalColumn>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "normal_column")]
+    pub normal_columns: Option<Vec<NormalColumn>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct ColumnGroup {
     pub column_group_name: String,
     pub columns: Columns,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase", deserialize = "snake_case"))]
 pub struct ColumnGroups {
-    #[serde(default)]
-    #[serde(rename(serialize = "columnGroups", deserialize = "column_group"))]
-    pub column_groups: Vec<ColumnGroup>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "column_group")]
+    pub column_groups: Option<Vec<ColumnGroup>>,
 }
