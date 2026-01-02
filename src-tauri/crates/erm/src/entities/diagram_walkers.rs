@@ -1,24 +1,24 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Color {
     pub r: u8,
     pub g: u8,
     pub b: u8,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct FkColumn {
     pub fk_column_name: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default)]
 pub struct FkColumns {
     #[serde(default)]
     pub fk_column: Vec<FkColumn>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Relationship {
     pub name: String,
     pub source: String,
@@ -31,14 +31,14 @@ pub struct Relationship {
     pub on_update_action: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default)]
 pub struct Connections {
     #[serde(default)]
     #[serde(rename = "relationship")]
     pub relationships: Option<Vec<Relationship>>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default)]
 pub struct NormalColumn {
     pub physical_name: String,
 
@@ -83,7 +83,7 @@ pub struct NormalColumn {
     pub relationship: Option<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub enum ColumnItem {
     #[serde(rename = "normal_column")]
     Normal(NormalColumn),
@@ -92,37 +92,37 @@ pub enum ColumnItem {
     Group(String),
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Columns {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "$value")]
     pub items: Option<Vec<ColumnItem>>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Indexes {}
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Column {
     pub column_id: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct CompoundUniqueKey {
     pub name: String,
     pub columns: Vec<Column>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct CompoundUniqueKeyList {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub compound_unique_key: Option<Vec<CompoundUniqueKey>>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct TableProperties {}
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Table {
     pub physical_name: String,
     pub logical_name: String,
@@ -151,7 +151,7 @@ pub struct Table {
     pub table_properties: TableProperties,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct DiagramWalkers {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "table")]

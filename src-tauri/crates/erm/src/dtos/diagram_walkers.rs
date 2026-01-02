@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Color {
     pub r: u8,
@@ -18,7 +18,7 @@ impl From<crate::entities::diagram_walkers::Color> for Color {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FkColumn {
     pub fk_column_name: String,
@@ -32,7 +32,7 @@ impl From<crate::entities::diagram_walkers::FkColumn> for FkColumn {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct FkColumns {
     #[serde(default)]
@@ -47,7 +47,7 @@ impl From<crate::entities::diagram_walkers::FkColumns> for FkColumns {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Relationship {
     pub name: String,
@@ -77,7 +77,7 @@ impl From<crate::entities::diagram_walkers::Relationship> for Relationship {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Connections {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -94,7 +94,7 @@ impl From<crate::entities::diagram_walkers::Connections> for Connections {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct NormalColumn {
     pub physical_name: String,
@@ -160,14 +160,14 @@ impl From<crate::entities::diagram_walkers::NormalColumn> for NormalColumn {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ColumnItem {
     Normal(NormalColumn),
     Group(String),
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Columns {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -193,7 +193,7 @@ impl From<crate::entities::diagram_walkers::Columns> for Columns {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Column {
     pub column_id: String,
 }
@@ -206,7 +206,7 @@ impl From<crate::entities::diagram_walkers::Column> for Column {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct CompoundUniqueKey {
     pub name: String,
     pub columns: Vec<Column>,
@@ -221,7 +221,7 @@ impl From<crate::entities::diagram_walkers::CompoundUniqueKey> for CompoundUniqu
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct CompoundUniqueKeyList {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub compound_unique_key: Option<Vec<CompoundUniqueKey>>,
@@ -237,7 +237,7 @@ impl From<crate::entities::diagram_walkers::CompoundUniqueKeyList> for CompoundU
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Table {
     pub physical_name: String,
@@ -289,7 +289,7 @@ impl From<crate::entities::diagram_walkers::Table> for Table {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DiagramWalkers {
     #[serde(default, skip_serializing_if = "Option::is_none")]

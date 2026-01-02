@@ -3,7 +3,7 @@ use super::diagram_settings::DiagramSettings;
 use super::diagram_walkers::DiagramWalkers;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Diagram {
     pub diagram_settings: DiagramSettings,

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct NormalColumn {
     pub physical_name: String,
@@ -33,7 +33,7 @@ impl From<crate::entities::column_groups::NormalColumn> for NormalColumn {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Columns {
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -50,7 +50,7 @@ impl From<crate::entities::column_groups::Columns> for Columns {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ColumnGroup {
     pub column_group_name: String,
@@ -66,7 +66,7 @@ impl From<crate::entities::column_groups::ColumnGroup> for ColumnGroup {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ColumnGroups {
     #[serde(default, skip_serializing_if = "Option::is_none")]
