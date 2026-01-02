@@ -21,6 +21,7 @@ export type Table = {
   width: number;
   height: number;
   physicalName: string;
-  logicalName?: string;
+  logicalName: string;
+  description: string;
   columns?: (Column | ColumnGroupName)[];
 };

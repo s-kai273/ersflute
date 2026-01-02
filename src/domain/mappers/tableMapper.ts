@@ -17,6 +17,8 @@ export function mapTablesFrom(tableResponses: TableResponse[]): Table[] {
       width: table.width,
       height: table.height,
       physicalName: table.physicalName,
+      logicalName: table.logicalName,
+      description: table.description,
       columns: table.columns.items?.map((item) => {
         if (typeof item === "string") {
           return item;

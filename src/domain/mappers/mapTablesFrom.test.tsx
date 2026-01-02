@@ -58,6 +58,8 @@ describe("with populated columns", () => {
         width: 140,
         height: 90,
         physicalName: "users",
+        logicalName: "Users",
+        description: "User table",
         columns: [
           {
             physicalName: "id",

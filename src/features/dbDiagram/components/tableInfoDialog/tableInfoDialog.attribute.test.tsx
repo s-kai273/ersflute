@@ -17,6 +17,7 @@ function createTableData(overrides?: Partial<Table>): Table {
     height: 120,
     physicalName: "MEMBERS",
     logicalName: "Members",
+    description: "This is Member table",
     color: { r: 80, g: 120, b: 200 },
     columns: [
       {

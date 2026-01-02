@@ -37,6 +37,7 @@ export function createClickInTableModeHandler(
         height,
         physicalName: defaultTableName,
         logicalName: defaultTableName,
+        description: "",
       } satisfies Table,
     });
   };

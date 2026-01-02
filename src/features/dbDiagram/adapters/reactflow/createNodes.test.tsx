@@ -10,6 +10,7 @@ function createTable(overrides?: Partial<Table>): Table {
     height: 120,
     physicalName: "USERS",
     logicalName: "Users",
+    description: "",
     columns: [],
     ...overrides,
   };

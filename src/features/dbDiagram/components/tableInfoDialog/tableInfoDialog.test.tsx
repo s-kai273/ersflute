@@ -15,6 +15,7 @@ function createTableData(overrides?: Partial<Table>): Table {
     height: 120,
     physicalName: "MEMBERS",
     logicalName: "Members",
+    description: "",
     color: { r: 80, g: 120, b: 200 },
     columns: [
       {
@@ -58,6 +59,7 @@ it("applies the current table data and closes when OK is clicked", async () => {
   const { onApply } = renderTableInfoDialog({
     physicalName: "  MEMBERS  ",
     logicalName: "  Members  ",
+    description: "  This is Member table   ",
     columns: [
       {
         physicalName: "  AMOUNT  ",
@@ -84,6 +86,7 @@ it("applies the current table data and closes when OK is clicked", async () => {
   expect(appliedTable).toMatchObject({
     physicalName: "MEMBERS",
     logicalName: "Members",
+    description: "This is Member table",
     columns: [
       expect.objectContaining({
         physicalName: "AMOUNT",
