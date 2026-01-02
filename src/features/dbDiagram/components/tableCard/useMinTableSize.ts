@@ -19,14 +19,14 @@ export function useMinTableSize(
   // enforce the same minimum-size constraint while resizing.
   useEffect(() => {
     if (contentRef.current) {
-      if (width && setWidth) {
+      if (typeof width === "number" && setWidth) {
         // minWidth = left padding (4px) + right padding (4px) + content width
         const minWidth = 4 + 4 + contentRef.current.clientWidth;
         if (width < minWidth) {
           setWidth(minWidth);
         }
       }
-      if (height && setHeight) {
+      if (typeof height === "number" && setHeight) {
         // minHeight = header height (20px) + bottom padding (4px) + content height
         const minHeight = 20 + 4 + contentRef.current.clientHeight;
         if (height < minHeight) {
