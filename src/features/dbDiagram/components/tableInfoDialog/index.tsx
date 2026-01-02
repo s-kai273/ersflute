@@ -15,6 +15,7 @@ import {
   type Table,
 } from "@/types/domain/table";
 import { AttributeContent } from "./contents/attribute";
+import { ConstraintOptionContent } from "./contents/constraintOption";
 import { DescriptionContent } from "./contents/description";
 import { type TableInfoDialogProps } from "./types";
 
@@ -53,6 +54,13 @@ export function TableInfoDialog({
       physicalName: tableData.physicalName.trim(),
       logicalName: tableData.logicalName.trim(),
       description: tableData.description.trim(),
+      tableConstraint: tableData.tableConstraint
+        ? tableData.tableConstraint.trim()
+        : undefined,
+      primaryKeyName: tableData.primaryKeyName
+        ? tableData.primaryKeyName.trim()
+        : undefined,
+      option: tableData.option ? tableData.option.trim() : undefined,
       columns: preparedColumns,
     });
     onOpenChange?.(false);
@@ -120,7 +128,29 @@ export function TableInfoDialog({
             value="constraint-option"
             className="rounded-md border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-500"
           >
-            Constraint and option settings will be available in a future update.
+            <ConstraintOptionContent
+              tableConstraint={tableData.tableConstraint}
+              primaryKeyName={tableData.primaryKeyName}
+              option={tableData.option}
+              setTableConstraint={(tableConstraint) =>
+                setTableData({
+                  ...tableData,
+                  tableConstraint,
+                })
+              }
+              setPrimaryKeyName={(primaryKeyName) =>
+                setTableData({
+                  ...tableData,
+                  primaryKeyName,
+                })
+              }
+              setOption={(option) =>
+                setTableData({
+                  ...tableData,
+                  option,
+                })
+              }
+            />
           </TabsContent>
           <TabsContent
             value="compound-unique-key"

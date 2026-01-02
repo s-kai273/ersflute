@@ -19,6 +19,9 @@ export function mapTablesFrom(tableResponses: TableResponse[]): Table[] {
       physicalName: table.physicalName,
       logicalName: table.logicalName,
       description: table.description,
+      tableConstraint: table.tableConstraint,
+      primaryKeyName: table.primaryKeyName,
+      option: table.option,
       columns: table.columns.items?.map((item) => {
         if (typeof item === "string") {
           return item;

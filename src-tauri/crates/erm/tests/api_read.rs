@@ -37,6 +37,9 @@ fn test_read_erm_file() {
                         connections: diagram_walkers::Connections {
                             relationships: None,
                         },
+                        table_constraint: None,
+                        primary_key_name: None,
+                        option: None,
                         columns: diagram_walkers::Columns {
                             items: Some(vec![
                                 diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
@@ -118,6 +121,9 @@ fn test_read_erm_file() {
                                 }
                             ])
                         },
+                        table_constraint: None,
+                        primary_key_name: None,
+                        option: None,
                         columns: diagram_walkers::Columns {
                             items: Some(vec![
                                 diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
@@ -180,6 +186,9 @@ fn test_read_erm_file() {
                         connections: diagram_walkers::Connections {
                             relationships: None,
                         },
+                        table_constraint: None,
+                        primary_key_name: None,
+                        option: None,
                         columns: diagram_walkers::Columns {
                             items: Some(vec![
                                 diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
@@ -236,6 +245,9 @@ fn test_read_erm_file() {
                                 on_update_action: "RESTRICT".to_string(),
                             }])
                         },
+                        table_constraint: None,
+                        primary_key_name: None,
+                        option: None,
                         columns: diagram_walkers::Columns {
                             items: Some(vec![
                                 diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
@@ -366,6 +378,9 @@ fn test_read_erm_file() {
                                 },
                             ])
                         },
+                        table_constraint: None,
+                        primary_key_name: None,
+                        option: None,
                         columns: diagram_walkers::Columns {
                             items: Some(vec![
                                 diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {
@@ -453,6 +468,9 @@ fn test_read_erm_file() {
                                 on_update_action: "RESTRICT".to_string(),
                             }])
                         },
+                        table_constraint: None,
+                        primary_key_name: None,
+                        option: None,
                         columns: diagram_walkers::Columns {
                             items: Some(vec![
                                 diagram_walkers::Column::Normal(diagram_walkers::NormalColumn {

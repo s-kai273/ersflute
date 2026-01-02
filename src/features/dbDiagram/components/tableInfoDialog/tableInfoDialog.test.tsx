@@ -60,6 +60,9 @@ it("applies the current table data and closes when OK is clicked", async () => {
     physicalName: "  MEMBERS  ",
     logicalName: "  Members  ",
     description: "  This is Member table   ",
+    tableConstraint: "  constraint_a\nconstraint_b  ",
+    primaryKeyName: "  PK_MEMBERS  ",
+    option: "  option_a\noption_b  ",
     columns: [
       {
         physicalName: "  AMOUNT  ",
@@ -87,6 +90,9 @@ it("applies the current table data and closes when OK is clicked", async () => {
     physicalName: "MEMBERS",
     logicalName: "Members",
     description: "This is Member table",
+    tableConstraint: "constraint_a\nconstraint_b",
+    primaryKeyName: "PK_MEMBERS",
+    option: "option_a\noption_b",
     columns: [
       expect.objectContaining({
         physicalName: "AMOUNT",

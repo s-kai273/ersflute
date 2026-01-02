@@ -23,5 +23,8 @@ export type Table = {
   physicalName: string;
   logicalName: string;
   description: string;
+  tableConstraint?: string;
+  primaryKeyName?: string;
+  option?: string;
   columns?: (Column | ColumnGroupName)[];
 };

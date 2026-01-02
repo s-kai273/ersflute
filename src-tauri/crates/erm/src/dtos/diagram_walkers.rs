@@ -207,6 +207,16 @@ pub struct Table {
     pub y: u16,
     pub color: Color,
     pub connections: Connections,
+
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub table_constraint: Option<String>,
+
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub primary_key_name: Option<String>,
+
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub option: Option<String>,
+
     pub columns: Columns,
 }
 
@@ -224,6 +234,9 @@ impl From<crate::entities::diagram_walkers::Table> for Table {
             y: entity.y,
             color: entity.color.into(),
             connections: entity.connections.into(),
+            table_constraint: entity.table_constraint,
+            primary_key_name: entity.primary_key_name,
+            option: entity.option,
             columns: entity.columns.into(),
         }
     }
