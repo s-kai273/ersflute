@@ -84,7 +84,7 @@ pub struct NormalColumn {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum Column {
+pub enum ColumnItem {
     #[serde(rename = "normal_column")]
     Normal(NormalColumn),
 
@@ -96,14 +96,28 @@ pub enum Column {
 pub struct Columns {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "$value")]
-    pub items: Option<Vec<Column>>,
+    pub items: Option<Vec<ColumnItem>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Indexes {}
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct CompoundUniqueKeyList {}
+pub struct Column {
+    pub column_id: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CompoundUniqueKey {
+    pub name: String,
+    pub columns: Vec<Column>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CompoundUniqueKeyList {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub compound_unique_key: Option<Vec<CompoundUniqueKey>>,
+}
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TableProperties {}

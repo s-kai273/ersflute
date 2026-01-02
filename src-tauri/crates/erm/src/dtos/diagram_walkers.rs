@@ -162,7 +162,7 @@ impl From<crate::entities::diagram_walkers::NormalColumn> for NormalColumn {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
-pub enum Column {
+pub enum ColumnItem {
     Normal(NormalColumn),
     Group(String),
 }
@@ -171,7 +171,7 @@ pub enum Column {
 #[serde(rename_all = "camelCase")]
 pub struct Columns {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub items: Option<Vec<Column>>,
+    pub items: Option<Vec<ColumnItem>>,
 }
 
 impl From<crate::entities::diagram_walkers::Columns> for Columns {
@@ -180,15 +180,59 @@ impl From<crate::entities::diagram_walkers::Columns> for Columns {
             items: entity.items.map(|v| {
                 v.into_iter()
                     .map(|item| match item {
-                        crate::entities::diagram_walkers::Column::Normal(column) => {
-                            Column::Normal(column.into())
+                        crate::entities::diagram_walkers::ColumnItem::Normal(column) => {
+                            ColumnItem::Normal(column.into())
                         }
-                        crate::entities::diagram_walkers::Column::Group(column) => {
-                            Column::Group(column)
+                        crate::entities::diagram_walkers::ColumnItem::Group(column) => {
+                            ColumnItem::Group(column)
                         }
                     })
                     .collect()
             }),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Column {
+    pub column_id: String,
+}
+
+impl From<crate::entities::diagram_walkers::Column> for Column {
+    fn from(entity: crate::entities::diagram_walkers::Column) -> Self {
+        Self {
+            column_id: entity.column_id,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CompoundUniqueKey {
+    pub name: String,
+    pub columns: Vec<Column>,
+}
+
+impl From<crate::entities::diagram_walkers::CompoundUniqueKey> for CompoundUniqueKey {
+    fn from(entity: crate::entities::diagram_walkers::CompoundUniqueKey) -> Self {
+        Self {
+            name: entity.name,
+            columns: entity.columns.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CompoundUniqueKeyList {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub compound_unique_key: Option<Vec<CompoundUniqueKey>>,
+}
+
+impl From<crate::entities::diagram_walkers::CompoundUniqueKeyList> for CompoundUniqueKeyList {
+    fn from(entity: crate::entities::diagram_walkers::CompoundUniqueKeyList) -> Self {
+        Self {
+            compound_unique_key: entity
+                .compound_unique_key
+                .map(|v| v.into_iter().map(Into::into).collect()),
         }
     }
 }
@@ -218,6 +262,8 @@ pub struct Table {
     pub option: Option<String>,
 
     pub columns: Columns,
+
+    pub compound_unique_key_list: CompoundUniqueKeyList,
 }
 
 impl From<crate::entities::diagram_walkers::Table> for Table {
@@ -238,6 +284,7 @@ impl From<crate::entities::diagram_walkers::Table> for Table {
             primary_key_name: entity.primary_key_name,
             option: entity.option,
             columns: entity.columns.into(),
+            compound_unique_key_list: entity.compound_unique_key_list.into(),
         }
     }
 }
