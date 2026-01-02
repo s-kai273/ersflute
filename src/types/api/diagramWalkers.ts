@@ -63,6 +63,9 @@ export type TableResponse = {
   y: number;
   color: Color;
   connections: Connections;
+  tableConstraint?: string;
+  primaryKeyName?: string;
+  option?: string;
   columns: Columns;
 };
 
