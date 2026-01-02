@@ -15,6 +15,7 @@ import {
   type Table,
 } from "@/types/domain/table";
 import { AttributeContent } from "./contents/attribute";
+import { DescriptionContent } from "./contents/description";
 import { type TableInfoDialogProps } from "./types";
 
 export function TableInfoDialog({
@@ -25,7 +26,6 @@ export function TableInfoDialog({
 }: TableInfoDialogProps) {
   const { open, onOpenChange, ...dialogProps } = props;
   const [tableData, setTableData] = useState<Table>(data);
-  const [description, setDescription] = useState("");
 
   const handleApply = () => {
     const columns = tableData.columns || [];
@@ -51,9 +51,8 @@ export function TableInfoDialog({
     onApply?.({
       ...data,
       physicalName: tableData.physicalName.trim(),
-      logicalName: tableData?.logicalName?.trim()
-        ? tableData?.logicalName.trim()
-        : undefined,
+      logicalName: tableData.logicalName.trim(),
+      description: tableData.description.trim(),
       columns: preparedColumns,
     });
     onOpenChange?.(false);
@@ -107,16 +106,15 @@ export function TableInfoDialog({
             value="description"
             className="rounded-md border border-slate-200 bg-white p-4"
           >
-            <label className="flex flex-col gap-2 text-sm">
-              <span className="font-medium text-slate-600">
-                Table Description
-              </span>
-              <textarea
-                className="min-h-[150px] rounded border border-slate-300 px-2 py-2 text-sm leading-5 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-              />
-            </label>
+            <DescriptionContent
+              description={tableData.description}
+              setDescription={(description: string) =>
+                setTableData({
+                  ...tableData,
+                  description,
+                })
+              }
+            />
           </TabsContent>
           <TabsContent
             value="constraint-option"

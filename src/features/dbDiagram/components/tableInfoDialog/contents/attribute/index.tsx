@@ -86,8 +86,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
             onChange={(event) =>
               setData({
                 ...data,
-                logicalName:
-                  event.target.value === "" ? undefined : event.target.value,
+                logicalName: event.target.value,
               })
             }
           />

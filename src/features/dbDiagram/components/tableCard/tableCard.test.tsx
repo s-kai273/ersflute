@@ -14,6 +14,8 @@ const createTable = (overrides?: Partial<Table>): Table => ({
   width: 180,
   height: 120,
   physicalName: "users",
+  logicalName: "",
+  description: "",
   columns: [
     {
       physicalName: "id",

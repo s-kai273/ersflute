@@ -17,6 +17,7 @@ function createTableData(overrides?: Partial<Table>): Table {
     height: 120,
     physicalName: "MEMBERS",
     logicalName: "Members",
+    description: "This is Member table",
     color: { r: 80, g: 120, b: 200 },
     columns: [
       {
@@ -40,7 +41,7 @@ function createTableData(overrides?: Partial<Table>): Table {
   };
 }
 
-function renderAttributeTab(overrides?: Partial<Table>) {
+function renderTableInfoDialog(overrides?: Partial<Table>) {
   const onApply = jest.fn();
   const onOpenChange = jest.fn();
   render(
@@ -54,14 +55,14 @@ function renderAttributeTab(overrides?: Partial<Table>) {
   return { onApply, onOpenChange };
 }
 
-function renderEditableAttributeTab(overrides?: Partial<Table>) {
+function renderEditableTableInfoDialog(overrides?: Partial<Table>) {
   useViewModeStore.setState({ ...initialViewModeState, isReadOnly: false });
-  return renderAttributeTab(overrides);
+  return renderTableInfoDialog(overrides);
 }
 
-function renderReadOnlyAttributeTab(overrides?: Partial<Table>) {
+function renderReadOnlyTableInfoDialog(overrides?: Partial<Table>) {
   useViewModeStore.setState({ ...initialViewModeState, isReadOnly: true });
-  return renderAttributeTab(overrides);
+  return renderTableInfoDialog(overrides);
 }
 
 function seedColumnGroups() {
@@ -120,7 +121,7 @@ beforeEach(() => {
 
 describe("when editing is allowed", () => {
   it("renders the Attribute tab content with table metadata and columns", () => {
-    renderEditableAttributeTab();
+    renderEditableTableInfoDialog();
 
     const physicalNameInput = screen.getByLabelText("Physical Name");
     expect(physicalNameInput).toHaveValue("MEMBERS");
@@ -165,7 +166,7 @@ describe("when editing is allowed", () => {
 
   it("opens the column detail view on double-click", async () => {
     const user = userEvent.setup();
-    renderEditableAttributeTab();
+    renderEditableTableInfoDialog();
 
     const detailRegion = await openDetailFor(user, "EMAIL");
 
@@ -176,7 +177,7 @@ describe("when editing is allowed", () => {
 
   it("returns to the list when back is clicked from the detail view", async () => {
     const user = userEvent.setup();
-    renderEditableAttributeTab();
+    renderEditableTableInfoDialog();
     await openDetailFor(user, "EMAIL");
 
     await user.click(screen.getByRole("button", { name: "Back to Columns" }));
@@ -188,7 +189,7 @@ describe("when editing is allowed", () => {
   });
 
   it("shows a placeholder message when no columns are defined", () => {
-    renderEditableAttributeTab({ columns: [] });
+    renderEditableTableInfoDialog({ columns: [] });
 
     expect(
       screen.getByText("Columns will appear here once added."),
@@ -196,7 +197,7 @@ describe("when editing is allowed", () => {
   });
 
   it("shows a foreign key indicator when a referred column is set", () => {
-    renderEditableAttributeTab({
+    renderEditableTableInfoDialog({
       columns: [
         {
           physicalName: "PROFILE_ID",
@@ -231,7 +232,7 @@ describe("when editing is allowed", () => {
   });
 
   it("renders a column group row", () => {
-    renderEditableAttributeTab({
+    renderEditableTableInfoDialog({
       columns: [seedColumnGroups(), createTableData().columns![0]],
     });
 
@@ -242,7 +243,7 @@ describe("when editing is allowed", () => {
 
   it("expands a column group to show grouped columns", async () => {
     const user = userEvent.setup();
-    renderEditableAttributeTab({
+    renderEditableTableInfoDialog({
       columns: [seedColumnGroups(), createTableData().columns![0]],
     });
 
@@ -270,7 +271,7 @@ describe("when editing is allowed", () => {
 
   it("collapses a column group to hide grouped columns", async () => {
     const user = userEvent.setup();
-    renderEditableAttributeTab({
+    renderEditableTableInfoDialog({
       columns: [seedColumnGroups(), createTableData().columns![0]],
     });
 
@@ -285,7 +286,7 @@ describe("when editing is allowed", () => {
   });
 
   it("keeps Edit/Delete disabled before any row is selected", () => {
-    renderEditableAttributeTab();
+    renderEditableTableInfoDialog();
 
     expect(screen.getByRole("button", { name: "Add" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Edit" })).toBeDisabled();
@@ -294,7 +295,7 @@ describe("when editing is allowed", () => {
 
   it("enables Edit/Delete after a row is selected", async () => {
     const user = userEvent.setup();
-    renderEditableAttributeTab();
+    renderEditableTableInfoDialog();
 
     await user.click(getColumnRow("EMAIL"));
 
@@ -304,7 +305,7 @@ describe("when editing is allowed", () => {
 
   it("opens the detail view when Add is clicked", async () => {
     const user = userEvent.setup();
-    renderEditableAttributeTab();
+    renderEditableTableInfoDialog();
 
     await user.click(screen.getByRole("button", { name: "Add" }));
 
@@ -318,7 +319,7 @@ describe("when editing is allowed", () => {
 
   it("opens the detail view for the selected row when Edit is clicked", async () => {
     const user = userEvent.setup();
-    renderEditableAttributeTab();
+    renderEditableTableInfoDialog();
     await user.click(getColumnRow("EMAIL"));
 
     await user.click(screen.getByRole("button", { name: "Edit" }));
@@ -333,7 +334,7 @@ describe("when editing is allowed", () => {
 
   it("updates column details and persists them after returning to the list", async () => {
     const user = userEvent.setup();
-    renderEditableAttributeTab();
+    renderEditableTableInfoDialog();
 
     const detailRegion = await openDetailFor(user, "EMAIL");
 
@@ -410,7 +411,7 @@ describe("when editing is allowed", () => {
 
   it("updates enum args when the column type supports it", async () => {
     const user = userEvent.setup();
-    renderEditableAttributeTab();
+    renderEditableTableInfoDialog();
 
     const detailRegion = await openDetailFor(user, "EMAIL");
 
@@ -440,7 +441,7 @@ describe("when editing is allowed", () => {
 
   it("deletes the selected row when Delete is clicked", async () => {
     const user = userEvent.setup();
-    renderEditableAttributeTab();
+    renderEditableTableInfoDialog();
     await user.click(getColumnRow("EMAIL"));
 
     await user.click(screen.getByRole("button", { name: "Delete" }));
@@ -452,7 +453,7 @@ describe("when editing is allowed", () => {
 
 describe("in read-only mode", () => {
   it("renders the Attribute tab content with table metadata and columns", () => {
-    renderReadOnlyAttributeTab();
+    renderReadOnlyTableInfoDialog();
 
     const physicalNameInput = screen.getByLabelText("Physical Name");
     expect(physicalNameInput).toHaveValue("MEMBERS");
@@ -485,7 +486,7 @@ describe("in read-only mode", () => {
 
   it("keeps Add/Delete disabled while enabling Edit after selection", async () => {
     const user = userEvent.setup();
-    renderReadOnlyAttributeTab();
+    renderReadOnlyTableInfoDialog();
 
     await user.click(getColumnRow("EMAIL"));
 
@@ -496,7 +497,7 @@ describe("in read-only mode", () => {
 
   it("opens the detail view for the selected row when Edit is clicked", async () => {
     const user = userEvent.setup();
-    renderReadOnlyAttributeTab();
+    renderReadOnlyTableInfoDialog();
     await user.click(getColumnRow("EMAIL"));
 
     await user.click(screen.getByRole("button", { name: "Edit" }));
