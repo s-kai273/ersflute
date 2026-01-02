@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/16/solid";
 import { findGroupFromName } from "@/features/dbDiagram/domain/findGroupFromName";
 import { formatColumnType } from "@/features/dbDiagram/domain/formatColumnType";
@@ -41,6 +41,10 @@ export function TableCard({
 }: TableCardProps) {
   const { isReadOnly } = useViewModeStore();
   const columnGroups = useDiagramStore((state) => state.columnGroups);
+  const flatColumns = useMemo(
+    () => flatColumnsFrom(data.columns ?? [], columnGroups),
+    [columnGroups, data.columns],
+  );
 
   // Ref to the variable table content used to determine the TableCard size.
   // Only the content area is measured to keep the TableCard dimensions
@@ -68,7 +72,7 @@ export function TableCard({
       <div className="nodrag flex-1 w-full h-full px-1 pb-1">
         <div className="w-full h-full bg-white">
           <div ref={contentRef} className="w-fit h-fit">
-            {flatColumnsFrom(data.columns ?? [], columnGroups).map((column) => (
+            {flatColumns.map((column) => (
               <p
                 key={column.physicalName}
                 className="flex items-center text-[0.625rem] leading-5 whitespace-nowrap"

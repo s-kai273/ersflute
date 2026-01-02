@@ -22,13 +22,17 @@ export function useMinTableSize(
       if (width && setWidth) {
         // minWidth = left padding (4px) + right padding (4px) + content width
         const minWidth = 4 + 4 + contentRef.current.clientWidth;
-        setWidth(width > minWidth ? width : minWidth);
+        if (width < minWidth) {
+          setWidth(minWidth);
+        }
       }
       if (height && setHeight) {
         // minHeight = header height (20px) + bottom padding (4px) + content height
         const minHeight = 20 + 4 + contentRef.current.clientHeight;
-        setHeight(height > minHeight ? height : minHeight);
+        if (height < minHeight) {
+          setHeight(minHeight);
+        }
       }
     }
-  }, []);
+  }, [width, height, setHeight, setWidth]);
 }
