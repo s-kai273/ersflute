@@ -1,10 +1,11 @@
 pub mod vtables;
 
 use crate::entities::diagram::vdiagrams as entities;
+use crate::validation::Validate;
 use serde::{Deserialize, Serialize};
 use vtables::VTables;
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct Color {
     pub r: u8,
@@ -22,7 +23,7 @@ impl From<entities::Color> for Color {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct WalkerNotes {}
 
@@ -32,7 +33,7 @@ impl From<entities::WalkerNotes> for WalkerNotes {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct WalkerGroups {}
 
@@ -42,7 +43,7 @@ impl From<entities::WalkerGroups> for WalkerGroups {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct VDiagram {
     pub vdiagram_name: String,
@@ -67,7 +68,7 @@ impl From<entities::VDiagram> for VDiagram {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct VDiagrams {
     #[serde(default, skip_serializing_if = "Option::is_none")]

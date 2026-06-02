@@ -7,10 +7,18 @@ use crate::entities::diagram::diagram_walkers::tables as entities;
 use columns::Columns;
 use compound_unique_key_list::CompoundUniqueKeyList;
 use connections::Connections;
-use indexes::Indexes;
+use indexes::Index;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+use crate::validation::Validate;
+use crate::validation::diagram::diagram_walkers::tables::{
+    validate_auto_increment_columns_are_key_columns, validate_column_length_and_decimal,
+    validate_compound_unique_key_column_references, validate_duplicate_column_physical_names,
+    validate_duplicate_compound_unique_key_names, validate_duplicate_index_names,
+    validate_index_column_references, validate_local_relationship_consistency,
+};
+
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct Color {
     pub r: u8,
@@ -28,7 +36,17 @@ impl From<entities::Color> for Color {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[validate(rules(
+    validate_duplicate_column_physical_names,
+    validate_duplicate_index_names,
+    validate_duplicate_compound_unique_key_names,
+    validate_auto_increment_columns_are_key_columns,
+    validate_column_length_and_decimal,
+    validate_index_column_references,
+    validate_compound_unique_key_column_references,
+    validate_local_relationship_consistency
+))]
 #[serde(rename_all = "camelCase")]
 pub struct Table {
     pub physical_name: String,
@@ -66,7 +84,8 @@ pub struct Table {
 
     pub columns: Columns,
 
-    pub indexes: Indexes,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub indexes: Option<Vec<Index>>,
 
     pub compound_unique_key_list: CompoundUniqueKeyList,
 }
@@ -89,7 +108,10 @@ impl From<entities::Table> for Table {
             primary_key_name: entity.primary_key_name,
             option: entity.option,
             columns: entity.columns.into(),
-            indexes: entity.indexes.into(),
+            indexes: entity
+                .indexes
+                .indexes
+                .map(|v| v.into_iter().map(Into::into).collect()),
             compound_unique_key_list: entity.compound_unique_key_list.into(),
         }
     }

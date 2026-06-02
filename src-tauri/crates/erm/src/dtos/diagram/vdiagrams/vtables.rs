@@ -1,7 +1,8 @@
 use crate::entities::diagram::vdiagrams::vtables as entities;
+use crate::validation::Validate;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct VTable {
     pub table_id: String,
@@ -23,7 +24,7 @@ impl From<entities::VTable> for VTable {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct VTables {
     #[serde(default, skip_serializing_if = "Option::is_none")]
