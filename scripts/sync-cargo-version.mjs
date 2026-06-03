@@ -15,6 +15,8 @@ const cargoManifestPaths = [
   resolve(rootDir, "src-tauri/crates/erm/Cargo.toml"),
   resolve(rootDir, "src-tauri/crates/erm_macros/Cargo.toml"),
 ];
+const cargoLockPath = resolve(rootDir, "src-tauri/Cargo.lock");
+const cargoLockPackages = ["app", "erm", "erm_macros"];
 
 async function main() {
   const packageJson = JSON.parse(await readFile(packageJsonPath, "utf8"));
@@ -28,10 +30,16 @@ async function main() {
     await syncCargoManifest(manifestPath, version, dryRun);
   }
 
+  await syncCargoLock(cargoLockPath, cargoLockPackages, version, dryRun);
+
   if (!dryRun) {
-    await execFileAsync("git", ["add", packageJsonPath, ...cargoManifestPaths], {
-      cwd: rootDir,
-    });
+    await execFileAsync(
+      "git",
+      ["add", packageJsonPath, ...cargoManifestPaths, cargoLockPath],
+      {
+        cwd: rootDir,
+      },
+    );
   }
 }
 
@@ -59,6 +67,135 @@ async function syncCargoManifest(manifestPath, version, dryRun) {
   if (!dryRun) {
     await writeFile(manifestPath, updated);
   }
+}
+
+async function syncCargoLock(lockPath, packageNames, version, dryRun) {
+  const original = await readFile(lockPath, "utf8");
+  const { headerLines, blocks } = splitCargoLockPackages(original);
+  let changed = false;
+
+  for (const packageName of packageNames) {
+    const matchingBlocks = blocks.filter(
+      (block) => block.name === packageName,
+    );
+
+    if (matchingBlocks.length === 0) {
+      throw new Error(`No package entry found in ${lockPath}: ${packageName}`);
+    }
+
+    if (matchingBlocks.length > 1) {
+      throw new Error(
+        `Multiple package entries found in ${lockPath}: ${packageName}`,
+      );
+    }
+
+    const block = matchingBlocks[0];
+
+    if (block.version === version) {
+      continue;
+    }
+
+    block.lines[block.versionLineIndex] = `version = "${version}"`;
+    changed = true;
+  }
+
+  if (!changed) {
+    return;
+  }
+
+  const header = headerLines.join("\n");
+  const packageContent = blocks.map((block) => block.lines.join("\n")).join("\n");
+  const updated =
+    header.length === 0
+      ? packageContent
+      : `${header}${header.endsWith("\n") ? "" : "\n"}${packageContent}`;
+
+  if (!dryRun) {
+    await writeFile(lockPath, updated);
+  }
+}
+
+function splitCargoLockPackages(content) {
+  const lines = content.split("\n");
+  const blocks = [];
+  const headerLines = [];
+  let currentLines = [];
+  let inPackageBlock = false;
+
+  for (const line of lines) {
+    if (line === "[[package]]") {
+      if (inPackageBlock) {
+        blocks.push(parseCargoLockPackageBlock(currentLines));
+      }
+
+      currentLines = [line];
+      inPackageBlock = true;
+      continue;
+    }
+
+    if (inPackageBlock) {
+      currentLines.push(line);
+      continue;
+    }
+
+    headerLines.push(line);
+  }
+
+  if (inPackageBlock) {
+    blocks.push(parseCargoLockPackageBlock(currentLines));
+  }
+
+  return { headerLines, blocks };
+}
+
+function parseCargoLockPackageBlock(lines) {
+  if (lines[0] !== "[[package]]") {
+    throw new Error("Invalid Cargo.lock package block");
+  }
+
+  let name;
+  let version;
+  let versionLineIndex = -1;
+
+  for (let index = 1; index < lines.length; index += 1) {
+    const line = lines[index];
+
+    if (line.startsWith("name = ")) {
+      name = parseQuotedValue(line, "name");
+      continue;
+    }
+
+    if (line.startsWith("version = ")) {
+      version = parseQuotedValue(line, "version");
+      versionLineIndex = index;
+      continue;
+    }
+  }
+
+  if (!name) {
+    throw new Error("Cargo.lock package block is missing a name");
+  }
+
+  if (versionLineIndex < 0 || !version) {
+    throw new Error(`Cargo.lock package block is missing a version: ${name}`);
+  }
+
+  return {
+    name,
+    version,
+    versionLineIndex,
+    lines,
+  };
+}
+
+function parseQuotedValue(line, fieldName) {
+  const match = line.match(new RegExp(`^${fieldName} = "(.*)"$`));
+
+  if (!match) {
+    throw new Error(`Invalid Cargo.lock ${fieldName} line: ${line}`);
+  }
+
+  return match[1];
 }
 
 function parseArgs(args) {
