@@ -8,7 +8,7 @@ export function mapVDiagramsFrom(
     return {
       vdiagramName: vdiagram.vdiagramName,
       color: vdiagram.color,
-      vtables: (vdiagram.vtables.vtables ?? []).map((vtable) => {
+      vtables: (vdiagram.vtables ?? []).map((vtable) => {
         return {
           tableId: vtable.tableId,
           x: vtable.x,

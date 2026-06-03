@@ -8,18 +8,10 @@ export type VTableResponse = {
   fontSize: number;
 };
 
-export type VTablesResponse = {
-  vtables?: VTableResponse[];
-};
-
 export type VDiagramResponse = {
   vdiagramName: string;
   color?: Color;
-  vtables: VTablesResponse;
+  vtables?: VTableResponse[];
   walkerNotes: Record<string, never>;
   walkerGroups: Record<string, never>;
-};
-
-export type VDiagramsResponse = {
-  vdiagrams?: VDiagramResponse[];
 };

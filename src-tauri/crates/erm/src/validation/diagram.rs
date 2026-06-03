@@ -1,4 +1,5 @@
 pub mod diagram_walkers;
+pub mod vdiagrams;
 
 use std::collections::{HashMap, HashSet};
 

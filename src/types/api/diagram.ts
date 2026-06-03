@@ -1,11 +1,11 @@
 import type { ColumnGroupsResponse } from "./columnGroups";
 import { type DiagramSettingsResponse } from "./diagramSettings";
 import type { DiagramWalkersResponse } from "./diagramWalkers";
-import type { VDiagramsResponse } from "./vdiagrams";
+import type { VDiagramResponse } from "./vdiagrams";
 
 export type DiagramResponse = {
   diagramSettings?: DiagramSettingsResponse;
   diagramWalkers?: DiagramWalkersResponse;
-  vdiagrams?: VDiagramsResponse;
+  vdiagrams?: VDiagramResponse[];
   columnGroups?: ColumnGroupsResponse["columnGroups"];
 };
