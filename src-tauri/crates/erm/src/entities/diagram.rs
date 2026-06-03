@@ -2,12 +2,14 @@ pub mod column_groups;
 pub mod diagram_settings;
 pub mod diagram_walkers;
 pub mod page_settings;
+pub mod vdiagrams;
 
 use column_groups::ColumnGroups;
 use diagram_settings::DiagramSettings;
 use diagram_walkers::DiagramWalkers;
 use page_settings::PageSettings;
 use serde::{Deserialize, Serialize};
+use vdiagrams::VDiagrams;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Color {
@@ -55,6 +57,9 @@ pub struct Diagram {
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub diagram_walkers: Option<DiagramWalkers>,
+
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub vdiagrams: Option<VDiagrams>,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub column_groups: Option<ColumnGroups>,
