@@ -12,6 +12,10 @@ use serde::{Deserialize, Serialize};
 use vdiagrams::VDiagrams;
 
 use crate::validation::Validate;
+use crate::validation::diagram::vdiagrams::{
+    validate_duplicate_vdiagram_names, validate_duplicate_virtual_table_references,
+    validate_virtual_table_references,
+};
 use crate::validation::diagram::{
     validate_column_group_column_length_and_decimal, validate_column_group_references,
     validate_duplicate_column_group_column_physical_names, validate_duplicate_column_group_names,
@@ -40,7 +44,10 @@ impl From<crate::entities::diagram::Color> for Color {
     validate_duplicate_column_group_names,
     validate_duplicate_column_group_column_physical_names,
     validate_column_group_column_length_and_decimal,
-    validate_column_group_references
+    validate_column_group_references,
+    validate_duplicate_vdiagram_names,
+    validate_virtual_table_references,
+    validate_duplicate_virtual_table_references
 ))]
 #[serde(rename_all = "camelCase")]
 pub struct Diagram {
