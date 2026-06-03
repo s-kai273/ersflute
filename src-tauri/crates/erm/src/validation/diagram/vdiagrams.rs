@@ -8,10 +8,6 @@ pub fn validate_duplicate_vdiagram_names(diagram: &Diagram) -> Result<(), Valida
         return Ok(());
     };
 
-    let Some(vdiagrams) = &vdiagrams.vdiagrams else {
-        return Ok(());
-    };
-
     let mut vdiagram_names = HashMap::new();
 
     for (vdiagram_index, vdiagram) in vdiagrams.iter().enumerate() {
@@ -35,10 +31,6 @@ pub fn validate_virtual_table_references(diagram: &Diagram) -> Result<(), Valida
         return Ok(());
     };
 
-    let Some(vdiagrams) = &vdiagrams.vdiagrams else {
-        return Ok(());
-    };
-
     let table_names = diagram
         .diagram_walkers
         .as_ref()
@@ -52,7 +44,7 @@ pub fn validate_virtual_table_references(diagram: &Diagram) -> Result<(), Valida
         .unwrap_or_default();
 
     for (vdiagram_index, vdiagram) in vdiagrams.iter().enumerate() {
-        let Some(vtables) = &vdiagram.vtables.vtables else {
+        let Some(vtables) = &vdiagram.vtables else {
             continue;
         };
 
@@ -87,12 +79,8 @@ pub fn validate_duplicate_virtual_table_references(
         return Ok(());
     };
 
-    let Some(vdiagrams) = &vdiagrams.vdiagrams else {
-        return Ok(());
-    };
-
     for (vdiagram_index, vdiagram) in vdiagrams.iter().enumerate() {
-        let Some(vtables) = &vdiagram.vtables.vtables else {
+        let Some(vtables) = &vdiagram.vtables else {
             continue;
         };
 

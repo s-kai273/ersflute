@@ -3,7 +3,7 @@ pub mod vtables;
 use crate::entities::diagram::vdiagrams as entities;
 use crate::validation::Validate;
 use serde::{Deserialize, Serialize};
-use vtables::VTables;
+use vtables::VTable;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
@@ -51,7 +51,8 @@ pub struct VDiagram {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub color: Option<Color>,
 
-    pub vtables: VTables,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub vtables: Option<Vec<VTable>>,
     pub walker_notes: WalkerNotes,
     pub walker_groups: WalkerGroups,
 }
@@ -61,26 +62,12 @@ impl From<entities::VDiagram> for VDiagram {
         Self {
             vdiagram_name: entity.vdiagram_name,
             color: entity.color.map(Into::into),
-            vtables: entity.vtables.into(),
+            vtables: entity
+                .vtables
+                .vtables
+                .map(|v| v.into_iter().map(Into::into).collect()),
             walker_notes: entity.walker_notes.into(),
             walker_groups: entity.walker_groups.into(),
-        }
-    }
-}
-
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
-#[serde(rename_all = "camelCase")]
-pub struct VDiagrams {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub vdiagrams: Option<Vec<VDiagram>>,
-}
-
-impl From<entities::VDiagrams> for VDiagrams {
-    fn from(entity: entities::VDiagrams) -> Self {
-        Self {
-            vdiagrams: entity
-                .vdiagrams
-                .map(|v| v.into_iter().map(Into::into).collect()),
         }
     }
 }

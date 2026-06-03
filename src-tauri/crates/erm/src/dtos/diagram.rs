@@ -9,7 +9,7 @@ use diagram_settings::DiagramSettings;
 use diagram_walkers::DiagramWalkers;
 use page_settings::PageSettings;
 use serde::{Deserialize, Serialize};
-use vdiagrams::VDiagrams;
+use vdiagrams::VDiagram;
 
 use crate::validation::Validate;
 use crate::validation::diagram::vdiagrams::{
@@ -90,7 +90,7 @@ pub struct Diagram {
     pub diagram_walkers: Option<DiagramWalkers>,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub vdiagrams: Option<VDiagrams>,
+    pub vdiagrams: Option<Vec<VDiagram>>,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub column_groups: Option<Vec<ColumnGroup>>,
@@ -112,7 +112,10 @@ impl From<crate::entities::diagram::Diagram> for Diagram {
             font_size: entity.font_size,
             diagram_settings: entity.diagram_settings.into(),
             diagram_walkers: entity.diagram_walkers.map(Into::into),
-            vdiagrams: entity.vdiagrams.map(Into::into),
+            vdiagrams: entity
+                .vdiagrams
+                .and_then(|vdiagrams| vdiagrams.vdiagrams)
+                .map(|v| v.into_iter().map(Into::into).collect()),
             column_groups: entity
                 .column_groups
                 .and_then(|groups| groups.column_groups)
