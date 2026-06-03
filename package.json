@@ -11,6 +11,7 @@
     "tauri": "tauri",
     "test": "jest",
     "lint": "eslint src",
+    "version": "node scripts/sync-cargo-version.mjs",
     "typecheck": "tsc --noEmit",
     "prepare": "husky"
   },
