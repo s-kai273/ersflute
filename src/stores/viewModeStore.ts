@@ -9,8 +9,7 @@ type ViewModeStore = {
 };
 
 export const useViewModeStore = create<ViewModeStore>((set) => ({
-  // First release ships in view-only mode, so this stays true until editing features call setReadOnly(false) in the future.
-  isReadOnly: true,
+  isReadOnly: false,
   setReadOnly: (value) => set({ isReadOnly: value }),
   diagramMode: null,
   setDiagramMode: (mode) => set({ diagramMode: mode }),
