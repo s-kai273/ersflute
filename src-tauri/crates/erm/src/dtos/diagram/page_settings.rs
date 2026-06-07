@@ -27,3 +27,17 @@ impl From<entities::PageSettings> for PageSettings {
         }
     }
 }
+
+impl From<PageSettings> for entities::PageSettings {
+    fn from(dto: PageSettings) -> Self {
+        Self {
+            direction_horizontal: dto.direction_horizontal,
+            scale: dto.scale,
+            paper_size: dto.paper_size,
+            top_margin: dto.top_margin,
+            left_margin: dto.left_margin,
+            bottom_margin: dto.bottom_margin,
+            right_margin: dto.right_margin,
+        }
+    }
+}

@@ -39,6 +39,16 @@ impl From<crate::entities::diagram::Color> for Color {
     }
 }
 
+impl From<Color> for crate::entities::diagram::Color {
+    fn from(dto: Color) -> Self {
+        Self {
+            r: dto.r,
+            g: dto.g,
+            b: dto.b,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[validate(rules(
     validate_duplicate_column_group_names,
@@ -120,6 +130,36 @@ impl From<crate::entities::diagram::Diagram> for Diagram {
                 .column_groups
                 .and_then(|groups| groups.column_groups)
                 .map(|v| v.into_iter().map(Into::into).collect()),
+        }
+    }
+}
+
+impl From<Diagram> for crate::entities::diagram::Diagram {
+    fn from(dto: Diagram) -> Self {
+        Self {
+            presenter: dto.presenter,
+            page_settings: dto.page_settings.map(Into::into),
+            category_index: dto.category_index,
+            current_ermodel: dto.current_ermodel,
+            zoom: dto.zoom,
+            x: dto.x,
+            y: dto.y,
+            default_color: dto.default_color.map(Into::into),
+            color: dto.color.map(Into::into),
+            font_name: dto.font_name,
+            font_size: dto.font_size,
+            diagram_settings: dto.diagram_settings.into(),
+            diagram_walkers: dto.diagram_walkers.map(Into::into),
+            vdiagrams: dto.vdiagrams.map(|vdiagrams| {
+                crate::entities::diagram::vdiagrams::VDiagrams {
+                    vdiagrams: Some(vdiagrams.into_iter().map(Into::into).collect()),
+                }
+            }),
+            column_groups: dto.column_groups.map(|column_groups| {
+                crate::entities::diagram::column_groups::ColumnGroups {
+                    column_groups: Some(column_groups.into_iter().map(Into::into).collect()),
+                }
+            }),
         }
     }
 }

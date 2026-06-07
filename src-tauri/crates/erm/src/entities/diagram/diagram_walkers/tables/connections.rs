@@ -144,7 +144,7 @@ pub struct Relationship {
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Default)]
 pub struct Connections {
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "relationship")]
     pub relationships: Option<Vec<Relationship>>,
 }

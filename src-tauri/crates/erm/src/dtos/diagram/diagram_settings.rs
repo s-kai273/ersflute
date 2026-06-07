@@ -12,12 +12,24 @@ impl From<entities::ExportSettings> for ExportSettings {
     }
 }
 
+impl From<ExportSettings> for entities::ExportSettings {
+    fn from(_: ExportSettings) -> Self {
+        Self {}
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct CategorySettings {}
 
 impl From<entities::CategorySettings> for CategorySettings {
     fn from(_: entities::CategorySettings) -> Self {
+        Self {}
+    }
+}
+
+impl From<CategorySettings> for entities::CategorySettings {
+    fn from(_: CategorySettings) -> Self {
         Self {}
     }
 }
@@ -32,12 +44,24 @@ impl From<entities::ModelProperties> for ModelProperties {
     }
 }
 
+impl From<ModelProperties> for entities::ModelProperties {
+    fn from(_: ModelProperties) -> Self {
+        Self {}
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct TableProperties {}
 
 impl From<entities::TableProperties> for TableProperties {
     fn from(_: entities::TableProperties) -> Self {
+        Self {}
+    }
+}
+
+impl From<TableProperties> for entities::TableProperties {
+    fn from(_: TableProperties) -> Self {
         Self {}
     }
 }
@@ -52,12 +76,24 @@ impl From<entities::EnvironmentSettings> for EnvironmentSettings {
     }
 }
 
+impl From<EnvironmentSettings> for entities::EnvironmentSettings {
+    fn from(_: EnvironmentSettings) -> Self {
+        Self {}
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct DesignSettings {}
 
 impl From<entities::DesignSettings> for DesignSettings {
     fn from(_: entities::DesignSettings) -> Self {
+        Self {}
+    }
+}
+
+impl From<DesignSettings> for entities::DesignSettings {
+    fn from(_: DesignSettings) -> Self {
         Self {}
     }
 }
@@ -114,6 +150,35 @@ impl From<entities::DiagramSettings> for DiagramSettings {
             table_properties: entity.table_properties.into(),
             environment_settings: entity.environment_settings.map(Into::into),
             design_settings: entity.design_settings.map(Into::into),
+        }
+    }
+}
+
+impl From<DiagramSettings> for entities::DiagramSettings {
+    fn from(dto: DiagramSettings) -> Self {
+        Self {
+            database: dto.database,
+            capital: dto.capital,
+            table_style: dto.table_style,
+            notation: dto.notation,
+            notation_level: dto.notation_level,
+            notation_expand_group: dto.notation_expand_group,
+            view_mode: dto.view_mode,
+            outline_view_mode: dto.outline_view_mode,
+            view_order_by: dto.view_order_by,
+            auto_ime_change: dto.auto_ime_change,
+            validate_physical_name: dto.validate_physical_name,
+            use_bezier_curve: dto.use_bezier_curve,
+            suspend_validator: dto.suspend_validator,
+            title_font_em: dto.title_font_em,
+            master_data_base_path: dto.master_data_base_path,
+            use_view_object: dto.use_view_object,
+            export_settings: dto.export_settings.into(),
+            category_settings: dto.category_settings.into(),
+            model_properties: dto.model_properties.into(),
+            table_properties: dto.table_properties.into(),
+            environment_settings: dto.environment_settings.map(Into::into),
+            design_settings: dto.design_settings.map(Into::into),
         }
     }
 }

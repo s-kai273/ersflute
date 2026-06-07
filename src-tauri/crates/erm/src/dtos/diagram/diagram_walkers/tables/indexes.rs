@@ -20,6 +20,15 @@ impl From<entities::Column> for Column {
     }
 }
 
+impl From<Column> for entities::Column {
+    fn from(dto: Column) -> Self {
+        Self {
+            column_id: dto.column_id,
+            desc: dto.desc,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct Index {
@@ -48,6 +57,21 @@ impl From<entities::Index> for Index {
             full_text: entity.full_text,
             non_unique: entity.non_unique,
             columns: entity.columns.columns.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl From<Index> for entities::Index {
+    fn from(dto: Index) -> Self {
+        Self {
+            name: dto.name,
+            index_type: dto.index_type,
+            description: dto.description,
+            full_text: dto.full_text,
+            non_unique: dto.non_unique,
+            columns: entities::Columns {
+                columns: dto.columns.into_iter().map(Into::into).collect(),
+            },
         }
     }
 }

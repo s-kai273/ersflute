@@ -23,6 +23,16 @@ impl From<entities::Color> for Color {
     }
 }
 
+impl From<Color> for entities::Color {
+    fn from(dto: Color) -> Self {
+        Self {
+            r: dto.r,
+            g: dto.g,
+            b: dto.b,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct WalkerNotes {}
@@ -33,12 +43,24 @@ impl From<entities::WalkerNotes> for WalkerNotes {
     }
 }
 
+impl From<WalkerNotes> for entities::WalkerNotes {
+    fn from(_: WalkerNotes) -> Self {
+        Self {}
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct WalkerGroups {}
 
 impl From<entities::WalkerGroups> for WalkerGroups {
     fn from(_: entities::WalkerGroups) -> Self {
+        Self {}
+    }
+}
+
+impl From<WalkerGroups> for entities::WalkerGroups {
+    fn from(_: WalkerGroups) -> Self {
         Self {}
     }
 }
@@ -68,6 +90,20 @@ impl From<entities::VDiagram> for VDiagram {
                 .map(|v| v.into_iter().map(Into::into).collect()),
             walker_notes: entity.walker_notes.into(),
             walker_groups: entity.walker_groups.into(),
+        }
+    }
+}
+
+impl From<VDiagram> for entities::VDiagram {
+    fn from(dto: VDiagram) -> Self {
+        Self {
+            vdiagram_name: dto.vdiagram_name,
+            color: dto.color.map(Into::into),
+            vtables: entities::vtables::VTables {
+                vtables: dto.vtables.map(|v| v.into_iter().map(Into::into).collect()),
+            },
+            walker_notes: dto.walker_notes.into(),
+            walker_groups: dto.walker_groups.into(),
         }
     }
 }

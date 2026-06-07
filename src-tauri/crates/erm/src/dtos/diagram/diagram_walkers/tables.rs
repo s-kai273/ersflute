@@ -36,6 +36,16 @@ impl From<entities::Color> for Color {
     }
 }
 
+impl From<Color> for entities::Color {
+    fn from(dto: Color) -> Self {
+        Self {
+            r: dto.r,
+            g: dto.g,
+            b: dto.b,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[validate(rules(
     validate_duplicate_column_physical_names,
@@ -113,6 +123,33 @@ impl From<entities::Table> for Table {
                 .indexes
                 .map(|v| v.into_iter().map(Into::into).collect()),
             compound_unique_key_list: entity.compound_unique_key_list.into(),
+        }
+    }
+}
+
+impl From<Table> for entities::Table {
+    fn from(dto: Table) -> Self {
+        Self {
+            physical_name: dto.physical_name,
+            logical_name: dto.logical_name,
+            description: dto.description,
+            height: dto.height,
+            width: dto.width,
+            font_name: dto.font_name,
+            font_size: dto.font_size,
+            x: dto.x,
+            y: dto.y,
+            color: dto.color.into(),
+            connections: dto.connections.into(),
+            table_constraint: dto.table_constraint,
+            primary_key_name: dto.primary_key_name,
+            option: dto.option,
+            columns: dto.columns.into(),
+            indexes: entities::indexes::Indexes {
+                indexes: dto.indexes.map(|v| v.into_iter().map(Into::into).collect()),
+            },
+            compound_unique_key_list: dto.compound_unique_key_list.into(),
+            table_properties: entities::TableProperties {},
         }
     }
 }

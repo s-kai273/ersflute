@@ -24,6 +24,16 @@ impl From<entities::Bendpoint> for Bendpoint {
     }
 }
 
+impl From<Bendpoint> for entities::Bendpoint {
+    fn from(dto: Bendpoint) -> Self {
+        Self {
+            relative: dto.relative,
+            x: dto.x,
+            y: dto.y,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct FkColumn {
@@ -34,6 +44,14 @@ impl From<entities::FkColumn> for FkColumn {
     fn from(entity: entities::FkColumn) -> Self {
         Self {
             fk_column_name: entity.fk_column_name,
+        }
+    }
+}
+
+impl From<FkColumn> for entities::FkColumn {
+    fn from(dto: FkColumn) -> Self {
+        Self {
+            fk_column_name: dto.fk_column_name,
         }
     }
 }
@@ -49,6 +67,14 @@ impl From<entities::FkColumns> for FkColumns {
     fn from(entity: entities::FkColumns) -> Self {
         Self {
             fk_column: entity.fk_column.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl From<FkColumns> for entities::FkColumns {
+    fn from(dto: FkColumns) -> Self {
+        Self {
+            fk_column: dto.fk_column.into_iter().map(Into::into).collect(),
         }
     }
 }
@@ -107,6 +133,27 @@ impl From<entities::Relationship> for Relationship {
     }
 }
 
+impl From<Relationship> for entities::Relationship {
+    fn from(dto: Relationship) -> Self {
+        Self {
+            name: dto.name,
+            source: dto.source,
+            target: dto.target,
+            bendpoints: dto
+                .bendpoints
+                .map(|v| v.into_iter().map(Into::into).collect()),
+            fk_columns: dto.fk_columns.into(),
+            parent_cardinality: dto.parent_cardinality,
+            child_cardinality: dto.child_cardinality,
+            reference_for_pk: dto.reference_for_pk,
+            on_delete_action: dto.on_delete_action,
+            on_update_action: dto.on_update_action,
+            referred_simple_unique_column: dto.referred_simple_unique_column,
+            referred_compound_unique_key: dto.referred_compound_unique_key,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct Connections {
@@ -118,6 +165,16 @@ impl From<entities::Connections> for Connections {
     fn from(entity: entities::Connections) -> Self {
         Self {
             relationships: entity
+                .relationships
+                .map(|v| v.into_iter().map(Into::into).collect()),
+        }
+    }
+}
+
+impl From<Connections> for entities::Connections {
+    fn from(dto: Connections) -> Self {
+        Self {
+            relationships: dto
                 .relationships
                 .map(|v| v.into_iter().map(Into::into).collect()),
         }

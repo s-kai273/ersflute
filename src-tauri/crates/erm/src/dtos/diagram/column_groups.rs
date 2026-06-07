@@ -57,6 +57,24 @@ impl From<entities::NormalColumn> for NormalColumn {
     }
 }
 
+impl From<NormalColumn> for entities::NormalColumn {
+    fn from(dto: NormalColumn) -> Self {
+        Self {
+            physical_name: dto.physical_name,
+            logical_name: dto.logical_name,
+            description: dto.description,
+            column_type: dto.column_type,
+            length: dto.length,
+            decimal: dto.decimal,
+            args: dto.args,
+            not_null: dto.not_null,
+            unique_key: dto.unique_key,
+            unsigned: dto.unsigned,
+            default_value: dto.default_value,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct Columns {
@@ -68,6 +86,16 @@ impl From<entities::Columns> for Columns {
     fn from(entity: entities::Columns) -> Self {
         Self {
             normal_columns: entity
+                .normal_columns
+                .map(|v| v.into_iter().map(Into::into).collect()),
+        }
+    }
+}
+
+impl From<Columns> for entities::Columns {
+    fn from(dto: Columns) -> Self {
+        Self {
+            normal_columns: dto
                 .normal_columns
                 .map(|v| v.into_iter().map(Into::into).collect()),
         }
@@ -86,6 +114,15 @@ impl From<entities::ColumnGroup> for ColumnGroup {
         Self {
             column_group_name: entity.column_group_name,
             columns: entity.columns.into(),
+        }
+    }
+}
+
+impl From<ColumnGroup> for entities::ColumnGroup {
+    fn from(dto: ColumnGroup) -> Self {
+        Self {
+            column_group_name: dto.column_group_name,
+            columns: dto.columns.into(),
         }
     }
 }
