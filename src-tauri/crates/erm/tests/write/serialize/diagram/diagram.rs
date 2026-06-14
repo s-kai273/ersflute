@@ -1,7 +1,6 @@
 use pretty_assertions::assert_eq;
 
 use erm::dtos::diagram;
-use erm::dtos::diagram::diagram_settings;
 
 use crate::write::support;
 
@@ -19,7 +18,7 @@ fn diagram_tags_are_serialized() {
         color: Some(diagram::Color { r: 4, g: 5, b: 6 }),
         font_name: Some("Ubuntu".to_string()),
         font_size: Some(9),
-        diagram_settings: diagram_settings(),
+        diagram_settings: support::minimal_diagram_settings(),
         diagram_walkers: None,
         vdiagrams: None,
         column_groups: None,
@@ -29,48 +28,18 @@ fn diagram_tags_are_serialized() {
     let expected = include_str!("../../fixtures/diagram/diagram.erm");
 
     assert_eq!(
-        remove_diagram_settings(&content),
-        remove_diagram_settings(expected)
+        remove_element(&content, "diagram_settings"),
+        remove_element(expected, "diagram_settings")
     );
 }
 
-fn remove_diagram_settings(content: &str) -> String {
+fn remove_element(content: &str, tag_name: &str) -> String {
+    let element = support::extract_element(content, tag_name);
     let start = content
-        .find("<diagram_settings>")
-        .expect("failed to find diagram_settings start");
-    let end = content
-        .find("</diagram_settings>")
-        .map(|index| index + "</diagram_settings>".len())
-        .expect("failed to find diagram_settings end");
+        .find(&element)
+        .expect("failed to find element for removal");
 
     let mut content = content.to_string();
-    content.replace_range(start..end, "");
+    content.replace_range(start..start + element.len(), "");
     content
-}
-
-fn diagram_settings() -> diagram_settings::DiagramSettings {
-    diagram_settings::DiagramSettings {
-        database: "MySQL".to_string(),
-        capital: true,
-        table_style: "".to_string(),
-        notation: "".to_string(),
-        notation_level: 0,
-        notation_expand_group: true,
-        view_mode: 1,
-        outline_view_mode: 1,
-        view_order_by: 1,
-        auto_ime_change: false,
-        validate_physical_name: true,
-        use_bezier_curve: false,
-        suspend_validator: false,
-        title_font_em: None,
-        master_data_base_path: None,
-        use_view_object: false,
-        export_settings: diagram_settings::ExportSettings {},
-        category_settings: diagram_settings::CategorySettings {},
-        model_properties: diagram_settings::ModelProperties {},
-        table_properties: diagram_settings::TableProperties {},
-        environment_settings: None,
-        design_settings: None,
-    }
 }
