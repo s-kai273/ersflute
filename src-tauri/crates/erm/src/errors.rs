@@ -11,6 +11,9 @@ pub enum Error {
     #[error("Serialize error: {0}")]
     Serialize(#[from] quick_xml::se::SeError),
 
+    #[error("Xml error: {0}")]
+    Xml(#[from] quick_xml::Error),
+
     #[error("{0}")]
     Validation(#[from] crate::validation::ValidationError),
 }

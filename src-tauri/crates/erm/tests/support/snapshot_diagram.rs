@@ -6,34 +6,11 @@ use erm::dtos::diagram::diagram_walkers::tables;
 use erm::dtos::diagram::diagram_walkers::tables::columns;
 use erm::dtos::diagram::diagram_walkers::tables::compound_unique_key_list;
 use erm::dtos::diagram::diagram_walkers::tables::connections;
-use erm::dtos::diagram::page_settings;
 use erm::dtos::diagram::vdiagrams;
 
 pub fn get_diagram() -> diagram::Diagram {
     diagram::Diagram {
-        presenter: Some("ERFlute".to_string()),
-        page_settings: Some(page_settings::PageSettings {
-            direction_horizontal: true,
-            scale: 100,
-            paper_size: "A4 210 x 297 mm".to_string(),
-            top_margin: 30,
-            left_margin: 30,
-            bottom_margin: 30,
-            right_margin: 30,
-        }),
-        category_index: None,
-        current_ermodel: None,
-        zoom: None,
-        x: None,
-        y: None,
-        default_color: None,
-        color: Some(diagram::Color {
-            r: 255,
-            g: 255,
-            b: 255,
-        }),
-        font_name: Some("".to_string()),
-        font_size: Some(9),
+        preserved_xml: Some(include_str!("../open/fixtures/read_snapshot.erm").to_string()),
         diagram_settings: diagram_settings::DiagramSettings {
             database: "MySQL".to_string(),
             capital: true,

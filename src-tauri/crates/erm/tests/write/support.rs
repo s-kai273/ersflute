@@ -53,17 +53,7 @@ pub(crate) fn extract_element(content: &str, tag_name: &str) -> String {
 
 pub(crate) fn minimal_diagram() -> diagram::Diagram {
     diagram::Diagram {
-        presenter: None,
-        page_settings: None,
-        category_index: None,
-        current_ermodel: None,
-        zoom: None,
-        x: None,
-        y: None,
-        default_color: None,
-        color: None,
-        font_name: None,
-        font_size: None,
+        preserved_xml: None,
         diagram_settings: minimal_diagram_settings(),
         diagram_walkers: None,
         vdiagrams: None,

@@ -12,12 +12,14 @@ use reader::read_file;
 use writer::write_file;
 
 pub fn open(filename: &str) -> Result<Diagram, Error> {
-    let diagram = Diagram::from(read_file(&filename)?);
+    let (entity, content) = read_file(filename)?;
+    let mut diagram = Diagram::from(entity);
+    diagram.preserved_xml = Some(content);
     validation::validate(&diagram)?;
     Ok(diagram)
 }
 
 pub fn save(filename: &str, diagram: Diagram) -> Result<(), Error> {
     validation::validate(&diagram)?;
-    write_file(filename, diagram.into())
+    write_file(filename, diagram)
 }
