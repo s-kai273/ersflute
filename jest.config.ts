@@ -14,6 +14,8 @@ const config: Config = {
     "src/components/**/*.{ts,tsx}",
     "src/domain/**/*.{ts,tsx}",
     "src/features/**/*.{ts,tsx}",
+    "!src/api/**/*.{ts,tsx}",
+    "!src/usecases/**/*.{ts,tsx}",
     "!src/**/*.d.ts",
     "!src/components/ui/**",
     "!src/features/**/adapters/**/*.{ts,tsx}",
