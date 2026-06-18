@@ -14,5 +14,6 @@ export type Column = {
   primaryKey?: boolean;
   autoIncrement?: boolean;
   referredColumn?: string;
+  relationship?: string;
   enumArgs?: string;
 };

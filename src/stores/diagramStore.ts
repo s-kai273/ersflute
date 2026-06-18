@@ -1,16 +1,14 @@
 import { create } from "zustand";
+import { defaultSettings } from "@/domain/diagram/defaultSettings";
 import { updateRelation } from "@/domain/diagram/updateRelation";
 import { updateTableAndRef } from "@/domain/diagram/updateTable";
 import type { ColumnGroup } from "@/types/domain/columnGroup";
 import type { Relationship } from "@/types/domain/relationship";
-import { ViewMode, type Settings } from "@/types/domain/settings";
+import { type Settings } from "@/types/domain/settings";
 import type { Table } from "@/types/domain/table";
 import type { VirtualDiagram } from "@/types/domain/vdiagram";
 
-const initialSettings: Settings = {
-  database: "",
-  viewMode: ViewMode.Logical,
-};
+const initialSettings: Settings = defaultSettings;
 
 type DiagramStore = {
   settings: Settings;

@@ -1,7 +1,7 @@
 import type { VDiagramResponse } from "@/types/api/vdiagrams";
 import type { VirtualDiagram, VirtualTable } from "@/types/domain/vdiagram";
 
-export function mapVDiagramsFrom(
+export function mapVDiagramsFromApi(
   vdiagramResponses: VDiagramResponse[],
 ): VirtualDiagram[] {
   return vdiagramResponses.map((vdiagram) => {
@@ -21,4 +21,22 @@ export function mapVDiagramsFrom(
       walkerGroups: vdiagram.walkerGroups,
     } satisfies VirtualDiagram;
   });
+}
+
+export function mapVDiagramsToApi(
+  vdiagrams: VirtualDiagram[],
+): VDiagramResponse[] {
+  return vdiagrams.map((vdiagram) => ({
+    vdiagramName: vdiagram.vdiagramName,
+    color: vdiagram.color,
+    vtables: vdiagram.vtables?.map((vtable) => ({
+      tableId: vtable.tableId,
+      x: vtable.x,
+      y: vtable.y,
+      fontName: vtable.fontName,
+      fontSize: vtable.fontSize,
+    })),
+    walkerNotes: vdiagram.walkerNotes,
+    walkerGroups: vdiagram.walkerGroups,
+  }));
 }
