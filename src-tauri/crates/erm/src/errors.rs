@@ -2,6 +2,9 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum Error {
+    #[error("preserved XML is required to save a diagram")]
+    MissingPreservedXml,
+
     #[error("Io error: {0}")]
     Io(#[from] std::io::Error),
 

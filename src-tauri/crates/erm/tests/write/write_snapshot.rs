@@ -5,6 +5,8 @@ mod snapshot_diagram;
 
 use erm::save;
 
+use crate::write::support;
+
 #[test]
 fn writes_diagram_xml_as_snapshot() {
     let diagram = snapshot_diagram::get_diagram();
@@ -20,10 +22,26 @@ fn writes_diagram_xml_as_snapshot() {
     assert!(content.contains("<tablespace_set>"));
     assert!(content.contains("<sequence_set>"));
     assert!(content.contains("<trigger_set>"));
-    assert!(content.contains("<diagram_settings><database>MySQL</database>"));
+    let settings = support::extract_element(&content, "diagram_settings");
+    assert!(settings.contains("<database>MySQL</database>"));
     assert!(content.contains("<diagram_walkers><table>"));
     assert!(content.contains("<vdiagrams><vdiagram>"));
     assert!(content.contains("<column_groups><column_group>"));
+}
+
+#[test]
+fn saving_without_preserved_xml_is_rejected() {
+    let mut diagram = support::minimal_diagram();
+    diagram.preserved_xml = None;
+    let path = temp_file_path();
+
+    let error = save(path.to_str().expect("invalid temp path"), diagram)
+        .expect_err("saving without preserved XML should fail");
+
+    assert_eq!(
+        error.to_string(),
+        "preserved XML is required to save a diagram"
+    );
 }
 
 fn temp_file_path() -> std::path::PathBuf {

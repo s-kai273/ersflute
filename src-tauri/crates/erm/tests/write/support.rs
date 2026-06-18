@@ -53,7 +53,10 @@ pub(crate) fn extract_element(content: &str, tag_name: &str) -> String {
 
 pub(crate) fn minimal_diagram() -> diagram::Diagram {
     diagram::Diagram {
-        preserved_xml: None,
+        preserved_xml: Some(
+            "<diagram><diagram_settings><database>MySQL</database><view_mode>1</view_mode></diagram_settings></diagram>"
+                .to_string(),
+        ),
         diagram_settings: minimal_diagram_settings(),
         diagram_walkers: None,
         vdiagrams: None,
@@ -64,27 +67,7 @@ pub(crate) fn minimal_diagram() -> diagram::Diagram {
 pub(crate) fn minimal_diagram_settings() -> diagram_settings::DiagramSettings {
     diagram_settings::DiagramSettings {
         database: "MySQL".to_string(),
-        capital: true,
-        table_style: "".to_string(),
-        notation: "".to_string(),
-        notation_level: 0,
-        notation_expand_group: true,
         view_mode: 1,
-        outline_view_mode: 1,
-        view_order_by: 1,
-        auto_ime_change: false,
-        validate_physical_name: true,
-        use_bezier_curve: false,
-        suspend_validator: false,
-        title_font_em: None,
-        master_data_base_path: None,
-        use_view_object: false,
-        export_settings: diagram_settings::ExportSettings {},
-        category_settings: diagram_settings::CategorySettings {},
-        model_properties: diagram_settings::ModelProperties {},
-        table_properties: diagram_settings::TableProperties {},
-        environment_settings: None,
-        design_settings: None,
     }
 }
 

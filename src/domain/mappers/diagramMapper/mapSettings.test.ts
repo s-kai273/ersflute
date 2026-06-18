@@ -22,23 +22,8 @@ it("maps settings to API values", () => {
   const result = mapDiagramToApi({
     preservedXml: "<diagram />",
     settings: {
-      ...defaultSettings,
       database: "postgresql",
-      capital: false,
-      tableStyle: "standard",
-      notation: "IE",
-      notationLevel: 1,
-      notationExpandGroup: false,
       viewMode: ViewMode.LogicalPhysical,
-      outlineViewMode: 2,
-      viewOrderBy: 3,
-      autoImeChange: true,
-      validatePhysicalName: false,
-      useBezierCurve: true,
-      suspendValidator: true,
-      titleFontEm: 1.5,
-      masterDataBasePath: "/tmp/master",
-      useViewObject: true,
     },
     tables: [],
     relationships: [],
@@ -46,22 +31,8 @@ it("maps settings to API values", () => {
     vdiagrams: [],
   });
 
-  expect(result.diagramSettings).toMatchObject({
+  expect(result.diagramSettings).toEqual({
     database: "postgresql",
-    capital: false,
-    tableStyle: "standard",
-    notation: "IE",
-    notationLevel: 1,
-    notationExpandGroup: false,
     viewMode: ViewMode.LogicalPhysical,
-    outlineViewMode: 2,
-    viewOrderBy: 3,
-    autoImeChange: true,
-    validatePhysicalName: false,
-    useBezierCurve: true,
-    suspendValidator: true,
-    titleFontEm: 1.5,
-    masterDataBasePath: "/tmp/master",
-    useViewObject: true,
   });
 });
