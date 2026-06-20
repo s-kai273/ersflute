@@ -416,11 +416,11 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                 />
               </label>
               <label
-                className="flex items-center gap-2 pb-1"
+                className="flex h-8 w-30 items-center gap-2 self-end px-2"
                 htmlFor="table-info-column-unsigned"
               >
                 {isReadOnly ? (
-                  <div className="w-4 h-4">
+                  <div className="size-4">
                     {currentColumn.unsigned && (
                       <CheckIcon
                         id="table-info-column-unsigned"
