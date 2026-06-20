@@ -5,6 +5,7 @@ import { saveCurrentDiagram } from "@/usecases/saveCurrentDiagram";
 export const saveMenu = await MenuItem.new({
   id: "save",
   text: "Save",
+  enabled: false,
   accelerator: "CmdOrCtrl+S",
   action: () => {
     void saveCurrentDiagram().catch((error: unknown) => {
