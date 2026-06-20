@@ -37,6 +37,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
     handleAddColumn,
     handleEditColumn,
     handleDeleteColumn,
+    handleUpdateColumn,
     handleBackToColumnList,
   } = createAttributeContentHandlers({
     columns,
@@ -112,6 +113,7 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
               ? selectedColumn
               : undefined
           }
+          onChange={handleUpdateColumn}
           onBack={handleBackToColumnList}
         />
       )}

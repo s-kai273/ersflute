@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useDiagramStore } from "@/stores/diagramStore";
 import { useViewModeStore } from "@/stores/viewModeStore";
@@ -42,17 +42,22 @@ function createTableData(overrides?: Partial<Table>): Table {
 }
 
 function renderTableInfoDialog(overrides?: Partial<Table>) {
-  const onApply = jest.fn();
+  const onApply = jest.fn<
+    ReturnType<(data: Table) => void>,
+    Parameters<(data: Table) => void>
+  >();
+  const onCancel = jest.fn();
   const onOpenChange = jest.fn();
   render(
     <TableInfoDialog
       open
       data={createTableData(overrides)}
       onApply={onApply}
+      onCancel={onCancel}
       onOpenChange={onOpenChange}
     />,
   );
-  return { onApply, onOpenChange };
+  return { onApply, onCancel, onOpenChange };
 }
 
 function renderEditableTableInfoDialog(overrides?: Partial<Table>) {
@@ -410,6 +415,42 @@ describe("when editing is allowed", () => {
       within(updatedDetailRegion).getByLabelText("Description"),
     ).toHaveValue("Billing amount");
   }, 15000);
+
+  it("applies column detail changes when OK is clicked without returning to the list", async () => {
+    const user = userEvent.setup();
+    const { onApply } = renderEditableTableInfoDialog();
+    const detailRegion = await openDetailFor(user, "EMAIL");
+
+    await user.clear(within(detailRegion).getByLabelText("Physical Name"));
+    await user.type(
+      within(detailRegion).getByLabelText("Physical Name"),
+      "EMAIL_ADDRESS",
+    );
+    await user.click(screen.getByRole("button", { name: "OK" }));
+
+    await waitFor(() => expect(onApply).toHaveBeenCalledTimes(1));
+    expect(onApply.mock.calls[0][0].columns).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ physicalName: "EMAIL_ADDRESS" }),
+      ]),
+    );
+  });
+
+  it("discards column detail changes when Cancel is clicked", async () => {
+    const user = userEvent.setup();
+    const { onApply, onCancel } = renderEditableTableInfoDialog();
+    const detailRegion = await openDetailFor(user, "EMAIL");
+
+    await user.clear(within(detailRegion).getByLabelText("Physical Name"));
+    await user.type(
+      within(detailRegion).getByLabelText("Physical Name"),
+      "EMAIL_ADDRESS",
+    );
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    await waitFor(() => expect(onCancel).toHaveBeenCalledTimes(1));
+    expect(onApply).not.toHaveBeenCalled();
+  });
 
   it("updates enum args when the column type supports it", async () => {
     const user = userEvent.setup();

@@ -91,7 +91,7 @@ export function createAttributeContentHandlers({
     setAttributeView("list");
   };
 
-  const handleBackToColumnList = (column: Column) => {
+  const handleUpdateColumn = (column: Column) => {
     setData((current) => {
       const nextColumns = current.columns?.map((col, index) => {
         if (index === selectedColumnIndex) {
@@ -104,6 +104,9 @@ export function createAttributeContentHandlers({
         columns: nextColumns,
       };
     });
+  };
+
+  const handleBackToColumnList = () => {
     setAttributeView("list");
   };
 
@@ -114,6 +117,7 @@ export function createAttributeContentHandlers({
     handleAddColumn,
     handleEditColumn,
     handleDeleteColumn,
+    handleUpdateColumn,
     handleBackToColumnList,
   };
 }
