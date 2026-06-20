@@ -2,10 +2,8 @@ import type { Dispatch, SetStateAction } from "react";
 import type { Edge, Node } from "@xyflow/react";
 import { updateRelationAndRefs } from "@/domain/diagram/updateRelation";
 import { stringifyReference } from "@/domain/parsers/referenceParser";
-import { showErrorDialog } from "@/features/errorDialog";
 import type { Relationship } from "@/types/domain/relationship";
 import type { Table } from "@/types/domain/table";
-import { saveCurrentDiagram } from "@/usecases/saveCurrentDiagram";
 
 type TableInfoDialogNode = Node<Table>;
 type RelationshipEdge = Edge<Relationship>;
@@ -94,12 +92,6 @@ export function createTableInfoDialogHandlers({
 
     setTableInfoDialogOpen(false);
     clearTidNode();
-    void saveCurrentDiagram().catch((error: unknown) => {
-      showErrorDialog(error, {
-        title: "Failed to save diagram",
-        message: "The table changes were applied, but the ERM file was not saved.",
-      });
-    });
   };
 
   const handleCancel = () => {
