@@ -7,8 +7,8 @@ import "./index.css";
 import { ErrorBoundary } from "./errorBoundary";
 
 function App() {
-  useSetupMenu();
   const { isLoaded } = useErmFileStore();
+  useSetupMenu(isLoaded);
   return (
     <ErrorBoundary>
       {isLoaded ? (

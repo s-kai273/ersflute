@@ -1,13 +1,11 @@
 pub mod column_groups;
 pub mod diagram_settings;
 pub mod diagram_walkers;
-pub mod page_settings;
 pub mod vdiagrams;
 
 use column_groups::ColumnGroup;
 use diagram_settings::DiagramSettings;
 use diagram_walkers::DiagramWalkers;
-use page_settings::PageSettings;
 use serde::{Deserialize, Serialize};
 use vdiagrams::VDiagram;
 
@@ -22,24 +20,6 @@ use crate::validation::diagram::{
 };
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
-#[serde(rename_all = "camelCase")]
-pub struct Color {
-    pub r: u8,
-    pub g: u8,
-    pub b: u8,
-}
-
-impl From<crate::entities::diagram::Color> for Color {
-    fn from(entity: crate::entities::diagram::Color) -> Self {
-        Self {
-            r: entity.r,
-            g: entity.g,
-            b: entity.b,
-        }
-    }
-}
-
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[validate(rules(
     validate_duplicate_column_group_names,
     validate_duplicate_column_group_column_physical_names,
@@ -52,37 +32,7 @@ impl From<crate::entities::diagram::Color> for Color {
 #[serde(rename_all = "camelCase")]
 pub struct Diagram {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub presenter: Option<String>,
-
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub page_settings: Option<PageSettings>,
-
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub category_index: Option<i64>,
-
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub current_ermodel: Option<String>,
-
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub zoom: Option<f64>,
-
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub x: Option<i64>,
-
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub y: Option<i64>,
-
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub default_color: Option<Color>,
-
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub color: Option<Color>,
-
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub font_name: Option<String>,
-
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub font_size: Option<i64>,
+    pub preserved_xml: Option<String>,
 
     pub diagram_settings: DiagramSettings,
 
@@ -99,17 +49,7 @@ pub struct Diagram {
 impl From<crate::entities::diagram::Diagram> for Diagram {
     fn from(entity: crate::entities::diagram::Diagram) -> Self {
         Self {
-            presenter: entity.presenter,
-            page_settings: entity.page_settings.map(Into::into),
-            category_index: entity.category_index,
-            current_ermodel: entity.current_ermodel,
-            zoom: entity.zoom,
-            x: entity.x,
-            y: entity.y,
-            default_color: entity.default_color.map(Into::into),
-            color: entity.color.map(Into::into),
-            font_name: entity.font_name,
-            font_size: entity.font_size,
+            preserved_xml: None,
             diagram_settings: entity.diagram_settings.into(),
             diagram_walkers: entity.diagram_walkers.map(Into::into),
             vdiagrams: entity
@@ -120,6 +60,25 @@ impl From<crate::entities::diagram::Diagram> for Diagram {
                 .column_groups
                 .and_then(|groups| groups.column_groups)
                 .map(|v| v.into_iter().map(Into::into).collect()),
+        }
+    }
+}
+
+impl From<Diagram> for crate::entities::diagram::Diagram {
+    fn from(dto: Diagram) -> Self {
+        Self {
+            diagram_settings: dto.diagram_settings.into(),
+            diagram_walkers: dto.diagram_walkers.map(Into::into),
+            vdiagrams: dto.vdiagrams.map(|vdiagrams| {
+                crate::entities::diagram::vdiagrams::VDiagrams {
+                    vdiagrams: Some(vdiagrams.into_iter().map(Into::into).collect()),
+                }
+            }),
+            column_groups: dto.column_groups.map(|column_groups| {
+                crate::entities::diagram::column_groups::ColumnGroups {
+                    column_groups: Some(column_groups.into_iter().map(Into::into).collect()),
+                }
+            }),
         }
     }
 }

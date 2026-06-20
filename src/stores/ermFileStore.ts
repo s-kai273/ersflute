@@ -5,6 +5,8 @@ type ErmFileStore = {
   setLoaded: (value: boolean) => void;
   filePath: string | null;
   setFilePath: (path: string | null) => void;
+  preservedXml: string | null;
+  setPreservedXml: (preservedXml: string | null) => void;
 };
 
 export const useErmFileStore = create<ErmFileStore>((set) => ({
@@ -12,4 +14,6 @@ export const useErmFileStore = create<ErmFileStore>((set) => ({
   setLoaded: (value) => set({ isLoaded: value }),
   filePath: null,
   setFilePath: (path) => set({ filePath: path }),
+  preservedXml: null,
+  setPreservedXml: (preservedXml) => set({ preservedXml }),
 }));

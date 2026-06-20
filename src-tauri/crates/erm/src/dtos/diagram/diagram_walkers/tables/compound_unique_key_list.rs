@@ -16,6 +16,14 @@ impl From<entities::Column> for Column {
     }
 }
 
+impl From<Column> for entities::Column {
+    fn from(dto: Column) -> Self {
+        Self {
+            column_id: dto.column_id,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct CompoundUniqueKey {
@@ -32,6 +40,17 @@ impl From<entities::CompoundUniqueKey> for CompoundUniqueKey {
     }
 }
 
+impl From<CompoundUniqueKey> for entities::CompoundUniqueKey {
+    fn from(dto: CompoundUniqueKey) -> Self {
+        Self {
+            name: dto.name,
+            columns: entities::Columns {
+                columns: dto.columns.into_iter().map(Into::into).collect(),
+            },
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct CompoundUniqueKeyList {
@@ -43,6 +62,16 @@ impl From<entities::CompoundUniqueKeyList> for CompoundUniqueKeyList {
     fn from(entity: entities::CompoundUniqueKeyList) -> Self {
         Self {
             compound_unique_keys: entity
+                .compound_unique_keys
+                .map(|v| v.into_iter().map(Into::into).collect()),
+        }
+    }
+}
+
+impl From<CompoundUniqueKeyList> for entities::CompoundUniqueKeyList {
+    fn from(dto: CompoundUniqueKeyList) -> Self {
+        Self {
+            compound_unique_keys: dto
                 .compound_unique_keys
                 .map(|v| v.into_iter().map(Into::into).collect()),
         }

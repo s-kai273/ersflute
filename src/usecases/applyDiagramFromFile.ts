@@ -3,8 +3,14 @@ import { useDiagramStore } from "@/stores/diagramStore";
 import { useErmFileStore } from "@/stores/ermFileStore";
 
 export async function applyDiagramFromFile(filePath: string) {
-  const { settings, tables, relationships, columnGroups, vdiagrams } =
-    await loadDiagram(filePath);
+  const {
+    settings,
+    tables,
+    relationships,
+    columnGroups,
+    vdiagrams,
+    preservedXml,
+  } = await loadDiagram(filePath);
   const {
     setSettings,
     setTables,
@@ -17,7 +23,9 @@ export async function applyDiagramFromFile(filePath: string) {
   setRelationships(relationships);
   setColumnGroups(columnGroups);
   setVDiagrams(vdiagrams);
-  const { setLoaded, setFilePath } = useErmFileStore.getState();
+  const { setLoaded, setFilePath, setPreservedXml } =
+    useErmFileStore.getState();
   setLoaded(true);
   setFilePath(filePath);
+  setPreservedXml(preservedXml ?? null);
 }

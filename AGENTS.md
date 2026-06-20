@@ -22,6 +22,9 @@ component_name/
 
 ### General
 
+- Do not write tests for code that is excluded from `collectCoverageFrom` in `jest.config.ts`.
+  For example, files under `src/features/**/adapters/` are excluded unless they are explicitly re-included there.
+
 - Do not wrap test files in a top-level `describe` block.  
   A `describe` block must be used only when it meaningfully expresses a user-facing scenario or condition.
 

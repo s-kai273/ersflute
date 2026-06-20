@@ -39,6 +39,8 @@ export type Table = {
   y: number;
   width: number;
   height: number;
+  fontName?: string;
+  fontSize?: number;
   physicalName: string;
   logicalName: string;
   description: string;

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { ArrowLeftIcon, CheckIcon } from "@heroicons/react/16/solid";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -70,11 +70,13 @@ const initialColumn = {
   notNull: true,
 };
 
-export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
+export function AttributeDetail({
+  column,
+  onChange,
+  onBack,
+}: AttributeDetailProps) {
   const { isReadOnly } = useViewModeStore();
-  const [currentColumn, setCurrentColumn] = useState<Column>(
-    column ? column : initialColumn,
-  );
+  const currentColumn: Column = column ?? initialColumn;
   const columnType = currentColumn?.columnType;
   const typeSupportsLength = useMemo(
     () =>
@@ -127,9 +129,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
             variant="secondary"
             size="icon"
             aria-label="Back to Columns"
-            onClick={() => {
-              onBack(currentColumn);
-            }}
+            onClick={onBack}
           >
             <ArrowLeftIcon className="size-4" />
           </Button>
@@ -161,7 +161,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                 id="table-info-column-primary-key"
                 checked={currentColumn.primaryKey ?? false}
                 onCheckedChange={(checked) =>
-                  setCurrentColumn({
+                  onChange({
                     ...currentColumn,
                     primaryKey: checked === true,
                   })
@@ -191,7 +191,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                 id="table-info-column-not-null"
                 checked={currentColumn.notNull ?? false}
                 onCheckedChange={(checked) =>
-                  setCurrentColumn({
+                  onChange({
                     ...currentColumn,
                     notNull: checked === true,
                   })
@@ -221,7 +221,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                 id="table-info-column-unique"
                 checked={currentColumn.unique ?? false}
                 onCheckedChange={(checked) =>
-                  setCurrentColumn({
+                  onChange({
                     ...currentColumn,
                     unique: checked === true,
                   })
@@ -251,7 +251,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                 id="table-info-column-auto-increment"
                 checked={currentColumn.autoIncrement ?? false}
                 onCheckedChange={(checked) =>
-                  setCurrentColumn({
+                  onChange({
                     ...currentColumn,
                     autoIncrement: checked === true,
                   })
@@ -280,7 +280,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                 value={currentColumn.physicalName}
                 readOnly={isReadOnly}
                 onChange={(event) =>
-                  setCurrentColumn({
+                  onChange({
                     ...currentColumn,
                     physicalName: event.target.value,
                   })
@@ -299,7 +299,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                 value={currentColumn.logicalName ?? ""}
                 readOnly={isReadOnly}
                 onChange={(event) =>
-                  setCurrentColumn({
+                  onChange({
                     ...currentColumn,
                     logicalName:
                       event.target.value === ""
@@ -351,7 +351,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                         ColumnTypeConfigMap[columnType].supportsEnumArgs
                           ? currentColumn.enumArgs
                           : undefined;
-                      setCurrentColumn({
+                      onChange({
                         ...currentColumn,
                         columnType,
                         length,
@@ -382,7 +382,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                   disabled={!typeSupportsLength}
                   readOnly={isReadOnly}
                   onChange={(event) =>
-                    setCurrentColumn({
+                    onChange({
                       ...currentColumn,
                       length:
                         event.target.value === ""
@@ -405,7 +405,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                   disabled={!typeSupportsDecimal}
                   readOnly={isReadOnly}
                   onChange={(event) =>
-                    setCurrentColumn({
+                    onChange({
                       ...currentColumn,
                       decimal:
                         event.target.value === ""
@@ -416,11 +416,11 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                 />
               </label>
               <label
-                className="flex items-center gap-2 pb-1"
+                className="flex h-8 w-30 items-center gap-2 self-end px-2"
                 htmlFor="table-info-column-unsigned"
               >
                 {isReadOnly ? (
-                  <div className="w-4 h-4">
+                  <div className="size-4">
                     {currentColumn.unsigned && (
                       <CheckIcon
                         id="table-info-column-unsigned"
@@ -435,7 +435,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                     checked={currentColumn.unsigned ?? false}
                     disabled={!typeSupportsUnsigned}
                     onCheckedChange={(checked) =>
-                      setCurrentColumn({
+                      onChange({
                         ...currentColumn,
                         unsigned: checked === true,
                       })
@@ -462,7 +462,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                 disabled={!typeSupportsEnumArgs}
                 readOnly={isReadOnly}
                 onChange={(event) =>
-                  setCurrentColumn({
+                  onChange({
                     ...currentColumn,
                     enumArgs:
                       event.target.value === ""
@@ -484,7 +484,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                 value={currentColumn.defaultValue ?? ""}
                 readOnly={isReadOnly}
                 onChange={(event) =>
-                  setCurrentColumn({
+                  onChange({
                     ...currentColumn,
                     defaultValue:
                       event.target.value === ""
@@ -505,7 +505,7 @@ export function AttributeDetail({ column, onBack }: AttributeDetailProps) {
                 value={currentColumn.description ?? ""}
                 readOnly={isReadOnly}
                 onChange={(event) =>
-                  setCurrentColumn({
+                  onChange({
                     ...currentColumn,
                     description:
                       event.target.value === ""

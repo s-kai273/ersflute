@@ -23,3 +23,15 @@ impl From<entities::VTable> for VTable {
         }
     }
 }
+
+impl From<VTable> for entities::VTable {
+    fn from(dto: VTable) -> Self {
+        Self {
+            table_id: dto.table_id,
+            x: dto.x,
+            y: dto.y,
+            font_name: dto.font_name,
+            font_size: dto.font_size,
+        }
+    }
+}

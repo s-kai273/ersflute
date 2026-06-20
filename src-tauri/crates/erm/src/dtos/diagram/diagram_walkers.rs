@@ -31,3 +31,11 @@ impl From<entities::DiagramWalkers> for DiagramWalkers {
         }
     }
 }
+
+impl From<DiagramWalkers> for entities::DiagramWalkers {
+    fn from(dto: DiagramWalkers) -> Self {
+        Self {
+            tables: dto.tables.map(|v| v.into_iter().map(Into::into).collect()),
+        }
+    }
+}

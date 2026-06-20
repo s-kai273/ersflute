@@ -74,6 +74,28 @@ impl From<entities::NormalColumn> for NormalColumn {
     }
 }
 
+impl From<NormalColumn> for entities::NormalColumn {
+    fn from(dto: NormalColumn) -> Self {
+        Self {
+            physical_name: dto.physical_name,
+            logical_name: dto.logical_name,
+            description: dto.description,
+            column_type: dto.column_type,
+            length: dto.length,
+            decimal: dto.decimal,
+            args: dto.args,
+            unsigned: dto.unsigned,
+            not_null: dto.not_null,
+            unique_key: dto.unique_key,
+            default_value: dto.default_value,
+            primary_key: dto.primary_key,
+            auto_increment: dto.auto_increment,
+            referred_column: dto.referred_column,
+            relationship: dto.relationship,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(untagged)]
 pub enum ColumnItem {
@@ -96,6 +118,21 @@ impl From<entities::Columns> for Columns {
                     .map(|item| match item {
                         entities::ColumnItem::Normal(column) => ColumnItem::Normal(column.into()),
                         entities::ColumnItem::Group(column) => ColumnItem::Group(column),
+                    })
+                    .collect()
+            }),
+        }
+    }
+}
+
+impl From<Columns> for entities::Columns {
+    fn from(dto: Columns) -> Self {
+        Self {
+            items: dto.items.map(|v| {
+                v.into_iter()
+                    .map(|item| match item {
+                        ColumnItem::Normal(column) => entities::ColumnItem::Normal(column.into()),
+                        ColumnItem::Group(column) => entities::ColumnItem::Group(column),
                     })
                     .collect()
             }),
