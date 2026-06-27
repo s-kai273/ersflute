@@ -10,6 +10,7 @@ use erm::dtos::diagram::vdiagrams;
 
 pub fn get_diagram() -> diagram::Diagram {
     diagram::Diagram {
+        xml_node_ids: Vec::new(),
         preserved_xml: Some(include_str!("../open/fixtures/read_snapshot.erm").to_string()),
         diagram_settings: diagram_settings::DiagramSettings {
             database: "MySQL".to_string(),

@@ -24,6 +24,7 @@ export type ReferenceOperation =
   (typeof ReferenceOperation)[keyof typeof ReferenceOperation];
 
 export type Relationship = {
+  xmlNodeId?: string;
   name: string;
   source: string;
   target: string;

@@ -19,6 +19,16 @@ use crate::validation::diagram::{
     validate_duplicate_column_group_column_physical_names, validate_duplicate_column_group_names,
 };
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
+#[serde(rename_all = "camelCase")]
+pub struct XmlNodeIdentity {
+    pub id: String,
+    pub tag: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub parent_id: Option<String>,
+    pub index: usize,
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[validate(rules(
     validate_duplicate_column_group_names,
@@ -33,6 +43,9 @@ use crate::validation::diagram::{
 pub struct Diagram {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub preserved_xml: Option<String>,
+
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub xml_node_ids: Vec<XmlNodeIdentity>,
 
     pub diagram_settings: DiagramSettings,
 
@@ -50,6 +63,7 @@ impl From<crate::entities::diagram::Diagram> for Diagram {
     fn from(entity: crate::entities::diagram::Diagram) -> Self {
         Self {
             preserved_xml: None,
+            xml_node_ids: Vec::new(),
             diagram_settings: entity.diagram_settings.into(),
             diagram_walkers: entity.diagram_walkers.map(Into::into),
             vdiagrams: entity

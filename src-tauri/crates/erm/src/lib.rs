@@ -2,19 +2,15 @@ pub mod column_type;
 pub mod dtos;
 pub mod entities;
 pub mod errors;
-mod reader;
+mod io;
 mod validation;
-mod writer;
 
 use dtos::diagram::Diagram;
 use errors::Error;
-use reader::read_file;
-use writer::write_file;
+use io::{read_file, write_file};
 
 pub fn open(filename: &str) -> Result<Diagram, Error> {
-    let (entity, content) = read_file(filename)?;
-    let mut diagram = Diagram::from(entity);
-    diagram.preserved_xml = Some(content);
+    let diagram = read_file(filename)?;
     validation::validate(&diagram)?;
     Ok(diagram)
 }

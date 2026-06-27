@@ -1,6 +1,7 @@
 import type { ColumnType } from "./columnType";
 
 export type Column = {
+  xmlNodeId?: string;
   physicalName: string;
   logicalName?: string;
   description?: string;

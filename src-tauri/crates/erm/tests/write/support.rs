@@ -53,6 +53,7 @@ pub(crate) fn extract_element(content: &str, tag_name: &str) -> String {
 
 pub(crate) fn minimal_diagram() -> diagram::Diagram {
     diagram::Diagram {
+        xml_node_ids: Vec::new(),
         preserved_xml: Some(
             "<diagram><diagram_settings><database>MySQL</database><view_mode>1</view_mode></diagram_settings></diagram>"
                 .to_string(),
