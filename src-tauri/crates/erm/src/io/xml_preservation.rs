@@ -1,4 +1,5 @@
 use crate::dtos::diagram::XmlNodeIdentity;
+use crate::entities::XmlSchema as _;
 use crate::errors::Error;
 use quick_xml::events::{BytesEnd, BytesStart, Event};
 use quick_xml::{Reader, Writer};
@@ -351,91 +352,7 @@ fn is_identity_child(parent: &str, tag: &str) -> bool {
 }
 
 fn is_known_child(parent: &str, tag: &str) -> bool {
-    match parent {
-        "diagram" => matches!(
-            tag,
-            "diagram_settings" | "diagram_walkers" | "vdiagrams" | "column_groups"
-        ),
-        "diagram_settings" => matches!(tag, "database" | "view_mode"),
-        "diagram_walkers" => tag == "table",
-        "table" => matches!(
-            tag,
-            "physical_name"
-                | "logical_name"
-                | "description"
-                | "height"
-                | "width"
-                | "font_name"
-                | "font_size"
-                | "x"
-                | "y"
-                | "color"
-                | "connections"
-                | "table_constraint"
-                | "primary_key_name"
-                | "option"
-                | "columns"
-                | "indexes"
-                | "compound_unique_key_list"
-        ),
-        "color" => matches!(tag, "r" | "g" | "b"),
-        "connections" => tag == "relationship",
-        "relationship" => matches!(
-            tag,
-            "name"
-                | "source"
-                | "target"
-                | "bendpoint"
-                | "fk_columns"
-                | "parent_cardinality"
-                | "child_cardinality"
-                | "reference_for_pk"
-                | "on_delete_action"
-                | "on_update_action"
-                | "referred_simple_unique_column"
-                | "referred_compound_unique_key"
-        ),
-        "bendpoint" => matches!(tag, "relative" | "x" | "y"),
-        "fk_columns" => tag == "fk_column",
-        "fk_column" => tag == "fk_column_name",
-        "columns" => matches!(tag, "normal_column" | "column_group" | "column"),
-        "normal_column" => matches!(
-            tag,
-            "physical_name"
-                | "logical_name"
-                | "description"
-                | "type"
-                | "length"
-                | "decimal"
-                | "args"
-                | "unsigned"
-                | "not_null"
-                | "unique_key"
-                | "default_value"
-                | "primary_key"
-                | "auto_increment"
-                | "referred_column"
-                | "relationship"
-        ),
-        "indexes" => tag == "index",
-        "index" => matches!(
-            tag,
-            "name" | "type" | "description" | "full_text" | "non_unique" | "columns"
-        ),
-        "column" => matches!(tag, "column_id" | "desc"),
-        "compound_unique_key_list" => tag == "compound_unique_key",
-        "compound_unique_key" => matches!(tag, "name" | "columns"),
-        "column_groups" => tag == "column_group",
-        "column_group" => matches!(tag, "column_group_name" | "columns"),
-        "vdiagrams" => tag == "vdiagram",
-        "vdiagram" => matches!(
-            tag,
-            "vdiagram_name" | "color" | "vtables" | "walker_notes" | "walker_groups"
-        ),
-        "vtables" => tag == "vtable",
-        "vtable" => matches!(tag, "table_id" | "x" | "y" | "font_name" | "font_size"),
-        _ => false,
-    }
+    crate::entities::diagram::Diagram::is_known_child(parent, tag)
 }
 
 #[cfg(test)]
@@ -509,6 +426,34 @@ mod tests {
         assert_eq!(
             merged,
             "<diagram><diagram_settings><database>PostgreSQL</database></diagram_settings></diagram>"
+        );
+    }
+
+    #[test]
+    fn entity_defined_children_are_matched_instead_of_duplicated() {
+        let source = concat!(
+            "<diagram><diagram_walkers><table>",
+            "<table_properties/>",
+            "<physical_name>OLD</physical_name>",
+            "</table></diagram_walkers></diagram>",
+        );
+        let managed = concat!(
+            "<diagram><diagram_walkers><table>",
+            "<physical_name>NEW</physical_name>",
+            "<table_properties/>",
+            "</table></diagram_walkers></diagram>",
+        );
+
+        let merged = merge_for_test(source, managed);
+
+        assert_eq!(
+            merged,
+            concat!(
+                "<diagram><diagram_walkers><table>",
+                "<table_properties/>",
+                "<physical_name>NEW</physical_name>",
+                "</table></diagram_walkers></diagram>",
+            )
         );
     }
 

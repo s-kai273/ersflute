@@ -1,6 +1,8 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{Data, DeriveInput, Error, Fields, LitStr, Result, parse_macro_input, spanned::Spanned};
+use syn::{
+    Data, DeriveInput, Error, Expr, Fields, LitStr, Result, parse_macro_input, spanned::Spanned,
+};
 
 #[proc_macro_derive(Validate, attributes(validate))]
 pub fn derive_validate(input: TokenStream) -> TokenStream {
@@ -10,6 +12,88 @@ pub fn derive_validate(input: TokenStream) -> TokenStream {
         Ok(tokens) => tokens.into(),
         Err(error) => error.to_compile_error().into(),
     }
+}
+
+#[proc_macro_derive(XmlSchema, attributes(serde, xml_schema))]
+pub fn derive_xml_schema(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as DeriveInput);
+
+    match expand_xml_schema(input) {
+        Ok(tokens) => tokens.into(),
+        Err(error) => error.to_compile_error().into(),
+    }
+}
+
+fn expand_xml_schema(input: DeriveInput) -> Result<proc_macro2::TokenStream> {
+    let ident = input.ident;
+    let tag = xml_tag(&ident.to_string(), &input.attrs)?;
+
+    match input.data {
+        Data::Struct(data) => expand_xml_schema_struct(ident, tag, data.fields),
+        Data::Enum(data) => expand_xml_schema_enum(ident, tag, data.variants),
+        Data::Union(data) => Err(Error::new(
+            data.union_token.span(),
+            "XmlSchema cannot be derived for unions",
+        )),
+    }
+}
+
+fn expand_xml_schema_struct(
+    ident: syn::Ident,
+    tag: String,
+    fields: Fields,
+) -> Result<proc_macro2::TokenStream> {
+    let field_tags = fields
+        .iter()
+        .filter_map(|field| xml_field_tag(field).transpose())
+        .collect::<Result<Vec<_>>>()?;
+    let child_types = fields.iter().map(|field| &field.ty);
+    let own_child_match = if field_tags.is_empty() {
+        quote! { false }
+    } else {
+        quote! { matches!(tag, #(#field_tags)|*) }
+    };
+
+    Ok(quote! {
+        impl crate::entities::XmlSchema for #ident {
+            const XML_TAG: &'static str = #tag;
+
+            fn is_known_child(parent: &str, tag: &str) -> bool {
+                (parent == Self::XML_TAG && (#own_child_match))
+                    #(|| <#child_types as crate::entities::XmlSchema>::is_known_child(parent, tag))*
+            }
+        }
+    })
+}
+
+fn expand_xml_schema_enum(
+    ident: syn::Ident,
+    tag: String,
+    variants: syn::punctuated::Punctuated<syn::Variant, syn::token::Comma>,
+) -> Result<proc_macro2::TokenStream> {
+    let variant_tags = variants
+        .iter()
+        .map(|variant| xml_renamed_tag(&variant.ident.to_string(), &variant.attrs))
+        .collect::<Result<Vec<_>>>()?;
+    let child_types = variants
+        .iter()
+        .flat_map(|variant| variant.fields.iter().map(|field| &field.ty));
+    let own_child_match = if variant_tags.is_empty() {
+        quote! { false }
+    } else {
+        quote! { matches!(tag, #(#variant_tags)|*) }
+    };
+
+    Ok(quote! {
+        impl crate::entities::XmlSchema for #ident {
+            const XML_TAG: &'static str = #tag;
+
+            fn is_known_child(parent: &str, tag: &str) -> bool {
+                (parent == Self::XML_TAG && (#own_child_match))
+                    #(|| <#child_types as crate::entities::XmlSchema>::is_known_child(parent, tag))*
+            }
+        }
+    })
 }
 
 fn expand_validate(input: DeriveInput) -> Result<proc_macro2::TokenStream> {
@@ -153,4 +237,81 @@ fn field_path(field: &syn::Field) -> Result<String> {
     }
 
     Ok(path)
+}
+
+fn xml_tag(default_name: &str, attrs: &[syn::Attribute]) -> Result<String> {
+    let mut tag = to_snake_case(default_name);
+
+    for attr in attrs
+        .iter()
+        .filter(|attr| attr.path().is_ident("xml_schema"))
+    {
+        attr.parse_nested_meta(|meta| {
+            if meta.path.is_ident("tag") {
+                let value = meta.value()?;
+                tag = value.parse::<LitStr>()?.value();
+                Ok(())
+            } else {
+                Err(meta.error("unsupported xml_schema attribute"))
+            }
+        })?;
+    }
+
+    Ok(tag)
+}
+
+fn xml_field_tag(field: &syn::Field) -> Result<Option<String>> {
+    let tag = xml_renamed_tag(
+        &field
+            .ident
+            .as_ref()
+            .map(ToString::to_string)
+            .unwrap_or_default(),
+        &field.attrs,
+    )?;
+
+    if tag == "$value" {
+        Ok(None)
+    } else {
+        Ok(Some(tag))
+    }
+}
+
+fn xml_renamed_tag(default_name: &str, attrs: &[syn::Attribute]) -> Result<String> {
+    let mut tag = default_name.to_string();
+
+    for attr in attrs.iter().filter(|attr| attr.path().is_ident("serde")) {
+        attr.parse_nested_meta(|meta| {
+            if meta.path.is_ident("rename") {
+                let value = meta.value()?;
+                tag = value.parse::<LitStr>()?.value();
+                Ok(())
+            } else if meta.input.peek(syn::Token![=]) {
+                let value = meta.value()?;
+                let _ = value.parse::<Expr>()?;
+                Ok(())
+            } else {
+                Ok(())
+            }
+        })?;
+    }
+
+    Ok(tag)
+}
+
+fn to_snake_case(value: &str) -> String {
+    let mut result = String::new();
+
+    for (index, character) in value.chars().enumerate() {
+        if character.is_uppercase() {
+            if index > 0 {
+                result.push('_');
+            }
+            result.extend(character.to_lowercase());
+        } else {
+            result.push(character);
+        }
+    }
+
+    result
 }

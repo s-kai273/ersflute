@@ -1,6 +1,7 @@
+use crate::entities::XmlSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct Column {
     pub column_id: String,
 
@@ -8,13 +9,13 @@ pub struct Column {
     pub desc: Option<bool>,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct Columns {
     #[serde(rename = "column")]
     pub columns: Vec<Column>,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct Index {
     pub name: String,
 
@@ -33,7 +34,7 @@ pub struct Index {
     pub columns: Columns,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct Indexes {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "index")]
