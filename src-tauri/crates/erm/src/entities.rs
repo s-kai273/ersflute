@@ -6,6 +6,12 @@ pub trait XmlSchema {
     const XML_TAG: &'static str;
 
     fn is_known_child(parent: &str, tag: &str) -> bool;
+
+    fn is_identity_child(parent: &str, tag: &str) -> bool;
+
+    fn is_known_value_child(tag: &str) -> bool;
+
+    fn is_identity_value_child(tag: &str) -> bool;
 }
 
 macro_rules! impl_leaf_xml_schema {
@@ -15,6 +21,18 @@ macro_rules! impl_leaf_xml_schema {
                 const XML_TAG: &'static str = "";
 
                 fn is_known_child(_parent: &str, _tag: &str) -> bool {
+                    false
+                }
+
+                fn is_identity_child(_parent: &str, _tag: &str) -> bool {
+                    false
+                }
+
+                fn is_known_value_child(_tag: &str) -> bool {
+                    false
+                }
+
+                fn is_identity_value_child(_tag: &str) -> bool {
                     false
                 }
             }
@@ -30,6 +48,18 @@ impl<T: XmlSchema> XmlSchema for Option<T> {
     fn is_known_child(parent: &str, tag: &str) -> bool {
         T::is_known_child(parent, tag)
     }
+
+    fn is_identity_child(parent: &str, tag: &str) -> bool {
+        T::is_identity_child(parent, tag)
+    }
+
+    fn is_known_value_child(tag: &str) -> bool {
+        T::is_known_value_child(tag)
+    }
+
+    fn is_identity_value_child(tag: &str) -> bool {
+        T::is_identity_value_child(tag)
+    }
 }
 
 impl<T: XmlSchema> XmlSchema for Vec<T> {
@@ -37,5 +67,17 @@ impl<T: XmlSchema> XmlSchema for Vec<T> {
 
     fn is_known_child(parent: &str, tag: &str) -> bool {
         T::is_known_child(parent, tag)
+    }
+
+    fn is_identity_child(parent: &str, tag: &str) -> bool {
+        T::is_identity_child(parent, tag)
+    }
+
+    fn is_known_value_child(tag: &str) -> bool {
+        T::is_known_value_child(tag)
+    }
+
+    fn is_identity_value_child(tag: &str) -> bool {
+        T::is_identity_value_child(tag)
     }
 }

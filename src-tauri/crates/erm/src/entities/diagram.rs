@@ -8,7 +8,7 @@ use column_groups::ColumnGroups;
 use diagram_settings::DiagramSettings;
 use diagram_walkers::DiagramWalkers;
 use serde::{Deserialize, Serialize};
-use vdiagrams::VDiagrams;
+use vdiagrams::Vdiagrams;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct Diagram {
@@ -18,7 +18,7 @@ pub struct Diagram {
     pub diagram_walkers: Option<DiagramWalkers>,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub vdiagrams: Option<VDiagrams>,
+    pub vdiagrams: Option<Vdiagrams>,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub column_groups: Option<ColumnGroups>,

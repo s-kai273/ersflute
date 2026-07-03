@@ -79,8 +79,8 @@ pub struct VDiagram {
     pub walker_groups: WalkerGroups,
 }
 
-impl From<entities::VDiagram> for VDiagram {
-    fn from(entity: entities::VDiagram) -> Self {
+impl From<entities::Vdiagram> for VDiagram {
+    fn from(entity: entities::Vdiagram) -> Self {
         Self {
             vdiagram_name: entity.vdiagram_name,
             color: entity.color.map(Into::into),
@@ -94,12 +94,12 @@ impl From<entities::VDiagram> for VDiagram {
     }
 }
 
-impl From<VDiagram> for entities::VDiagram {
+impl From<VDiagram> for entities::Vdiagram {
     fn from(dto: VDiagram) -> Self {
         Self {
             vdiagram_name: dto.vdiagram_name,
             color: dto.color.map(Into::into),
-            vtables: entities::vtables::VTables {
+            vtables: entities::vtables::Vtables {
                 vtables: dto.vtables.map(|v| v.into_iter().map(Into::into).collect()),
             },
             walker_notes: dto.walker_notes.into(),

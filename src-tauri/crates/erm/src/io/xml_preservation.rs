@@ -338,17 +338,7 @@ fn is_element(node: &XmlNode) -> bool {
 }
 
 fn is_identity_child(parent: &str, tag: &str) -> bool {
-    matches!(
-        (parent, tag),
-        ("diagram_walkers", "table")
-            | ("columns", "normal_column")
-            | ("connections", "relationship")
-            | ("indexes", "index")
-            | ("compound_unique_key_list", "compound_unique_key")
-            | ("column_groups", "column_group")
-            | ("vdiagrams", "vdiagram")
-            | ("vtables", "vtable")
-    )
+    crate::entities::diagram::Diagram::is_identity_child(parent, tag)
 }
 
 fn is_known_child(parent: &str, tag: &str) -> bool {

@@ -84,7 +84,7 @@ impl From<Diagram> for crate::entities::diagram::Diagram {
             diagram_settings: dto.diagram_settings.into(),
             diagram_walkers: dto.diagram_walkers.map(Into::into),
             vdiagrams: dto.vdiagrams.map(|vdiagrams| {
-                crate::entities::diagram::vdiagrams::VDiagrams {
+                crate::entities::diagram::vdiagrams::Vdiagrams {
                     vdiagrams: Some(vdiagrams.into_iter().map(Into::into).collect()),
                 }
             }),

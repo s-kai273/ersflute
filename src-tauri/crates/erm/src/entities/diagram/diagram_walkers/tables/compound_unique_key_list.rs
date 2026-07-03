@@ -9,6 +9,7 @@ pub struct Column {
 #[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct Columns {
     #[serde(rename = "column")]
+    #[xml_schema_override(identity = false)]
     pub columns: Vec<Column>,
 }
 

@@ -1,7 +1,8 @@
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{
-    Data, DeriveInput, Error, Expr, Fields, LitStr, Result, parse_macro_input, spanned::Spanned,
+    Data, DeriveInput, Error, Expr, Fields, LitBool, LitStr, PathArguments, Result, Type,
+    parse_macro_input, spanned::Spanned,
 };
 
 #[proc_macro_derive(Validate, attributes(validate))]
@@ -14,7 +15,7 @@ pub fn derive_validate(input: TokenStream) -> TokenStream {
     }
 }
 
-#[proc_macro_derive(XmlSchema, attributes(serde, xml_schema))]
+#[proc_macro_derive(XmlSchema, attributes(serde, xml_schema_override))]
 pub fn derive_xml_schema(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
 
@@ -25,8 +26,9 @@ pub fn derive_xml_schema(input: TokenStream) -> TokenStream {
 }
 
 fn expand_xml_schema(input: DeriveInput) -> Result<proc_macro2::TokenStream> {
+    reject_xml_schema_overrides(&input.attrs)?;
     let ident = input.ident;
-    let tag = xml_tag(&ident.to_string(), &input.attrs)?;
+    let tag = to_snake_case(&ident.to_string());
 
     match input.data {
         Data::Struct(data) => expand_xml_schema_struct(ident, tag, data.fields),
@@ -43,15 +45,26 @@ fn expand_xml_schema_struct(
     tag: String,
     fields: Fields,
 ) -> Result<proc_macro2::TokenStream> {
+    let fields = fields.iter().collect::<Vec<_>>();
     let field_tags = fields
         .iter()
-        .filter_map(|field| xml_field_tag(field).transpose())
+        .map(|field| xml_field_child_match(field))
+        .collect::<Result<Vec<_>>>()?;
+    let identity_child_matches = fields
+        .iter()
+        .filter_map(|field| xml_identity_child_match(field).transpose())
         .collect::<Result<Vec<_>>>()?;
     let child_types = fields.iter().map(|field| &field.ty);
+    let identity_child_types = fields.iter().map(|field| &field.ty);
     let own_child_match = if field_tags.is_empty() {
         quote! { false }
     } else {
-        quote! { matches!(tag, #(#field_tags)|*) }
+        quote! { #(#field_tags)||* }
+    };
+    let own_identity_child_match = if identity_child_matches.is_empty() {
+        quote! { false }
+    } else {
+        quote! { #(#identity_child_matches)||* }
     };
 
     Ok(quote! {
@@ -61,6 +74,19 @@ fn expand_xml_schema_struct(
             fn is_known_child(parent: &str, tag: &str) -> bool {
                 (parent == Self::XML_TAG && (#own_child_match))
                     #(|| <#child_types as crate::entities::XmlSchema>::is_known_child(parent, tag))*
+            }
+
+            fn is_identity_child(parent: &str, tag: &str) -> bool {
+                (parent == Self::XML_TAG && (#own_identity_child_match))
+                    #(|| <#identity_child_types as crate::entities::XmlSchema>::is_identity_child(parent, tag))*
+            }
+
+            fn is_known_value_child(_tag: &str) -> bool {
+                false
+            }
+
+            fn is_identity_value_child(_tag: &str) -> bool {
+                false
             }
         }
     })
@@ -75,13 +101,29 @@ fn expand_xml_schema_enum(
         .iter()
         .map(|variant| xml_renamed_tag(&variant.ident.to_string(), &variant.attrs))
         .collect::<Result<Vec<_>>>()?;
+    let identity_variant_tags = variants
+        .iter()
+        .filter_map(|variant| match xml_identity_enabled(&variant.attrs) {
+            Ok(Some(false)) => None,
+            Ok(_) => Some(xml_renamed_tag(&variant.ident.to_string(), &variant.attrs)),
+            Err(error) => Some(Err(error)),
+        })
+        .collect::<Result<Vec<_>>>()?;
     let child_types = variants
+        .iter()
+        .flat_map(|variant| variant.fields.iter().map(|field| &field.ty));
+    let identity_child_types = variants
         .iter()
         .flat_map(|variant| variant.fields.iter().map(|field| &field.ty));
     let own_child_match = if variant_tags.is_empty() {
         quote! { false }
     } else {
         quote! { matches!(tag, #(#variant_tags)|*) }
+    };
+    let own_identity_child_match = if identity_variant_tags.is_empty() {
+        quote! { false }
+    } else {
+        quote! { matches!(tag, #(#identity_variant_tags)|*) }
     };
 
     Ok(quote! {
@@ -91,6 +133,19 @@ fn expand_xml_schema_enum(
             fn is_known_child(parent: &str, tag: &str) -> bool {
                 (parent == Self::XML_TAG && (#own_child_match))
                     #(|| <#child_types as crate::entities::XmlSchema>::is_known_child(parent, tag))*
+            }
+
+            fn is_identity_child(parent: &str, tag: &str) -> bool {
+                (parent == Self::XML_TAG && (#own_identity_child_match))
+                    #(|| <#identity_child_types as crate::entities::XmlSchema>::is_identity_child(parent, tag))*
+            }
+
+            fn is_known_value_child(tag: &str) -> bool {
+                #own_child_match
+            }
+
+            fn is_identity_value_child(tag: &str) -> bool {
+                #own_identity_child_match
             }
         }
     })
@@ -239,28 +294,21 @@ fn field_path(field: &syn::Field) -> Result<String> {
     Ok(path)
 }
 
-fn xml_tag(default_name: &str, attrs: &[syn::Attribute]) -> Result<String> {
-    let mut tag = to_snake_case(default_name);
-
-    for attr in attrs
+fn reject_xml_schema_overrides(attrs: &[syn::Attribute]) -> Result<()> {
+    if let Some(attr) = attrs
         .iter()
-        .filter(|attr| attr.path().is_ident("xml_schema"))
+        .find(|attr| attr.path().is_ident("xml_schema_override"))
     {
-        attr.parse_nested_meta(|meta| {
-            if meta.path.is_ident("tag") {
-                let value = meta.value()?;
-                tag = value.parse::<LitStr>()?.value();
-                Ok(())
-            } else {
-                Err(meta.error("unsupported xml_schema attribute"))
-            }
-        })?;
+        Err(Error::new(
+            attr.span(),
+            "unsupported xml_schema_override attribute",
+        ))
+    } else {
+        Ok(())
     }
-
-    Ok(tag)
 }
 
-fn xml_field_tag(field: &syn::Field) -> Result<Option<String>> {
+fn xml_field_child_match(field: &syn::Field) -> Result<proc_macro2::TokenStream> {
     let tag = xml_renamed_tag(
         &field
             .ident
@@ -271,9 +319,88 @@ fn xml_field_tag(field: &syn::Field) -> Result<Option<String>> {
     )?;
 
     if tag == "$value" {
-        Ok(None)
+        let ty = &field.ty;
+        Ok(quote! { <#ty as crate::entities::XmlSchema>::is_known_value_child(tag) })
     } else {
-        Ok(Some(tag))
+        Ok(quote! { matches!(tag, #tag) })
+    }
+}
+
+fn xml_identity_child_match(field: &syn::Field) -> Result<Option<proc_macro2::TokenStream>> {
+    if !is_identity_field(field)? || !is_repeated_type(&field.ty) {
+        return Ok(None);
+    }
+
+    let tag = xml_renamed_tag(
+        &field
+            .ident
+            .as_ref()
+            .map(ToString::to_string)
+            .unwrap_or_default(),
+        &field.attrs,
+    )?;
+
+    if tag == "$value" {
+        let ty = &field.ty;
+        Ok(Some(
+            quote! { <#ty as crate::entities::XmlSchema>::is_identity_value_child(tag) },
+        ))
+    } else {
+        Ok(Some(quote! { matches!(tag, #tag) }))
+    }
+}
+
+fn is_identity_field(field: &syn::Field) -> Result<bool> {
+    Ok(xml_identity_enabled(&field.attrs)?.unwrap_or(true))
+}
+
+fn xml_identity_enabled(attrs: &[syn::Attribute]) -> Result<Option<bool>> {
+    let mut enabled = None;
+
+    for attr in attrs
+        .iter()
+        .filter(|attr| attr.path().is_ident("xml_schema_override"))
+    {
+        attr.parse_nested_meta(|meta| {
+            if meta.path.is_ident("identity") {
+                let value = meta.value()?;
+                enabled = Some(value.parse::<LitBool>()?.value);
+                Ok(())
+            } else {
+                Err(meta.error("unsupported xml_schema_override attribute"))
+            }
+        })?;
+    }
+
+    Ok(enabled)
+}
+
+fn is_repeated_type(ty: &Type) -> bool {
+    type_path_ident(ty, "Vec").is_some()
+        || type_path_ident(ty, "Option").is_some_and(type_arg_is_vec)
+}
+
+fn type_arg_is_vec(arguments: &PathArguments) -> bool {
+    let PathArguments::AngleBracketed(arguments) = arguments else {
+        return false;
+    };
+
+    arguments.args.iter().any(|argument| match argument {
+        syn::GenericArgument::Type(ty) => type_path_ident(ty, "Vec").is_some(),
+        _ => false,
+    })
+}
+
+fn type_path_ident<'a>(ty: &'a Type, ident: &str) -> Option<&'a PathArguments> {
+    let Type::Path(path) = ty else {
+        return None;
+    };
+
+    let segment = path.path.segments.last()?;
+    if segment.ident == ident {
+        Some(&segment.arguments)
+    } else {
+        None
     }
 }
 
@@ -314,4 +441,23 @@ fn to_snake_case(value: &str) -> String {
     }
 
     result
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn type_level_xml_schema_override_is_rejected() {
+        let input = syn::parse_quote! {
+            #[xml_schema_override(tag = "custom")]
+            struct Root {
+                value: String,
+            }
+        };
+
+        let error = expand_xml_schema(input).expect_err("tag override should be unsupported");
+
+        assert!(error.to_string().contains("xml_schema_override"));
+    }
 }

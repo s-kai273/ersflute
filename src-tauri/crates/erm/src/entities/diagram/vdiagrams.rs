@@ -2,7 +2,7 @@ pub mod vtables;
 
 use crate::entities::XmlSchema;
 use serde::{Deserialize, Serialize};
-use vtables::VTables;
+use vtables::Vtables;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct Color {
@@ -18,22 +18,20 @@ pub struct WalkerNotes {}
 pub struct WalkerGroups {}
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
-#[xml_schema(tag = "vdiagram")]
-pub struct VDiagram {
+pub struct Vdiagram {
     pub vdiagram_name: String,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub color: Option<Color>,
 
-    pub vtables: VTables,
+    pub vtables: Vtables,
     pub walker_notes: WalkerNotes,
     pub walker_groups: WalkerGroups,
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
-#[xml_schema(tag = "vdiagrams")]
-pub struct VDiagrams {
+pub struct Vdiagrams {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "vdiagram")]
-    pub vdiagrams: Option<Vec<VDiagram>>,
+    pub vdiagrams: Option<Vec<Vdiagram>>,
 }

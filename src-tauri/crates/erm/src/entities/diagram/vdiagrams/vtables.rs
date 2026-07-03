@@ -2,8 +2,7 @@ use crate::entities::XmlSchema;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
-#[xml_schema(tag = "vtable")]
-pub struct VTable {
+pub struct Vtable {
     pub table_id: String,
     pub x: u16,
     pub y: u16,
@@ -12,9 +11,8 @@ pub struct VTable {
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
-#[xml_schema(tag = "vtables")]
-pub struct VTables {
+pub struct Vtables {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "vtable")]
-    pub vtables: Option<Vec<VTable>>,
+    pub vtables: Option<Vec<Vtable>>,
 }

@@ -9,12 +9,30 @@ mod entities {
         const XML_TAG: &'static str;
 
         fn is_known_child(parent: &str, tag: &str) -> bool;
+
+        fn is_identity_child(parent: &str, tag: &str) -> bool;
+
+        fn is_known_value_child(tag: &str) -> bool;
+
+        fn is_identity_value_child(tag: &str) -> bool;
     }
 
     impl XmlSchema for String {
         const XML_TAG: &'static str = "";
 
         fn is_known_child(_parent: &str, _tag: &str) -> bool {
+            false
+        }
+
+        fn is_identity_child(_parent: &str, _tag: &str) -> bool {
+            false
+        }
+
+        fn is_known_value_child(_tag: &str) -> bool {
+            false
+        }
+
+        fn is_identity_value_child(_tag: &str) -> bool {
             false
         }
     }
@@ -25,6 +43,18 @@ mod entities {
         fn is_known_child(parent: &str, tag: &str) -> bool {
             T::is_known_child(parent, tag)
         }
+
+        fn is_identity_child(parent: &str, tag: &str) -> bool {
+            T::is_identity_child(parent, tag)
+        }
+
+        fn is_known_value_child(tag: &str) -> bool {
+            T::is_known_value_child(tag)
+        }
+
+        fn is_identity_value_child(tag: &str) -> bool {
+            T::is_identity_value_child(tag)
+        }
     }
 
     impl<T: XmlSchema> XmlSchema for Vec<T> {
@@ -32,6 +62,18 @@ mod entities {
 
         fn is_known_child(parent: &str, tag: &str) -> bool {
             T::is_known_child(parent, tag)
+        }
+
+        fn is_identity_child(parent: &str, tag: &str) -> bool {
+            T::is_identity_child(parent, tag)
+        }
+
+        fn is_known_value_child(tag: &str) -> bool {
+            T::is_known_value_child(tag)
+        }
+
+        fn is_identity_value_child(tag: &str) -> bool {
+            T::is_identity_value_child(tag)
         }
     }
 }
@@ -44,10 +86,14 @@ struct Root {
     renamed: RenamedChild,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    optional_children: Option<Vec<OptionalChild>>,
+    optional_children: Option<Vec<OptionalChildren>>,
 
     #[serde(rename = "$value")]
     items: Vec<Item>,
+
+    #[serde(rename = "skipped_child")]
+    #[xml_schema_override(identity = false)]
+    skipped_children: Vec<SkippedChild>,
 }
 
 #[derive(XmlSchema)]
@@ -56,19 +102,26 @@ struct RenamedChild {
 }
 
 #[derive(XmlSchema)]
-#[xml_schema(tag = "optional_children")]
-struct OptionalChild {
+struct OptionalChildren {
     label: String,
 }
 
 #[derive(XmlSchema)]
-#[xml_schema(tag = "root")]
+struct SkippedChild {
+    value: String,
+}
+
+#[derive(XmlSchema)]
 enum Item {
     #[serde(rename = "first_item")]
     First(String),
 
     #[serde(rename = "second_item")]
     Second(String),
+
+    #[serde(rename = "skipped_item")]
+    #[xml_schema_override(identity = false)]
+    Skipped(String),
 }
 
 #[test]
@@ -91,4 +144,28 @@ fn optional_vector_child_types_are_checked_recursively() {
 fn value_fields_use_enum_variant_tags_as_children_of_the_container() {
     assert!(Root::is_known_child("root", "first_item"));
     assert!(Root::is_known_child("root", "second_item"));
+    assert!(Root::is_known_child("root", "skipped_item"));
+}
+
+#[test]
+fn non_vector_fields_are_not_identity_children() {
+    assert!(!Root::is_identity_child("root", "visible_name"));
+    assert!(!Root::is_identity_child("root", "renamed_child"));
+}
+
+#[test]
+fn vector_fields_are_identity_children_by_default() {
+    assert!(Root::is_identity_child("root", "optional_children"));
+}
+
+#[test]
+fn value_vector_fields_use_enum_variant_tags_as_identity_children() {
+    assert!(Root::is_identity_child("root", "first_item"));
+    assert!(Root::is_identity_child("root", "second_item"));
+    assert!(!Root::is_identity_child("root", "skipped_item"));
+}
+
+#[test]
+fn identity_can_be_disabled_for_vector_fields() {
+    assert!(!Root::is_identity_child("root", "skipped_child"));
 }

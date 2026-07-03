@@ -53,12 +53,12 @@ pub struct NormalColumn {
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
-#[xml_schema(tag = "columns")]
 pub enum ColumnItem {
     #[serde(rename = "normal_column")]
     Normal(NormalColumn),
 
     #[serde(rename = "column_group")]
+    #[xml_schema_override(identity = false)]
     Group(String),
 }
 

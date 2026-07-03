@@ -12,8 +12,8 @@ pub struct VTable {
     pub font_size: u16,
 }
 
-impl From<entities::VTable> for VTable {
-    fn from(entity: entities::VTable) -> Self {
+impl From<entities::Vtable> for VTable {
+    fn from(entity: entities::Vtable) -> Self {
         Self {
             table_id: entity.table_id,
             x: entity.x,
@@ -24,7 +24,7 @@ impl From<entities::VTable> for VTable {
     }
 }
 
-impl From<VTable> for entities::VTable {
+impl From<VTable> for entities::Vtable {
     fn from(dto: VTable) -> Self {
         Self {
             table_id: dto.table_id,
