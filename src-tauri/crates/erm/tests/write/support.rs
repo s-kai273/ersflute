@@ -27,8 +27,8 @@ pub(crate) fn assert_serialized_element(
     let content = save_diagram_to_string(diagram, test_name);
 
     assert_eq!(
-        extract_element(&content, tag_name),
-        extract_element(expected, tag_name)
+        compact_xml(&extract_element(&content, tag_name)),
+        compact_xml(&extract_element(expected, tag_name))
     );
 }
 
@@ -49,6 +49,14 @@ pub(crate) fn extract_element(content: &str, tag_name: &str) -> String {
         .expect("failed to find element end");
 
     content[start..end].to_string()
+}
+
+pub(crate) fn compact_xml(content: &str) -> String {
+    content
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.is_empty())
+        .collect::<String>()
 }
 
 pub(crate) fn minimal_diagram() -> diagram::Diagram {

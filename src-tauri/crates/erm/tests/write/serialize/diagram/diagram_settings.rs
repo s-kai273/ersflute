@@ -35,7 +35,7 @@ fn missing_used_settings_are_added_without_removing_existing_settings() {
     let content = support::save_diagram_to_string(diagram, "missing_diagram_settings");
 
     assert_eq!(
-        support::extract_element(&content, "diagram_settings"),
+        support::compact_xml(&support::extract_element(&content, "diagram_settings")),
         "<diagram_settings><capital>true</capital><database>MySQL</database><view_mode>1</view_mode></diagram_settings>"
     );
 }

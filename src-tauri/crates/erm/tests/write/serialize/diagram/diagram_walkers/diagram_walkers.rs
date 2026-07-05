@@ -8,7 +8,10 @@ fn diagram_walkers_details_are_serialized() {
         write_support::save_diagram_to_string(support::diagram(), "diagram_walkers_details");
 
     assert_eq!(
-        write_support::extract_element(&content, "diagram_walkers"),
-        write_support::extract_element(support::DETAILS_FIXTURE, "diagram_walkers")
+        write_support::compact_xml(&write_support::extract_element(&content, "diagram_walkers")),
+        write_support::compact_xml(&write_support::extract_element(
+            support::DETAILS_FIXTURE,
+            "diagram_walkers",
+        ))
     );
 }

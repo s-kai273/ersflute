@@ -26,7 +26,7 @@ fn repeated_tables_keep_their_preserved_content_after_rename() {
     });
 
     assert_eq!(
-        extract_diagram_walkers(&saved),
+        compact_xml(&extract_diagram_walkers(&saved)),
         format!(
             concat!(
                 "<diagram_walkers>",
@@ -68,7 +68,7 @@ fn unknown_nested_elements_attributes_and_comments_keep_their_positions() {
     });
 
     assert_eq!(
-        extract_diagram_walkers(&saved),
+        compact_xml(&extract_diagram_walkers(&saved)),
         format!(
             concat!(
                 "<diagram_walkers>",
@@ -94,7 +94,7 @@ fn empty_elements_can_be_updated_with_text() {
     });
 
     assert_eq!(
-        extract_diagram_settings(&saved),
+        compact_xml(&extract_diagram_settings(&saved)),
         "<diagram_settings><database>PostgreSQL</database><view_mode>1</view_mode></diagram_settings>"
     );
 }
@@ -124,7 +124,7 @@ fn entity_defined_children_are_matched_instead_of_duplicated() {
     });
 
     assert_eq!(
-        extract_diagram_walkers(&saved),
+        compact_xml(&extract_diagram_walkers(&saved)),
         format!(
             concat!(
                 "<diagram_walkers>",
@@ -186,7 +186,7 @@ fn table_with_extra(
     after_physical_name: &str,
 ) -> String {
     format!(
-        "<table>{before_logical_name}<physical_name>{physical_name}</physical_name>{after_physical_name}<logical_name>{physical_name}</logical_name>{TABLE_AFTER_LOGICAL_NAME}</table>"
+        "<table>{before_logical_name}<physical_name>{physical_name}</physical_name>{after_physical_name}<logical_name>{physical_name}</logical_name>{SOURCE_TABLE_AFTER_LOGICAL_NAME}</table>"
     )
 }
 
@@ -209,6 +209,14 @@ fn extract_element(content: &str, tag_name: &str) -> String {
         .expect("failed to find element end");
 
     content[start..end].to_string()
+}
+
+fn compact_xml(content: &str) -> String {
+    content
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.is_empty())
+        .collect::<String>()
 }
 
 fn temp_file_path(test_name: &str, role: &str) -> std::path::PathBuf {
@@ -255,4 +263,18 @@ const TABLE_AFTER_LOGICAL_NAME_WITHOUT_TABLE_PROPERTIES: &str = concat!(
     "<columns/>",
     "<indexes/>",
     "<compound_unique_key_list/>",
+);
+
+const SOURCE_TABLE_AFTER_LOGICAL_NAME: &str = concat!(
+    "<description></description>",
+    "<font_name>Ubuntu</font_name>",
+    "<font_size>9</font_size>",
+    "<x>1</x>",
+    "<y>2</y>",
+    "<color><r>128</r><g>128</g><b>192</b></color>",
+    "<connections/>",
+    "<columns/>",
+    "<indexes/>",
+    "<compound_unique_key_list/>",
+    "<table_properties/>",
 );

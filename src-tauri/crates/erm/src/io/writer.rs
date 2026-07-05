@@ -1,3 +1,4 @@
+use super::xml_format::format_xml;
 use super::xml_preservation::merge_preserved_xml;
 use crate::dtos::diagram::Diagram;
 use crate::errors::Error;
@@ -19,7 +20,11 @@ pub fn write_file(filename: &str, diagram: Diagram) -> Result<(), Error> {
     // Serialize the edited DTO as clean managed XML, then merge it into the
     // preserved source XML to keep comments, attributes, and unsupported nodes.
     let managed_xml = to_string_with_root("diagram", &entity)?;
-    let xml = merge_preserved_xml(&preserved_xml, &managed_xml, &identities)?;
+    let xml = format_xml(&merge_preserved_xml(
+        &preserved_xml,
+        &managed_xml,
+        &identities,
+    )?)?;
 
     fs::write(filename, format!("{XML_DECLARATION}\n{xml}\n"))?;
     Ok(())
