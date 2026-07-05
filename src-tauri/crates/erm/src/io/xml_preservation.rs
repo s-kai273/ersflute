@@ -5,9 +5,14 @@ use quick_xml::events::{BytesEnd, BytesStart, Event};
 use quick_xml::{Reader, Writer};
 use std::collections::HashMap;
 
+// This module applies managed DTO changes to the original XML without
+// normalizing the whole file. It keeps raw XML events for unsupported content
+// and uses schema metadata plus saved identities to match repeated elements.
 #[derive(Clone)]
 enum XmlNode {
+    // Schema-aware XML element that can be merged with managed output.
     Element(XmlElement),
+    // Byte-preserved XML event such as whitespace, text, or comments.
     Raw(Vec<u8>),
 }
 
@@ -17,9 +22,11 @@ struct XmlElement {
     start: BytesStart<'static>,
     end: Option<BytesEnd<'static>>,
     children: Vec<XmlNode>,
+    // Temporary merge key for repeated elements. This is not written to XML.
     identity_id: Option<String>,
 }
 
+// Merges freshly serialized managed XML into the preserved source XML.
 pub(crate) fn merge_preserved_xml(
     preserved_xml: &str,
     managed_xml: &str,
@@ -36,6 +43,8 @@ pub(crate) fn merge_preserved_xml(
     Ok(String::from_utf8(writer.into_inner()).expect("quick-xml wrote invalid UTF-8"))
 }
 
+// Captures stable identities from source XML before DTO edits change ordering
+// or names of repeated elements.
 pub(crate) fn collect_xml_node_identities(xml: &str) -> Result<Vec<XmlNodeIdentity>, Error> {
     let root = parse_document(xml)?;
     let mut identities = Vec::new();
@@ -43,6 +52,8 @@ pub(crate) fn collect_xml_node_identities(xml: &str) -> Result<Vec<XmlNodeIdenti
     Ok(identities)
 }
 
+// Walks the source XML tree and records identity children by tag/index under
+// the nearest repeated parent.
 fn collect_identities(
     element: &XmlElement,
     repeated_parent_id: Option<&str>,
@@ -62,6 +73,7 @@ fn collect_identities(
         path.push(element_index);
         let index = tag_indexes.entry(&child.name).or_default();
         let id = path_id(path);
+
         let next_parent = if is_identity_child(&element.name, &child.name) {
             identities.push(XmlNodeIdentity {
                 id: id.clone(),
@@ -79,10 +91,13 @@ fn collect_identities(
     }
 }
 
+// Assigns path-based identity ids to repeated elements in the preserved source
+// XML tree.
 fn assign_source_identities(root: &mut XmlElement) {
     assign_source_identity_children(root, &mut Vec::new());
 }
 
+// Recursively writes source XML path ids onto identity children.
 fn assign_source_identity_children(element: &mut XmlElement, path: &mut Vec<usize>) {
     let mut element_index = 0;
     for child in &mut element.children {
@@ -99,6 +114,8 @@ fn assign_source_identity_children(element: &mut XmlElement, path: &mut Vec<usiz
     }
 }
 
+// Reconnects serialized managed elements to the source XML identities collected
+// during read.
 fn assign_managed_identities(root: &mut XmlElement, identities: &[XmlNodeIdentity]) {
     let lookup: HashMap<(&str, Option<&str>, usize), &str> = identities
         .iter()
@@ -116,6 +133,8 @@ fn assign_managed_identities(root: &mut XmlElement, identities: &[XmlNodeIdentit
     assign_managed_identity_children(root, None, &lookup);
 }
 
+// Assigns source identity ids to managed identity children using their
+// tag/index position under the current repeated parent.
 fn assign_managed_identity_children<'a>(
     element: &mut XmlElement,
     repeated_parent_id: Option<&'a str>,
@@ -139,6 +158,8 @@ fn assign_managed_identity_children<'a>(
     }
 }
 
+// Merges one preserved element with the corresponding managed element while
+// keeping raw and unknown preserved children in place.
 fn merge_element(mut base: XmlElement, managed: XmlElement) -> XmlElement {
     if base.end.is_none() && managed.end.is_some() {
         base.end = managed.end.clone();
@@ -191,7 +212,11 @@ fn merge_element(mut base: XmlElement, managed: XmlElement) -> XmlElement {
     base
 }
 
+// Finds the managed child that should update a preserved child.
 fn find_managed_match(base: &XmlElement, managed: &[Option<XmlElement>]) -> Option<usize> {
+    // For repeated schema children, identity ids are safer than tag matching.
+    // If managed siblings for this tag have ids but none match, the base node
+    // represents a removed element and should not consume another sibling.
     if base.identity_id.is_some() {
         let identity_match = base.identity_id.as_ref().and_then(|id| {
             managed.iter().position(|candidate| {
@@ -219,6 +244,8 @@ fn find_managed_match(base: &XmlElement, managed: &[Option<XmlElement>]) -> Opti
     })
 }
 
+// Appends managed children that did not exist in the preserved XML after the
+// last preserved sibling with the same tag.
 fn append_unmatched_tag(tag: &str, managed: &mut [Option<XmlElement>], output: &mut Vec<XmlNode>) {
     for candidate in managed {
         if candidate.as_ref().is_some_and(|child| child.name == tag) {
@@ -229,6 +256,8 @@ fn append_unmatched_tag(tag: &str, managed: &mut [Option<XmlElement>], output: &
     }
 }
 
+// Counts preserved element children by tag so new managed siblings can be
+// inserted after the final preserved sibling in each tag group.
 fn element_tag_counts(children: &[XmlNode]) -> HashMap<String, usize> {
     let mut counts = HashMap::new();
     for child in children {
@@ -239,7 +268,10 @@ fn element_tag_counts(children: &[XmlNode]) -> HashMap<String, usize> {
     counts
 }
 
+// Parses a full XML document and returns the root element tree.
 fn parse_document(xml: &str) -> Result<XmlElement, Error> {
+    // Only element nodes are interpreted. Everything else before the root is
+    // ignored because the writer owns the final XML declaration.
     let mut reader = Reader::from_str(xml);
     loop {
         match reader.read_event()? {
@@ -260,6 +292,8 @@ fn parse_document(xml: &str) -> Result<XmlElement, Error> {
     }
 }
 
+// Parses an XML element into the preservation tree, keeping child elements
+// structured and all other events as raw bytes.
 fn parse_element(
     reader: &mut Reader<&[u8]>,
     start: BytesStart<'static>,
@@ -296,6 +330,8 @@ fn parse_element(
     }
 }
 
+// Writes the preservation tree back to XML, passing raw events through
+// byte-for-byte.
 fn write_element(writer: &mut Writer<Vec<u8>>, element: &XmlElement) -> Result<(), Error> {
     if element.end.is_none() {
         writer.write_event(Event::Empty(element.start.borrow()))?;
@@ -314,18 +350,22 @@ fn write_element(writer: &mut Writer<Vec<u8>>, element: &XmlElement) -> Result<(
     Ok(())
 }
 
+// Serializes a non-structured quick-xml event so it can be preserved as raw
+// bytes in the tree.
 fn event_bytes(event: Event<'_>) -> Result<Vec<u8>, Error> {
     let mut writer = Writer::new(Vec::new());
     writer.write_event(event.borrow())?;
     Ok(writer.into_inner())
 }
 
+// Reads the UTF-8 tag name from a quick-xml start event.
 fn event_name(start: &BytesStart<'_>) -> String {
     std::str::from_utf8(start.name().as_ref())
         .expect("quick-xml read invalid UTF-8 tag name")
         .to_string()
 }
 
+// Converts an element-child path to a stable dotted id for source XML nodes.
 fn path_id(path: &[usize]) -> String {
     path.iter()
         .map(usize::to_string)
@@ -333,14 +373,18 @@ fn path_id(path: &[usize]) -> String {
         .join(".")
 }
 
+// Distinguishes structured XML children from raw events.
 fn is_element(node: &XmlNode) -> bool {
     matches!(node, XmlNode::Element(_))
 }
 
+// Checks entity schema metadata for repeated children that require identity
+// matching.
 fn is_identity_child(parent: &str, tag: &str) -> bool {
     crate::entities::diagram::Diagram::is_identity_child(parent, tag)
 }
 
+// Checks entity schema metadata for children owned by ERM serialization.
 fn is_known_child(parent: &str, tag: &str) -> bool {
     crate::entities::diagram::Diagram::is_known_child(parent, tag)
 }
