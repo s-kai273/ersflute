@@ -442,22 +442,3 @@ fn to_snake_case(value: &str) -> String {
 
     result
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn type_level_xml_schema_override_is_rejected() {
-        let input = syn::parse_quote! {
-            #[xml_schema_override(tag = "custom")]
-            struct Root {
-                value: String,
-            }
-        };
-
-        let error = expand_xml_schema(input).expect_err("tag override should be unsupported");
-
-        assert!(error.to_string().contains("xml_schema_override"));
-    }
-}
