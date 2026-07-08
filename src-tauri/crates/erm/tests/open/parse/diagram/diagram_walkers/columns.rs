@@ -11,8 +11,10 @@ fn columns_tags_keep_valid_values() {
     assert_eq!(
         table.columns,
         columns::Columns {
+            identity_key: None,
             items: Some(vec![
                 columns::ColumnItem::Normal(columns::NormalColumn {
+                    identity_key: None,
                     physical_name: "MEMBER_ID".to_string(),
                     logical_name: Some("Member ID".to_string()),
                     description: Some("Surrogate key".to_string()),
@@ -30,6 +32,7 @@ fn columns_tags_keep_valid_values() {
                     relationship: Some("FK_MEMBERS_PARENT".to_string()),
                 }),
                 columns::ColumnItem::Normal(columns::NormalColumn {
+                    identity_key: None,
                     physical_name: "MEMBER_NAME".to_string(),
                     ..Default::default()
                 }),

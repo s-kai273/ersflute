@@ -5,12 +5,16 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct Column {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity_key: Option<String>,
+
     pub column_id: String,
 }
 
 impl From<entities::Column> for Column {
     fn from(entity: entities::Column) -> Self {
         Self {
+            identity_key: None,
             column_id: entity.column_id,
         }
     }
@@ -27,6 +31,9 @@ impl From<Column> for entities::Column {
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct CompoundUniqueKey {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity_key: Option<String>,
+
     pub name: String,
     pub columns: Vec<Column>,
 }
@@ -34,6 +41,7 @@ pub struct CompoundUniqueKey {
 impl From<entities::CompoundUniqueKey> for CompoundUniqueKey {
     fn from(entity: entities::CompoundUniqueKey) -> Self {
         Self {
+            identity_key: None,
             name: entity.name,
             columns: entity.columns.columns.into_iter().map(Into::into).collect(),
         }
@@ -55,12 +63,16 @@ impl From<CompoundUniqueKey> for entities::CompoundUniqueKey {
 #[serde(rename_all = "camelCase")]
 pub struct CompoundUniqueKeyList {
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity_key: Option<String>,
+
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub compound_unique_keys: Option<Vec<CompoundUniqueKey>>,
 }
 
 impl From<entities::CompoundUniqueKeyList> for CompoundUniqueKeyList {
     fn from(entity: entities::CompoundUniqueKeyList) -> Self {
         Self {
+            identity_key: None,
             compound_unique_keys: entity
                 .compound_unique_keys
                 .map(|v| v.into_iter().map(Into::into).collect()),

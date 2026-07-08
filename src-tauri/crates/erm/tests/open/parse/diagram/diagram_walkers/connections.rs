@@ -11,17 +11,22 @@ fn connections_tags_keep_valid_values() {
     assert_eq!(
         table.connections,
         connections::Connections {
+            identity_key: None,
             relationships: Some(vec![connections::Relationship {
+                identity_key: None,
                 name: "FK_MEMBERS_PARENT".to_string(),
                 source: "table.PARENT_MEMBERS".to_string(),
                 target: "table.MEMBERS".to_string(),
                 bendpoints: Some(vec![connections::Bendpoint {
+                    identity_key: None,
                     relative: true,
                     x: 11,
                     y: 12,
                 }]),
                 fk_columns: connections::FkColumns {
+                    identity_key: None,
                     fk_column: vec![connections::FkColumn {
+                        identity_key: None,
                         fk_column_name: "MEMBER_ID".to_string(),
                     }],
                 },

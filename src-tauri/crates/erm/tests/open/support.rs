@@ -1,6 +1,7 @@
 use std::fs;
 
 use erm::dtos::diagram::Diagram;
+use erm::dtos::diagram::diagram_walkers::tables::columns;
 use erm::errors::Error;
 use erm::open;
 
@@ -167,6 +168,60 @@ pub(crate) fn assert_parse_error(content: String, temp_prefix: &str, test_name: 
 
     fs::remove_file(&path).expect("failed to remove fixture");
     assert!(result.is_err());
+}
+
+pub(crate) fn clear_identity_keys(diagram: &mut Diagram) {
+    if let Some(diagram_walkers) = &mut diagram.diagram_walkers {
+        if let Some(tables) = &mut diagram_walkers.tables {
+            for table in tables {
+                table.identity_key = None;
+                if let Some(items) = &mut table.columns.items {
+                    for item in items {
+                        if let columns::ColumnItem::Normal(column) = item {
+                            column.identity_key = None;
+                        }
+                    }
+                }
+                if let Some(relationships) = &mut table.connections.relationships {
+                    for relationship in relationships {
+                        relationship.identity_key = None;
+                    }
+                }
+                if let Some(indexes) = &mut table.indexes {
+                    for index in indexes {
+                        index.identity_key = None;
+                    }
+                }
+                if let Some(compound_unique_keys) =
+                    &mut table.compound_unique_key_list.compound_unique_keys
+                {
+                    for compound_unique_key in compound_unique_keys {
+                        compound_unique_key.identity_key = None;
+                    }
+                }
+            }
+        }
+    }
+    if let Some(vdiagrams) = &mut diagram.vdiagrams {
+        for vdiagram in vdiagrams {
+            vdiagram.identity_key = None;
+            if let Some(vtables) = &mut vdiagram.vtables {
+                for vtable in vtables {
+                    vtable.identity_key = None;
+                }
+            }
+        }
+    }
+    if let Some(column_groups) = &mut diagram.column_groups {
+        for column_group in column_groups {
+            column_group.identity_key = None;
+            if let Some(normal_columns) = &mut column_group.columns.normal_columns {
+                for normal_column in normal_columns {
+                    normal_column.identity_key = None;
+                }
+            }
+        }
+    }
 }
 
 fn assert_parse_success(content: String, temp_prefix: &str, test_name: &str) {

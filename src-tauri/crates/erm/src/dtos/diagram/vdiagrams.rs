@@ -8,6 +8,9 @@ use vtables::VTable;
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct Color {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity_key: Option<String>,
+
     pub r: u8,
     pub g: u8,
     pub b: u8,
@@ -16,6 +19,7 @@ pub struct Color {
 impl From<entities::Color> for Color {
     fn from(entity: entities::Color) -> Self {
         Self {
+            identity_key: None,
             r: entity.r,
             g: entity.g,
             b: entity.b,
@@ -35,11 +39,14 @@ impl From<Color> for entities::Color {
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
-pub struct WalkerNotes {}
+pub struct WalkerNotes {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity_key: Option<String>,
+}
 
 impl From<entities::WalkerNotes> for WalkerNotes {
     fn from(_: entities::WalkerNotes) -> Self {
-        Self {}
+        Self { identity_key: None }
     }
 }
 
@@ -51,11 +58,14 @@ impl From<WalkerNotes> for entities::WalkerNotes {
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
-pub struct WalkerGroups {}
+pub struct WalkerGroups {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity_key: Option<String>,
+}
 
 impl From<entities::WalkerGroups> for WalkerGroups {
     fn from(_: entities::WalkerGroups) -> Self {
-        Self {}
+        Self { identity_key: None }
     }
 }
 
@@ -68,6 +78,9 @@ impl From<WalkerGroups> for entities::WalkerGroups {
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct VDiagram {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity_key: Option<String>,
+
     pub vdiagram_name: String,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -82,6 +95,7 @@ pub struct VDiagram {
 impl From<entities::Vdiagram> for VDiagram {
     fn from(entity: entities::Vdiagram) -> Self {
         Self {
+            identity_key: None,
             vdiagram_name: entity.vdiagram_name,
             color: entity.color.map(Into::into),
             vtables: entity

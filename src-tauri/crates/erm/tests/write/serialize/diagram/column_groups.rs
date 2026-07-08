@@ -7,10 +7,13 @@ fn column_groups_tags_are_serialized() {
     let mut diagram = support::minimal_diagram();
     diagram.column_groups = Some(vec![
         column_groups::ColumnGroup {
+            identity_key: None,
             column_group_name: "COMMON".to_string(),
             columns: column_groups::Columns {
+                identity_key: None,
                 normal_columns: Some(vec![
                     column_groups::NormalColumn {
+                        identity_key: None,
                         physical_name: "CREATED_AT".to_string(),
                         logical_name: Some("Created At".to_string()),
                         description: Some("Created timestamp".to_string()),
@@ -24,6 +27,7 @@ fn column_groups_tags_are_serialized() {
                         default_value: Some("CURRENT_TIMESTAMP".to_string()),
                     },
                     column_groups::NormalColumn {
+                        identity_key: None,
                         physical_name: "UPDATED_BY".to_string(),
                         column_type: column_groups::ColumnType::BigInt,
                         ..Default::default()
@@ -32,8 +36,10 @@ fn column_groups_tags_are_serialized() {
             },
         },
         column_groups::ColumnGroup {
+            identity_key: None,
             column_group_name: "AUDIT".to_string(),
             columns: column_groups::Columns {
+                identity_key: None,
                 normal_columns: None,
             },
         },

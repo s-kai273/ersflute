@@ -12,16 +12,20 @@ const ASSERTIONS: support::FixtureAssertions =
 
 #[test]
 fn column_groups_tags_keep_valid_values() {
-    let diagram = open(COLUMN_GROUPS_FIXTURE).expect("failed to parse");
+    let mut diagram = open(COLUMN_GROUPS_FIXTURE).expect("failed to parse");
+    support::clear_identity_keys(&mut diagram);
 
     assert_eq!(
         diagram.column_groups,
         Some(vec![
             column_groups::ColumnGroup {
+                identity_key: None,
                 column_group_name: "COMMON".to_string(),
                 columns: column_groups::Columns {
+                    identity_key: None,
                     normal_columns: Some(vec![
                         column_groups::NormalColumn {
+                            identity_key: None,
                             physical_name: "CREATED_AT".to_string(),
                             logical_name: Some("Created At".to_string()),
                             description: Some("Created timestamp".to_string()),
@@ -35,6 +39,7 @@ fn column_groups_tags_keep_valid_values() {
                             default_value: Some("CURRENT_TIMESTAMP".to_string()),
                         },
                         column_groups::NormalColumn {
+                            identity_key: None,
                             physical_name: "UPDATED_BY".to_string(),
                             column_type: column_groups::ColumnType::BigInt,
                             ..Default::default()
@@ -43,8 +48,10 @@ fn column_groups_tags_keep_valid_values() {
                 },
             },
             column_groups::ColumnGroup {
+                identity_key: None,
                 column_group_name: "AUDIT".to_string(),
                 columns: column_groups::Columns {
+                    identity_key: None,
                     normal_columns: None,
                 },
             },

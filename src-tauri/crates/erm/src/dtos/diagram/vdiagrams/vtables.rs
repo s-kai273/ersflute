@@ -5,6 +5,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct VTable {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity_key: Option<String>,
+
     pub table_id: String,
     pub x: u16,
     pub y: u16,
@@ -15,6 +18,7 @@ pub struct VTable {
 impl From<entities::Vtable> for VTable {
     fn from(entity: entities::Vtable) -> Self {
         Self {
+            identity_key: None,
             table_id: entity.table_id,
             x: entity.x,
             y: entity.y,

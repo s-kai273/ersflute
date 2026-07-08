@@ -61,7 +61,7 @@ pub(crate) fn compact_xml(content: &str) -> String {
 
 pub(crate) fn minimal_diagram() -> diagram::Diagram {
     diagram::Diagram {
-        xml_node_ids: Vec::new(),
+        identity_key: None,
         preserved_xml: Some(
             "<diagram><diagram_settings><database>MySQL</database><view_mode>1</view_mode></diagram_settings></diagram>"
                 .to_string(),
@@ -75,6 +75,7 @@ pub(crate) fn minimal_diagram() -> diagram::Diagram {
 
 pub(crate) fn minimal_diagram_settings() -> diagram_settings::DiagramSettings {
     diagram_settings::DiagramSettings {
+        identity_key: None,
         database: "MySQL".to_string(),
         view_mode: 1,
     }

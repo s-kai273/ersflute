@@ -12,20 +12,24 @@ const ASSERTIONS: support::FixtureAssertions =
 
 #[test]
 fn vdiagrams_tags_keep_valid_values() {
-    let diagram = open(VDIAGRAMS_FIXTURE).expect("failed to parse");
+    let mut diagram = open(VDIAGRAMS_FIXTURE).expect("failed to parse");
+    support::clear_identity_keys(&mut diagram);
 
     assert_eq!(
         diagram.vdiagrams,
         Some(vec![
             vdiagrams::VDiagram {
+                identity_key: None,
                 vdiagram_name: "main".to_string(),
                 color: Some(vdiagrams::Color {
+                    identity_key: None,
                     r: 64,
                     g: 128,
                     b: 192,
                 }),
                 vtables: Some(vec![
                     vdiagrams::vtables::VTable {
+                        identity_key: None,
                         table_id: "table.MEMBERS".to_string(),
                         x: 160,
                         y: 106,
@@ -33,6 +37,7 @@ fn vdiagrams_tags_keep_valid_values() {
                         font_size: 9,
                     },
                     vdiagrams::vtables::VTable {
+                        identity_key: None,
                         table_id: "table.MEMBER_STATUS".to_string(),
                         x: 400,
                         y: 120,
@@ -40,15 +45,16 @@ fn vdiagrams_tags_keep_valid_values() {
                         font_size: 10,
                     },
                 ]),
-                walker_notes: vdiagrams::WalkerNotes {},
-                walker_groups: vdiagrams::WalkerGroups {},
+                walker_notes: vdiagrams::WalkerNotes { identity_key: None },
+                walker_groups: vdiagrams::WalkerGroups { identity_key: None },
             },
             vdiagrams::VDiagram {
+                identity_key: None,
                 vdiagram_name: "empty".to_string(),
                 color: None,
                 vtables: None,
-                walker_notes: vdiagrams::WalkerNotes {},
-                walker_groups: vdiagrams::WalkerGroups {},
+                walker_notes: vdiagrams::WalkerNotes { identity_key: None },
+                walker_groups: vdiagrams::WalkerGroups { identity_key: None },
             },
         ])
     );

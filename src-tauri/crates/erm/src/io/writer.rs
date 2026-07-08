@@ -1,5 +1,5 @@
 use super::xml_format::format_xml;
-use super::xml_preservation::merge_preserved_xml;
+use super::xml_preservation::{diagram_into_entity_with_identity_keys, merge_preserved_xml};
 use crate::dtos::diagram::Diagram;
 use crate::errors::Error;
 use quick_xml::se::to_string_with_root;
@@ -14,8 +14,7 @@ pub fn write_file(filename: &str, diagram: Diagram) -> Result<(), Error> {
         .preserved_xml
         .clone()
         .ok_or(Error::MissingPreservedXml)?;
-    let identities = diagram.xml_node_ids.clone();
-    let entity: crate::entities::diagram::Diagram = diagram.into();
+    let (entity, identities) = diagram_into_entity_with_identity_keys(diagram);
 
     // Serialize the edited DTO as clean managed XML, then merge it into the
     // preserved source XML to keep comments, attributes, and unsupported nodes.

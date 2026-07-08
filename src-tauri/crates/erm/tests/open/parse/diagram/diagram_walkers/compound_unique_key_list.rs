@@ -11,13 +11,17 @@ fn compound_unique_key_list_tags_keep_valid_values() {
     assert_eq!(
         table.compound_unique_key_list,
         compound_unique_key_list::CompoundUniqueKeyList {
+            identity_key: None,
             compound_unique_keys: Some(vec![compound_unique_key_list::CompoundUniqueKey {
+                identity_key: None,
                 name: "UK_MEMBERS_NAME".to_string(),
                 columns: vec![
                     compound_unique_key_list::Column {
+                        identity_key: None,
                         column_id: "MEMBER_NAME".to_string(),
                     },
                     compound_unique_key_list::Column {
+                        identity_key: None,
                         column_id: "MEMBER_ID".to_string(),
                     },
                 ],

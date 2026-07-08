@@ -10,15 +10,18 @@ use erm::dtos::diagram::vdiagrams;
 
 pub fn get_diagram() -> diagram::Diagram {
     diagram::Diagram {
-        xml_node_ids: Vec::new(),
+        identity_key: None,
         preserved_xml: Some(include_str!("../open/fixtures/read_snapshot.erm").to_string()),
         diagram_settings: diagram_settings::DiagramSettings {
+            identity_key: None,
             database: "MySQL".to_string(),
             view_mode: 1,
         },
         diagram_walkers: Some(diagram_walkers::DiagramWalkers {
+            identity_key: None,
             tables: Some(vec![
                 tables::Table {
+                    identity_key: None,
                     physical_name: "MEMBERS".to_string(),
                     logical_name: "会員".to_string(),
                     description: "".to_string(),
@@ -29,19 +32,23 @@ pub fn get_diagram() -> diagram::Diagram {
                     x: 160,
                     y: 106,
                     color: tables::Color {
+                        identity_key: None,
                         r: 128,
                         g: 128,
                         b: 192,
                     },
                     connections: connections::Connections {
+                        identity_key: None,
                         relationships: None,
                     },
                     table_constraint: None,
                     primary_key_name: None,
                     option: None,
                     columns: columns::Columns {
+                        identity_key: None,
                         items: Some(vec![
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "MEMBER_ID".to_string(),
                                 logical_name: Some("会員ID".to_string()),
                                 column_type: Some(columns::ColumnType::BigInt),
@@ -52,6 +59,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "LAST_NAME".to_string(),
                                 logical_name: Some("苗字".to_string()),
                                 column_type: Some(columns::ColumnType::VarCharN),
@@ -60,6 +68,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "FIRST_NAME".to_string(),
                                 logical_name: Some("名前".to_string()),
                                 column_type: Some(columns::ColumnType::VarCharN),
@@ -72,10 +81,12 @@ pub fn get_diagram() -> diagram::Diagram {
                     },
                     indexes: None,
                     compound_unique_key_list: compound_unique_key_list::CompoundUniqueKeyList {
+                        identity_key: None,
                         compound_unique_keys: None,
                     },
                 },
                 tables::Table {
+                    identity_key: None,
                     physical_name: "MEMBER_PROFILES".to_string(),
                     logical_name: "会員プロフィール".to_string(),
                     description: "".to_string(),
@@ -86,19 +97,24 @@ pub fn get_diagram() -> diagram::Diagram {
                     x: 502,
                     y: 103,
                     color: tables::Color {
+                        identity_key: None,
                         r: 128,
                         g: 128,
                         b: 192,
                     },
                     connections: connections::Connections {
+                        identity_key: None,
                         relationships: Some(vec![
                             connections::Relationship {
+                                identity_key: None,
                                 name: "FK_MEMBER_PROFILES_MEMBERS".to_string(),
                                 source: "table.MEMBERS".to_string(),
                                 target: "table.MEMBER_PROFILES".to_string(),
                                 bendpoints: None,
                                 fk_columns: connections::FkColumns {
+                                    identity_key: None,
                                     fk_column: vec![connections::FkColumn {
+                                        identity_key: None,
                                         fk_column_name: "MEMBER_ID".to_string(),
                                     }],
                                 },
@@ -111,12 +127,15 @@ pub fn get_diagram() -> diagram::Diagram {
                                 referred_compound_unique_key: None,
                             },
                             connections::Relationship {
+                                identity_key: None,
                                 name: "FK_MEMBER_PROFILES_MST_GENDER".to_string(),
                                 source: "table.MST_GENDER".to_string(),
                                 target: "table.MEMBER_PROFILES".to_string(),
                                 bendpoints: None,
                                 fk_columns: connections::FkColumns {
+                                    identity_key: None,
                                     fk_column: vec![connections::FkColumn {
+                                        identity_key: None,
                                         fk_column_name: "GENDER_ID".to_string(),
                                     }],
                                 },
@@ -134,8 +153,10 @@ pub fn get_diagram() -> diagram::Diagram {
                     primary_key_name: None,
                     option: None,
                     columns: columns::Columns {
+                        identity_key: None,
                         items: Some(vec![
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "MEMBER_PROFILE_ID".to_string(),
                                 logical_name: Some("会員プロフィールID".to_string()),
                                 column_type: Some(columns::ColumnType::BigInt),
@@ -146,6 +167,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "MEMBER_ID".to_string(),
                                 referred_column: Some("table.MEMBERS.MEMBER_ID".to_string()),
                                 relationship: Some("FK_MEMBER_PROFILES_MEMBERS".to_string()),
@@ -153,6 +175,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "SELF_INTRODUCTION".to_string(),
                                 logical_name: Some("自己紹介".to_string()),
                                 column_type: Some(columns::ColumnType::Text),
@@ -160,6 +183,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "PROFILE_IMG_URL".to_string(),
                                 logical_name: Some("プロフィール画像URL".to_string()),
                                 column_type: Some(columns::ColumnType::VarCharN),
@@ -168,6 +192,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "GENDER_ID".to_string(),
                                 referred_column: Some("table.MST_GENDER.GENDER_ID".to_string()),
                                 relationship: Some("FK_MEMBER_PROFILES_MST_GENDER".to_string()),
@@ -178,10 +203,12 @@ pub fn get_diagram() -> diagram::Diagram {
                     },
                     indexes: None,
                     compound_unique_key_list: compound_unique_key_list::CompoundUniqueKeyList {
+                        identity_key: None,
                         compound_unique_keys: None,
                     },
                 },
                 tables::Table {
+                    identity_key: None,
                     physical_name: "MST_GENDER".to_string(),
                     logical_name: "マスター性別".to_string(),
                     description: "".to_string(),
@@ -192,19 +219,23 @@ pub fn get_diagram() -> diagram::Diagram {
                     x: 829,
                     y: 99,
                     color: tables::Color {
+                        identity_key: None,
                         r: 128,
                         g: 128,
                         b: 192,
                     },
                     connections: connections::Connections {
+                        identity_key: None,
                         relationships: None,
                     },
                     table_constraint: None,
                     primary_key_name: None,
                     option: None,
                     columns: columns::Columns {
+                        identity_key: None,
                         items: Some(vec![
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "GENDER_ID".to_string(),
                                 logical_name: Some("性別ID".to_string()),
                                 column_type: Some(columns::ColumnType::Int),
@@ -215,6 +246,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "GENDER".to_string(),
                                 logical_name: Some("性別".to_string()),
                                 column_type: Some(columns::ColumnType::CharN),
@@ -227,10 +259,12 @@ pub fn get_diagram() -> diagram::Diagram {
                     },
                     indexes: None,
                     compound_unique_key_list: compound_unique_key_list::CompoundUniqueKeyList {
+                        identity_key: None,
                         compound_unique_keys: None,
                     },
                 },
                 tables::Table {
+                    identity_key: None,
                     physical_name: "POSTS".to_string(),
                     logical_name: "投稿".to_string(),
                     description: "".to_string(),
@@ -241,18 +275,23 @@ pub fn get_diagram() -> diagram::Diagram {
                     x: 159,
                     y: 364,
                     color: tables::Color {
+                        identity_key: None,
                         r: 128,
                         g: 128,
                         b: 192,
                     },
                     connections: connections::Connections {
+                        identity_key: None,
                         relationships: Some(vec![connections::Relationship {
+                            identity_key: None,
                             name: "FK_MEMBER_POSTS_MEMBERS".to_string(),
                             source: "table.MEMBERS".to_string(),
                             target: "table.POSTS".to_string(),
                             bendpoints: None,
                             fk_columns: connections::FkColumns {
+                                identity_key: None,
                                 fk_column: vec![connections::FkColumn {
+                                    identity_key: None,
                                     fk_column_name: "MEMBER_ID".to_string(),
                                 }],
                             },
@@ -269,8 +308,10 @@ pub fn get_diagram() -> diagram::Diagram {
                     primary_key_name: None,
                     option: None,
                     columns: columns::Columns {
+                        identity_key: None,
                         items: Some(vec![
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "POST_ID".to_string(),
                                 logical_name: Some("投稿ID".to_string()),
                                 column_type: Some(columns::ColumnType::BigInt),
@@ -281,6 +322,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "MEMBER_ID".to_string(),
                                 referred_column: Some("table.MEMBERS.MEMBER_ID".to_string()),
                                 relationship: Some("FK_MEMBER_POSTS_MEMBERS".to_string()),
@@ -288,6 +330,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "TITLE".to_string(),
                                 logical_name: Some("タイトル".to_string()),
                                 column_type: Some(columns::ColumnType::VarCharN),
@@ -296,12 +339,14 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "TEXT".to_string(),
                                 logical_name: Some("本文".to_string()),
                                 column_type: Some(columns::ColumnType::Text),
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "IMG_URL".to_string(),
                                 logical_name: Some("画像URL".to_string()),
                                 column_type: Some(columns::ColumnType::VarCharN),
@@ -309,6 +354,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "VIEW_COUNT".to_string(),
                                 logical_name: Some("閲覧数".to_string()),
                                 column_type: Some(columns::ColumnType::BigInt),
@@ -317,6 +363,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "LIKE_COUNT".to_string(),
                                 logical_name: Some("いいね数".to_string()),
                                 column_type: Some(columns::ColumnType::BigInt),
@@ -325,6 +372,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "PUBLIC_START_AT".to_string(),
                                 logical_name: Some("公開開始時間".to_string()),
                                 column_type: Some(columns::ColumnType::Datetime),
@@ -332,12 +380,14 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "PUBLIC_END_AT".to_string(),
                                 logical_name: Some("公開終了時間".to_string()),
                                 column_type: Some(columns::ColumnType::Datetime),
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "DELETED".to_string(),
                                 logical_name: Some("削除済".to_string()),
                                 column_type: Some(columns::ColumnType::Boolean),
@@ -350,10 +400,12 @@ pub fn get_diagram() -> diagram::Diagram {
                     },
                     indexes: None,
                     compound_unique_key_list: compound_unique_key_list::CompoundUniqueKeyList {
+                        identity_key: None,
                         compound_unique_keys: None,
                     },
                 },
                 tables::Table {
+                    identity_key: None,
                     physical_name: "POST_REPLIES".to_string(),
                     logical_name: "投稿返信".to_string(),
                     description: "".to_string(),
@@ -364,19 +416,24 @@ pub fn get_diagram() -> diagram::Diagram {
                     x: 782,
                     y: 391,
                     color: tables::Color {
+                        identity_key: None,
                         r: 128,
                         g: 128,
                         b: 192,
                     },
                     connections: connections::Connections {
+                        identity_key: None,
                         relationships: Some(vec![
                             connections::Relationship {
+                                identity_key: None,
                                 name: "FK_POST_REPLIES_POST_THREADS".to_string(),
                                 source: "table.POST_THREADS".to_string(),
                                 target: "table.POST_REPLIES".to_string(),
                                 bendpoints: None,
                                 fk_columns: connections::FkColumns {
+                                    identity_key: None,
                                     fk_column: vec![connections::FkColumn {
+                                        identity_key: None,
                                         fk_column_name: "POST_THREAD_ID".to_string(),
                                     }],
                                 },
@@ -389,12 +446,15 @@ pub fn get_diagram() -> diagram::Diagram {
                                 referred_compound_unique_key: None,
                             },
                             connections::Relationship {
+                                identity_key: None,
                                 name: "FK_POST_REPLIES_MEMBERS".to_string(),
                                 source: "table.MEMBERS".to_string(),
                                 target: "table.POST_REPLIES".to_string(),
                                 bendpoints: None,
                                 fk_columns: connections::FkColumns {
+                                    identity_key: None,
                                     fk_column: vec![connections::FkColumn {
+                                        identity_key: None,
                                         fk_column_name: "MEMBER_ID".to_string(),
                                     }],
                                 },
@@ -412,8 +472,10 @@ pub fn get_diagram() -> diagram::Diagram {
                     primary_key_name: None,
                     option: None,
                     columns: columns::Columns {
+                        identity_key: None,
                         items: Some(vec![
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "POST_REPLY_ID".to_string(),
                                 logical_name: Some("投稿返信ID".to_string()),
                                 column_type: Some(columns::ColumnType::BigInt),
@@ -424,6 +486,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "POST_THREAD_ID".to_string(),
                                 referred_column: Some(
                                     "table.POST_THREADS.POST_THREAD_ID".to_string(),
@@ -433,6 +496,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "MEMBER_ID".to_string(),
                                 referred_column: Some("table.MEMBERS.MEMBER_ID".to_string()),
                                 relationship: Some("FK_POST_REPLIES_MEMBERS".to_string()),
@@ -440,6 +504,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "TEXT".to_string(),
                                 logical_name: Some("本文".to_string()),
                                 column_type: Some(columns::ColumnType::Text),
@@ -447,6 +512,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "VIEW_COUNT".to_string(),
                                 logical_name: Some("閲覧数".to_string()),
                                 column_type: Some(columns::ColumnType::BigInt),
@@ -455,6 +521,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "LIKE_COUNT".to_string(),
                                 logical_name: Some("いいね数".to_string()),
                                 column_type: Some(columns::ColumnType::BigInt),
@@ -467,10 +534,12 @@ pub fn get_diagram() -> diagram::Diagram {
                     },
                     indexes: None,
                     compound_unique_key_list: compound_unique_key_list::CompoundUniqueKeyList {
+                        identity_key: None,
                         compound_unique_keys: None,
                     },
                 },
                 tables::Table {
+                    identity_key: None,
                     physical_name: "POST_THREADS".to_string(),
                     logical_name: "投稿スレッド".to_string(),
                     description: "".to_string(),
@@ -481,18 +550,23 @@ pub fn get_diagram() -> diagram::Diagram {
                     x: 481,
                     y: 474,
                     color: tables::Color {
+                        identity_key: None,
                         r: 128,
                         g: 128,
                         b: 192,
                     },
                     connections: connections::Connections {
+                        identity_key: None,
                         relationships: Some(vec![connections::Relationship {
+                            identity_key: None,
                             name: "FK_POST_THREADS_MEMBER_POSTS".to_string(),
                             source: "table.POSTS".to_string(),
                             target: "table.POST_THREADS".to_string(),
                             bendpoints: None,
                             fk_columns: connections::FkColumns {
+                                identity_key: None,
                                 fk_column: vec![connections::FkColumn {
+                                    identity_key: None,
                                     fk_column_name: "POST_ID".to_string(),
                                 }],
                             },
@@ -509,8 +583,10 @@ pub fn get_diagram() -> diagram::Diagram {
                     primary_key_name: None,
                     option: None,
                     columns: columns::Columns {
+                        identity_key: None,
                         items: Some(vec![
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "POST_THREAD_ID".to_string(),
                                 logical_name: Some("投稿スレッドID".to_string()),
                                 column_type: Some(columns::ColumnType::BigInt),
@@ -521,6 +597,7 @@ pub fn get_diagram() -> diagram::Diagram {
                                 ..Default::default()
                             }),
                             columns::ColumnItem::Normal(columns::NormalColumn {
+                                identity_key: None,
                                 physical_name: "POST_ID".to_string(),
                                 referred_column: Some("table.POSTS.POST_ID".to_string()),
                                 relationship: Some("FK_POST_THREADS_MEMBER_POSTS".to_string()),
@@ -533,29 +610,35 @@ pub fn get_diagram() -> diagram::Diagram {
                     },
                     indexes: None,
                     compound_unique_key_list: compound_unique_key_list::CompoundUniqueKeyList {
+                        identity_key: None,
                         compound_unique_keys: None,
                     },
                 },
             ]),
         }),
         vdiagrams: Some(vec![vdiagrams::VDiagram {
+            identity_key: None,
             vdiagram_name: "sample".to_string(),
             color: None,
             vtables: Some(vec![vdiagrams::vtables::VTable {
+                identity_key: None,
                 table_id: "table.MEMBERS".to_string(),
                 x: 264,
                 y: 182,
                 font_name: "Ubuntu".to_string(),
                 font_size: 9,
             }]),
-            walker_notes: vdiagrams::WalkerNotes {},
-            walker_groups: vdiagrams::WalkerGroups {},
+            walker_notes: vdiagrams::WalkerNotes { identity_key: None },
+            walker_groups: vdiagrams::WalkerGroups { identity_key: None },
         }]),
         column_groups: Some(vec![column_groups::ColumnGroup {
+            identity_key: None,
             column_group_name: "COMMON".to_string(),
             columns: column_groups::Columns {
+                identity_key: None,
                 normal_columns: Some(vec![
                     column_groups::NormalColumn {
+                        identity_key: None,
                         physical_name: "CREATED_AT".to_string(),
                         logical_name: Some("作成時間".to_string()),
                         column_type: column_groups::ColumnType::Datetime,
@@ -563,6 +646,7 @@ pub fn get_diagram() -> diagram::Diagram {
                         ..Default::default()
                     },
                     column_groups::NormalColumn {
+                        identity_key: None,
                         physical_name: "CREATED_BY".to_string(),
                         logical_name: Some("作成会員ID".to_string()),
                         column_type: column_groups::ColumnType::BigInt,
@@ -570,6 +654,7 @@ pub fn get_diagram() -> diagram::Diagram {
                         ..Default::default()
                     },
                     column_groups::NormalColumn {
+                        identity_key: None,
                         physical_name: "UPDATED_AT".to_string(),
                         logical_name: Some("更新時間".to_string()),
                         column_type: column_groups::ColumnType::Datetime,
@@ -577,6 +662,7 @@ pub fn get_diagram() -> diagram::Diagram {
                         ..Default::default()
                     },
                     column_groups::NormalColumn {
+                        identity_key: None,
                         physical_name: "UPDATED_BY".to_string(),
                         logical_name: Some("更新会員ID".to_string()),
                         column_type: column_groups::ColumnType::BigInt,

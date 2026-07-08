@@ -7,6 +7,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct NormalColumn {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity_key: Option<String>,
+
     pub physical_name: String,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -55,6 +58,7 @@ pub struct NormalColumn {
 impl From<entities::NormalColumn> for NormalColumn {
     fn from(entity: entities::NormalColumn) -> Self {
         Self {
+            identity_key: None,
             physical_name: entity.physical_name,
             logical_name: entity.logical_name,
             description: entity.description,
@@ -107,12 +111,16 @@ pub enum ColumnItem {
 #[serde(rename_all = "camelCase")]
 pub struct Columns {
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity_key: Option<String>,
+
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub items: Option<Vec<ColumnItem>>,
 }
 
 impl From<entities::Columns> for Columns {
     fn from(entity: entities::Columns) -> Self {
         Self {
+            identity_key: None,
             items: entity.items.map(|v| {
                 v.into_iter()
                     .map(|item| match item {

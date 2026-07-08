@@ -5,6 +5,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct Column {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity_key: Option<String>,
+
     pub column_id: String,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -14,6 +17,7 @@ pub struct Column {
 impl From<entities::Column> for Column {
     fn from(entity: entities::Column) -> Self {
         Self {
+            identity_key: None,
             column_id: entity.column_id,
             desc: entity.desc,
         }
@@ -32,6 +36,9 @@ impl From<Column> for entities::Column {
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct Index {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity_key: Option<String>,
+
     pub name: String,
 
     pub index_type: String,
@@ -51,6 +58,7 @@ pub struct Index {
 impl From<entities::Index> for Index {
     fn from(entity: entities::Index) -> Self {
         Self {
+            identity_key: None,
             name: entity.name,
             index_type: entity.index_type,
             description: entity.description,

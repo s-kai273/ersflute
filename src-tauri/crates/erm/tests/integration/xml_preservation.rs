@@ -47,6 +47,44 @@ fn repeated_tables_keep_their_preserved_content_after_rename() {
 }
 
 #[test]
+fn reordered_repeated_tables_are_saved_in_managed_order() {
+    let source = diagram_with_tables(&[
+        table_with_extra("FIRST", "<before>first</before>", ""),
+        table_with_extra("SECOND", "<before>second</before>", ""),
+    ]);
+
+    let saved = open_edit_save(&source, "reordered_repeated_elements", |diagram| {
+        let tables = diagram
+            .diagram_walkers
+            .as_mut()
+            .and_then(|walkers| walkers.tables.as_mut())
+            .expect("missing tables");
+
+        tables.swap(0, 1);
+    });
+
+    assert_eq!(
+        compact_xml(&extract_diagram_walkers(&saved)),
+        format!(
+            concat!(
+                "<diagram_walkers>",
+                "<table><before>second</before>",
+                "<physical_name>SECOND</physical_name>",
+                "{}",
+                "</table>",
+                "<table><before>first</before>",
+                "<physical_name>FIRST</physical_name>",
+                "{}",
+                "</table>",
+                "</diagram_walkers>",
+            ),
+            table_after_physical_name("SECOND"),
+            table_after_physical_name("FIRST"),
+        )
+    );
+}
+
+#[test]
 fn unknown_nested_elements_attributes_and_comments_keep_their_positions() {
     let source = diagram_with_tables(&[table_with_extra(
         "OLD",

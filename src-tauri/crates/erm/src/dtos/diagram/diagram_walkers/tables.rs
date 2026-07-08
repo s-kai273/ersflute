@@ -21,6 +21,9 @@ use crate::validation::diagram::diagram_walkers::tables::{
 #[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct Color {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity_key: Option<String>,
+
     pub r: u8,
     pub g: u8,
     pub b: u8,
@@ -29,6 +32,7 @@ pub struct Color {
 impl From<entities::Color> for Color {
     fn from(entity: entities::Color) -> Self {
         Self {
+            identity_key: None,
             r: entity.r,
             g: entity.g,
             b: entity.b,
@@ -59,6 +63,9 @@ impl From<Color> for entities::Color {
 ))]
 #[serde(rename_all = "camelCase")]
 pub struct Table {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity_key: Option<String>,
+
     pub physical_name: String,
 
     pub logical_name: String,
@@ -103,6 +110,7 @@ pub struct Table {
 impl From<entities::Table> for Table {
     fn from(entity: entities::Table) -> Self {
         Self {
+            identity_key: None,
             physical_name: entity.physical_name,
             logical_name: entity.logical_name,
             description: entity.description,

@@ -11,6 +11,7 @@ fn indexes_tags_keep_valid_values() {
     assert_eq!(
         table.indexes,
         Some(vec![indexes::Index {
+            identity_key: None,
             name: "IDX_MEMBERS_NAME".to_string(),
             index_type: "BTREE".to_string(),
             description: Some("Name lookup".to_string()),
@@ -18,10 +19,12 @@ fn indexes_tags_keep_valid_values() {
             non_unique: Some(true),
             columns: vec![
                 indexes::Column {
+                    identity_key: None,
                     column_id: "MEMBER_NAME".to_string(),
                     desc: Some(true),
                 },
                 indexes::Column {
+                    identity_key: None,
                     column_id: "MEMBER_ID".to_string(),
                     desc: None,
                 },
