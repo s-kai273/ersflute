@@ -1,6 +1,7 @@
 import type { Color } from "./diagramWalkers";
 
 export type VTableResponse = {
+  identityKey?: string;
   tableId: string;
   x: number;
   y: number;
@@ -9,6 +10,7 @@ export type VTableResponse = {
 };
 
 export type VDiagramResponse = {
+  identityKey?: string;
   vdiagramName: string;
   color?: Color;
   vtables?: VTableResponse[];

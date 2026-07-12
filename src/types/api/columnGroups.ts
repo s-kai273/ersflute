@@ -1,4 +1,5 @@
 type NormalColumn = {
+  identityKey?: string;
   physicalName: string;
   logicalName?: string;
   description?: string;
@@ -17,6 +18,7 @@ type Columns = {
 };
 
 export type ColumnGroupResponse = {
+  identityKey?: string;
   columnGroupName: string;
   columns: Columns;
 };

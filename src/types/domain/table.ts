@@ -20,7 +20,7 @@ export type IndexColumn = {
 };
 
 export type Index = {
-  xmlNodeId?: string;
+  identityKey?: string;
   name: string;
   indexType: string;
   description?: string;
@@ -30,13 +30,13 @@ export type Index = {
 };
 
 export type CompoundUniqueKey = {
-  xmlNodeId?: string;
+  identityKey?: string;
   name: string;
   columns: string[];
 };
 
 export type Table = {
-  xmlNodeId?: string;
+  identityKey?: string;
   color: Color;
   x: number;
   y: number;

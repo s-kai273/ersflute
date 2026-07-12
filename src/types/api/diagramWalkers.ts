@@ -9,20 +9,24 @@ export type Color = {
 };
 
 type FkColumn = {
+  identityKey?: string;
   fkColumnName: string;
 };
 
 type FkColumns = {
+  identityKey?: string;
   fkColumn: FkColumn[];
 };
 
 type Bendpoint = {
+  identityKey?: string;
   relative: boolean;
   x: number;
   y: number;
 };
 
 type Relationship = {
+  identityKey?: string;
   name: string;
   source: string;
   target: string;
@@ -42,6 +46,7 @@ type Connections = {
 };
 
 export type NormalColumn = {
+  identityKey?: string;
   physicalName: string;
   logicalName?: string;
   description?: string;
@@ -64,6 +69,7 @@ type Columns = {
 };
 
 export type TableResponse = {
+  identityKey?: string;
   physicalName: string;
   logicalName: string;
   description: string;

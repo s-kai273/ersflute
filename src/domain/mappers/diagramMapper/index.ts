@@ -15,10 +15,6 @@ import {
   mapTablesToApi,
 } from "./tableMapper";
 import { mapVDiagramsFromApi, mapVDiagramsToApi } from "./vdiagramMapper";
-import {
-  applyXmlNodeIdentities,
-  collectXmlNodeIdentities,
-} from "./xmlNodeIdentities";
 
 export type DiagramMapping = {
   settings: Settings;
@@ -31,7 +27,7 @@ export type DiagramMapping = {
 
 export function mapDiagramFromApi(diagram: DiagramResponse): DiagramMapping {
   const tables = diagram.diagramWalkers?.tables ?? [];
-  const mapping = {
+  return {
     settings: mapSettingsFromApi(diagram.diagramSettings),
     tables: mapTablesFromApi(tables),
     relationships: mapRelationshipsFromApi(tables),
@@ -39,8 +35,6 @@ export function mapDiagramFromApi(diagram: DiagramResponse): DiagramMapping {
     vdiagrams: mapVDiagramsFromApi(diagram.vdiagrams ?? []),
     preservedXml: diagram.preservedXml,
   };
-  applyXmlNodeIdentities(diagram, mapping);
-  return mapping;
 }
 
 export function mapDiagramToApi({
@@ -53,12 +47,6 @@ export function mapDiagramToApi({
 }: DiagramMapping): DiagramResponse {
   return {
     preservedXml,
-    xmlNodeIds: collectXmlNodeIdentities({
-      tables,
-      relationships,
-      columnGroups,
-      vdiagrams,
-    }),
     diagramSettings: mapSettingsToApi(settings),
     diagramWalkers: {
       tables: mapTablesToApi(tables, relationships),

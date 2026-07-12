@@ -5,10 +5,12 @@ it("maps virtual diagrams from API values", () => {
   const result = mapDiagramFromApi({
     vdiagrams: [
       {
+        identityKey: "vdiagram-main",
         vdiagramName: "Main",
         color: { r: 255, g: 255, b: 255 },
         vtables: [
           {
+            identityKey: "vtable-users",
             tableId: "table.users",
             x: 100,
             y: 200,
@@ -24,10 +26,12 @@ it("maps virtual diagrams from API values", () => {
 
   expect(result.vdiagrams).toEqual([
     {
+      identityKey: "vdiagram-main",
       vdiagramName: "Main",
       color: { r: 255, g: 255, b: 255 },
       vtables: [
         {
+          identityKey: "vtable-users",
           tableId: "table.users",
           x: 100,
           y: 200,
@@ -49,10 +53,12 @@ it("maps virtual diagrams to API values", () => {
     columnGroups: [],
     vdiagrams: [
       {
+        identityKey: "vdiagram-main",
         vdiagramName: "Main",
         color: { r: 255, g: 255, b: 255 },
         vtables: [
           {
+            identityKey: "vtable-users",
             tableId: "table.users",
             x: 100,
             y: 200,
@@ -68,10 +74,12 @@ it("maps virtual diagrams to API values", () => {
 
   expect(result.vdiagrams).toEqual([
     {
+      identityKey: "vdiagram-main",
       vdiagramName: "Main",
       color: { r: 255, g: 255, b: 255 },
       vtables: [
         {
+          identityKey: "vtable-users",
           tableId: "table.users",
           x: 100,
           y: 200,

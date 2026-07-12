@@ -30,11 +30,21 @@ it("maps table properties and column attributes from API values", () => {
     diagramWalkers: {
       tables: [
         createTableResponse({
+          identityKey: "table-users",
           width: 140,
           height: 90,
+          indexes: [
+            {
+              identityKey: "index-users-name",
+              name: "users_name",
+              indexType: "BTREE",
+              columns: [{ columnId: "table.users.name" }],
+            },
+          ],
           compoundUniqueKeyList: {
             compoundUniqueKeys: [
               {
+                identityKey: "unique-users",
                 name: "users_unique",
                 columns: [
                   { columnId: "table.users.id" },
@@ -46,6 +56,7 @@ it("maps table properties and column attributes from API values", () => {
           columns: {
             items: [
               {
+                identityKey: "column-id",
                 physicalName: "id",
                 logicalName: "ID",
                 description: "Identifier",
@@ -71,6 +82,7 @@ it("maps table properties and column attributes from API values", () => {
   expect(result.tables).toEqual([
     {
       color: { r: 10, g: 20, b: 30 },
+      identityKey: "table-users",
       x: 10,
       y: 20,
       width: 140,
@@ -85,13 +97,30 @@ it("maps table properties and column attributes from API values", () => {
       option: undefined,
       compoundUniqueKeys: [
         {
-          name: "users_unique",
+          identityKey: "unique-users",
           columns: ["table.users.id", "table.users.email"],
+          name: "users_unique",
         },
       ],
-      indexes: [],
+      indexes: [
+        {
+          identityKey: "index-users-name",
+          name: "users_name",
+          indexType: "BTREE",
+          description: undefined,
+          fullText: undefined,
+          nonUnique: undefined,
+          columns: [
+            {
+              columnId: "table.users.name",
+              desc: undefined,
+            },
+          ],
+        },
+      ],
       columns: [
         {
+          identityKey: "column-id",
           physicalName: "id",
           logicalName: "ID",
           description: "Identifier",

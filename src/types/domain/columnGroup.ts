@@ -1,7 +1,7 @@
 import type { Column } from "./column";
 
 export type ColumnGroup = {
-  xmlNodeId?: string;
+  identityKey?: string;
   columnGroupName: string;
   columns: Column[];
 };

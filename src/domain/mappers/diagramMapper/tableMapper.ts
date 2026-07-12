@@ -42,6 +42,7 @@ export function mapTablesFromApi(tableResponses: TableResponse[]): Table[] {
   }
   return tableResponses.map((table) => {
     return {
+      identityKey: table.identityKey,
       color: {
         r: table.color.r,
         g: table.color.g,
@@ -70,6 +71,7 @@ export function mapTablesFromApi(tableResponses: TableResponse[]): Table[] {
             ? parseColumnType(referredColumn.columnType)
             : undefined;
         return {
+          identityKey: item.identityKey,
           physicalName: item.physicalName,
           logicalName: item.logicalName,
           description: item.description,
@@ -89,6 +91,7 @@ export function mapTablesFromApi(tableResponses: TableResponse[]): Table[] {
       }),
       indexes: table.indexes?.map((index) => {
         return {
+          identityKey: index.identityKey,
           name: index.name,
           indexType: index.indexType,
           description: index.description,
@@ -105,6 +108,7 @@ export function mapTablesFromApi(tableResponses: TableResponse[]): Table[] {
       compoundUniqueKeys: table.compoundUniqueKeyList.compoundUniqueKeys?.map(
         (uniqueKey) => {
           return {
+            identityKey: uniqueKey.identityKey,
             name: uniqueKey.name,
             columns: uniqueKey.columns.map((column) => column.columnId),
           } satisfies CompoundUniqueKey;
@@ -148,6 +152,7 @@ export function mapRelationshipsFromApi(
     .flatMap((table) => table.connections.relationships)
     .map((relationship) => {
       return {
+        identityKey: relationship.identityKey,
         name: relationship.name,
         source: relationship.source,
         target: relationship.target,
@@ -173,6 +178,7 @@ export function mapRelationshipsFromApi(
 
 function mapTableColumnToApi(column: Column): NormalColumn {
   return {
+    identityKey: column.identityKey,
     physicalName: column.physicalName,
     logicalName: column.logicalName,
     description: column.description,
@@ -231,6 +237,7 @@ function mapRelationshipToApi(
       : undefined;
 
   return {
+    identityKey: relationship.identityKey,
     name: relationship.name,
     source: relationship.source,
     target: relationship.target,
@@ -257,6 +264,7 @@ export function mapTablesToApi(
   return tables.map((table) => {
     const tableId = stringifyReference({ tableName: table.physicalName });
     return {
+      identityKey: table.identityKey,
       physicalName: table.physicalName,
       logicalName: table.logicalName,
       description: table.description,
@@ -284,6 +292,7 @@ export function mapTablesToApi(
         }),
       },
       indexes: table.indexes?.map((index) => ({
+        identityKey: index.identityKey,
         name: index.name,
         indexType: index.indexType,
         description: index.description,
@@ -296,6 +305,7 @@ export function mapTablesToApi(
       })),
       compoundUniqueKeyList: {
         compoundUniqueKeys: table.compoundUniqueKeys?.map((key) => ({
+          identityKey: key.identityKey,
           name: key.name,
           columns: key.columns.map((columnId) => ({ columnId })),
         })),

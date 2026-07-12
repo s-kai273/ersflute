@@ -1,7 +1,7 @@
 import type { Color } from "./table";
 
 export type VirtualTable = {
-  xmlNodeId?: string;
+  identityKey?: string;
   tableId: string;
   x: number;
   y: number;
@@ -10,7 +10,7 @@ export type VirtualTable = {
 };
 
 export type VirtualDiagram = {
-  xmlNodeId?: string;
+  identityKey?: string;
   vdiagramName: string;
   color?: Color;
   vtables: VirtualTable[];
