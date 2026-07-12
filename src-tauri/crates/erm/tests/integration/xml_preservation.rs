@@ -3,6 +3,7 @@ use std::fs;
 use pretty_assertions::assert_eq;
 
 use erm::dtos::diagram::Diagram;
+use erm::dtos::diagram::diagram_walkers::tables::columns::ColumnItem;
 use erm::{open, save};
 
 #[test]
@@ -80,6 +81,50 @@ fn reordered_repeated_tables_are_saved_in_managed_order() {
             ),
             table_after_physical_name("SECOND"),
             table_after_physical_name("FIRST"),
+        )
+    );
+}
+
+#[test]
+fn reordered_nested_normal_columns_keep_their_preserved_content() {
+    let source = diagram_with_tables(&[table("TABLE").replace(
+        "<columns/>",
+        concat!(
+            "<columns>",
+            "<normal_column><before>first</before><physical_name>FIRST</physical_name></normal_column>",
+            "<normal_column><before>second</before><physical_name>SECOND</physical_name></normal_column>",
+            "<column_group>GROUP</column_group>",
+            "</columns>",
+        ),
+    )])
+    .replace(
+        "</diagram>",
+        "<column_groups><column_group><column_group_name>GROUP</column_group_name><columns/></column_group></column_groups></diagram>",
+    );
+
+    let saved = open_edit_save(&source, "reordered_nested_normal_columns", |diagram| {
+        let items = diagram
+            .diagram_walkers
+            .as_mut()
+            .and_then(|walkers| walkers.tables.as_mut())
+            .and_then(|tables| tables.first_mut())
+            .and_then(|table| table.columns.items.as_mut())
+            .expect("missing columns");
+
+        assert!(matches!(items[0], ColumnItem::Normal(_)));
+        assert!(matches!(items[1], ColumnItem::Normal(_)));
+        assert!(matches!(items[2], ColumnItem::Group(_)));
+        items.swap(0, 1);
+    });
+
+    assert_eq!(
+        compact_xml(&extract_element(&saved, "columns")),
+        concat!(
+            "<columns>",
+            "<normal_column><before>second</before><physical_name>SECOND</physical_name></normal_column>",
+            "<normal_column><before>first</before><physical_name>FIRST</physical_name></normal_column>",
+            "<column_group>GROUP</column_group>",
+            "</columns>",
         )
     );
 }
