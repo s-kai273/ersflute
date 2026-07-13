@@ -17,7 +17,7 @@ pub fn write_file(filename: &str, diagram: Diagram) -> Result<(), Error> {
     let (entity, identities) = diagram_into_entity_with_identity_keys(diagram);
 
     // Serialize the edited DTO as clean managed XML, then merge it into the
-    // preserved source XML to keep comments, attributes, and unsupported nodes.
+    // preserved source XML to keep attributes and unsupported nodes.
     let managed_xml = to_string_with_root("diagram", &entity)?;
     let xml = format_xml(&merge_preserved_xml(
         &preserved_xml,

@@ -130,11 +130,11 @@ fn reordered_nested_normal_columns_keep_their_preserved_content() {
 }
 
 #[test]
-fn unknown_nested_elements_attributes_and_comments_keep_their_positions() {
+fn unknown_nested_elements_and_attributes_keep_their_positions() {
     let source = diagram_with_tables(&[table_with_extra(
         "OLD",
         "",
-        "<!-- marker --><extension enabled=\"true\"><nested>value</nested></extension>",
+        "<extension enabled=\"true\"><nested>value</nested></extension>",
     )
     .replace("<table>", "<table custom=\"kept\">")]);
 
@@ -157,7 +157,7 @@ fn unknown_nested_elements_attributes_and_comments_keep_their_positions() {
                 "<diagram_walkers>",
                 "<table custom=\"kept\">",
                 "<physical_name>NEW</physical_name>",
-                "<!-- marker --><extension enabled=\"true\"><nested>value</nested></extension>",
+                "<extension enabled=\"true\"><nested>value</nested></extension>",
                 "<logical_name>New label</logical_name>",
                 "{}",
                 "</table>",
@@ -166,6 +166,40 @@ fn unknown_nested_elements_attributes_and_comments_keep_their_positions() {
             TABLE_AFTER_LOGICAL_NAME,
         )
     );
+}
+
+#[test]
+fn comments_are_removed_when_saved() {
+    let source = diagram_with_tables(&[table_with_extra(
+        "OLD",
+        "<!-- before logical name -->",
+        "<extension><!-- inside extension --><nested>value</nested></extension>",
+    )]);
+
+    let saved = open_edit_save(&source, "comments", |_| {});
+
+    assert!(!saved.contains("<!--"));
+    assert!(saved.contains("<extension>"));
+    assert!(saved.contains("<nested>value</nested>"));
+}
+
+#[test]
+fn whitespace_only_content_in_unknown_elements_is_preserved() {
+    let source = diagram_with_tables(&[table_with_extra("OLD", "", "<extension> </extension>")]);
+
+    let saved = open_edit_save(&source, "unknown_element_whitespace", |diagram| {
+        let table = diagram
+            .diagram_walkers
+            .as_mut()
+            .and_then(|walkers| walkers.tables.as_mut())
+            .and_then(|tables| tables.first_mut())
+            .expect("missing table");
+
+        table.physical_name = "NEW".to_string();
+        table.logical_name = "NEW".to_string();
+    });
+
+    assert!(saved.contains("<extension> </extension>"));
 }
 
 #[test]

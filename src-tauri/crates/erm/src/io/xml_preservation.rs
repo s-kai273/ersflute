@@ -17,13 +17,13 @@ pub(crate) struct XmlNodeIdentity {
 }
 
 // This module applies managed DTO changes to the original XML without
-// normalizing the whole file. It keeps raw XML events for unsupported content
-// and uses schema metadata plus saved identities to match repeated elements.
+// normalizing the whole file. It keeps unsupported content and uses schema
+// metadata plus saved identities to match repeated elements.
 #[derive(Clone)]
 enum XmlNode {
     // Schema-aware XML element that can be merged with managed output.
     Element(XmlElement),
-    // Byte-preserved XML event such as whitespace, text, or comments.
+    // Byte-preserved non-element content such as whitespace or text.
     Raw(Vec<u8>),
 }
 
@@ -404,7 +404,7 @@ fn parse_document(xml: &str) -> Result<XmlElement, Error> {
 }
 
 // Parses an XML element into the preservation tree, keeping child elements
-// structured and all other events as raw bytes.
+// structured and non-comment content as raw bytes.
 fn parse_element(
     reader: &mut Reader<&[u8]>,
     start: BytesStart<'static>,
@@ -435,6 +435,7 @@ fn parse_element(
                     identity_id: None,
                 });
             }
+            Event::Comment(_) => {}
             Event::Eof => unreachable!("XML element was not closed"),
             event => children.push(XmlNode::Raw(event_bytes(event)?)),
         }
