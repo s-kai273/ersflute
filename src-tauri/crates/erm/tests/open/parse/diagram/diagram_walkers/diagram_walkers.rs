@@ -22,7 +22,6 @@ fn diagram_walkers_table_tags_keep_valid_values() {
     assert_eq!(
         tables[0],
         diagram_walkers::tables::Table {
-            identity_key: None,
             physical_name: "MEMBERS".to_string(),
             logical_name: "Members".to_string(),
             description: "Member master table".to_string(),
@@ -33,40 +32,36 @@ fn diagram_walkers_table_tags_keep_valid_values() {
             x: 160,
             y: 106,
             color: tables::Color {
-                identity_key: None,
                 r: 128,
                 g: 129,
                 b: 130,
             },
             connections: tables::connections::Connections {
-                identity_key: None,
                 relationships: None,
             },
             table_constraint: Some("ENGINE=InnoDB".to_string()),
             primary_key_name: Some("PK_MEMBERS".to_string()),
             option: Some("member option".to_string()),
             columns: tables::columns::Columns {
-                identity_key: None,
                 items: Some(vec![tables::columns::ColumnItem::Normal(
                     tables::columns::NormalColumn {
-                        identity_key: None,
                         physical_name: "MEMBER_ID".to_string(),
                         primary_key: Some(true),
                         ..Default::default()
-                    },
+                    }
+                    .into(),
                 )]),
             },
             indexes: None,
             compound_unique_key_list: tables::compound_unique_key_list::CompoundUniqueKeyList {
-                identity_key: None,
                 compound_unique_keys: None,
             },
         }
+        .into()
     );
     assert_eq!(
         tables[1],
         diagram_walkers::tables::Table {
-            identity_key: None,
             physical_name: "MEMBER_STATUS".to_string(),
             logical_name: "Member Status".to_string(),
             description: "Status master table".to_string(),
@@ -77,28 +72,23 @@ fn diagram_walkers_table_tags_keep_valid_values() {
             x: 400,
             y: 120,
             color: tables::Color {
-                identity_key: None,
                 r: 10,
                 g: 20,
                 b: 30,
             },
             connections: tables::connections::Connections {
-                identity_key: None,
                 relationships: None,
             },
             table_constraint: None,
             primary_key_name: None,
             option: None,
-            columns: tables::columns::Columns {
-                identity_key: None,
-                items: None,
-            },
+            columns: tables::columns::Columns { items: None },
             indexes: None,
             compound_unique_key_list: tables::compound_unique_key_list::CompoundUniqueKeyList {
-                identity_key: None,
                 compound_unique_keys: None,
             },
         }
+        .into()
     );
 }
 

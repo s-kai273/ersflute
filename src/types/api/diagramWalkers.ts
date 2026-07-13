@@ -1,4 +1,5 @@
 import type { Cardinality, ReferenceOperation } from "../domain/relationship";
+import type { Identified } from "../identified";
 import type { CompoundUniqueKeyList } from "./compoundUniqueKeyList";
 import type { Indexes } from "./indexes";
 
@@ -9,24 +10,20 @@ export type Color = {
 };
 
 type FkColumn = {
-  identityKey?: string;
   fkColumnName: string;
 };
 
 type FkColumns = {
-  identityKey?: string;
   fkColumn: FkColumn[];
 };
 
 type Bendpoint = {
-  identityKey?: string;
   relative: boolean;
   x: number;
   y: number;
 };
 
-type Relationship = {
-  identityKey?: string;
+type Relationship = Identified<{
   name: string;
   source: string;
   target: string;
@@ -39,14 +36,13 @@ type Relationship = {
   onUpdateAction?: ReferenceOperation;
   referredSimpleUniqueColumn?: string;
   referredCompoundUniqueKey?: string;
-};
+}>;
 
 type Connections = {
   relationships: Relationship[];
 };
 
-export type NormalColumn = {
-  identityKey?: string;
+export type NormalColumn = Identified<{
   physicalName: string;
   logicalName?: string;
   description?: string;
@@ -62,14 +58,13 @@ export type NormalColumn = {
   autoIncrement?: boolean;
   referredColumn?: string;
   relationship?: string;
-};
+}>;
 
 type Columns = {
   items?: (NormalColumn | string)[];
 };
 
-export type TableResponse = {
-  identityKey?: string;
+export type TableResponse = Identified<{
   physicalName: string;
   logicalName: string;
   description: string;
@@ -87,7 +82,7 @@ export type TableResponse = {
   columns: Columns;
   indexes?: Indexes;
   compoundUniqueKeyList: CompoundUniqueKeyList;
-};
+}>;
 
 export type DiagramWalkersResponse = {
   tables?: TableResponse[];

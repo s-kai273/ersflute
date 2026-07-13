@@ -14,5 +14,6 @@ pub struct Vtable {
 pub struct Vtables {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "vtable")]
+    #[xml_identity]
     pub vtables: Option<Vec<Vtable>>,
 }

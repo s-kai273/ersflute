@@ -2,16 +2,15 @@ pub use crate::entities::diagram::diagram_walkers::tables::connections::{
     ChildCardinality, OnAction, ParentCardinality,
 };
 
+use crate::dtos::{Identified, identified_from_entity, identified_into_entity};
 use crate::entities::diagram::diagram_walkers::tables::connections as entities;
+use crate::identity::VisitIdentified;
 use crate::validation::Validate;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct Bendpoint {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-
     pub relative: bool,
     pub x: u16,
     pub y: u16,
@@ -20,7 +19,6 @@ pub struct Bendpoint {
 impl From<entities::Bendpoint> for Bendpoint {
     fn from(entity: entities::Bendpoint) -> Self {
         Self {
-            identity_key: None,
             relative: entity.relative,
             x: entity.x,
             y: entity.y,
@@ -38,19 +36,15 @@ impl From<Bendpoint> for entities::Bendpoint {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct FkColumn {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-
     pub fk_column_name: String,
 }
 
 impl From<entities::FkColumn> for FkColumn {
     fn from(entity: entities::FkColumn) -> Self {
         Self {
-            identity_key: None,
             fk_column_name: entity.fk_column_name,
         }
     }
@@ -64,12 +58,9 @@ impl From<FkColumn> for entities::FkColumn {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct FkColumns {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-
     #[serde(default)]
     pub fk_column: Vec<FkColumn>,
 }
@@ -77,7 +68,6 @@ pub struct FkColumns {
 impl From<entities::FkColumns> for FkColumns {
     fn from(entity: entities::FkColumns) -> Self {
         Self {
-            identity_key: None,
             fk_column: entity.fk_column.into_iter().map(Into::into).collect(),
         }
     }
@@ -91,12 +81,9 @@ impl From<FkColumns> for entities::FkColumns {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct Relationship {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-
     pub name: String,
 
     pub source: String,
@@ -130,7 +117,6 @@ pub struct Relationship {
 impl From<entities::Relationship> for Relationship {
     fn from(entity: entities::Relationship) -> Self {
         Self {
-            identity_key: None,
             name: entity.name,
             source: entity.source,
             target: entity.target,
@@ -170,23 +156,19 @@ impl From<Relationship> for entities::Relationship {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct Connections {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub relationships: Option<Vec<Relationship>>,
+    pub relationships: Option<Vec<Identified<Relationship>>>,
 }
 
 impl From<entities::Connections> for Connections {
     fn from(entity: entities::Connections) -> Self {
         Self {
-            identity_key: None,
             relationships: entity
                 .relationships
-                .map(|v| v.into_iter().map(Into::into).collect()),
+                .map(|v| v.into_iter().map(identified_from_entity).collect()),
         }
     }
 }
@@ -196,7 +178,7 @@ impl From<Connections> for entities::Connections {
         Self {
             relationships: dto
                 .relationships
-                .map(|v| v.into_iter().map(Into::into).collect()),
+                .map(|v| v.into_iter().map(identified_into_entity).collect()),
         }
     }
 }

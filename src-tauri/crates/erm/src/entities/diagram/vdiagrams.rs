@@ -33,5 +33,6 @@ pub struct Vdiagram {
 pub struct Vdiagrams {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "vdiagram")]
+    #[xml_identity]
     pub vdiagrams: Option<Vec<Vdiagram>>,
 }

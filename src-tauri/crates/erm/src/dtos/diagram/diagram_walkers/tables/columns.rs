@@ -1,15 +1,14 @@
 pub use crate::column_type::ColumnType;
 
+use crate::dtos::{Identified, identified_from_entity, identified_into_entity};
 use crate::entities::diagram::diagram_walkers::tables::columns as entities;
+use crate::identity::VisitIdentified;
 use crate::validation::Validate;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct NormalColumn {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-
     pub physical_name: String,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -58,7 +57,6 @@ pub struct NormalColumn {
 impl From<entities::NormalColumn> for NormalColumn {
     fn from(entity: entities::NormalColumn) -> Self {
         Self {
-            identity_key: None,
             physical_name: entity.physical_name,
             logical_name: entity.logical_name,
             description: entity.description,
@@ -100,19 +98,16 @@ impl From<NormalColumn> for entities::NormalColumn {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(untagged)]
 pub enum ColumnItem {
-    Normal(NormalColumn),
+    Normal(Identified<NormalColumn>),
     Group(String),
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct Columns {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub items: Option<Vec<ColumnItem>>,
 }
@@ -120,11 +115,12 @@ pub struct Columns {
 impl From<entities::Columns> for Columns {
     fn from(entity: entities::Columns) -> Self {
         Self {
-            identity_key: None,
             items: entity.items.map(|v| {
                 v.into_iter()
                     .map(|item| match item {
-                        entities::ColumnItem::Normal(column) => ColumnItem::Normal(column.into()),
+                        entities::ColumnItem::Normal(column) => {
+                            ColumnItem::Normal(identified_from_entity(column))
+                        }
                         entities::ColumnItem::Group(column) => ColumnItem::Group(column),
                     })
                     .collect()
@@ -139,7 +135,9 @@ impl From<Columns> for entities::Columns {
             items: dto.items.map(|v| {
                 v.into_iter()
                     .map(|item| match item {
-                        ColumnItem::Normal(column) => entities::ColumnItem::Normal(column.into()),
+                        ColumnItem::Normal(column) => {
+                            entities::ColumnItem::Normal(identified_into_entity(column))
+                        }
                         ColumnItem::Group(column) => entities::ColumnItem::Group(column),
                     })
                     .collect()

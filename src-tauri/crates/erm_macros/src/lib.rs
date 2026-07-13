@@ -1,8 +1,8 @@
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{
-    Data, DeriveInput, Error, Expr, Fields, LitBool, LitStr, PathArguments, Result, Type,
-    parse_macro_input, spanned::Spanned,
+    Data, DeriveInput, Error, Expr, Fields, LitStr, PathArguments, Result, Type, parse_macro_input,
+    spanned::Spanned,
 };
 
 #[proc_macro_derive(Validate, attributes(validate))]
@@ -15,7 +15,7 @@ pub fn derive_validate(input: TokenStream) -> TokenStream {
     }
 }
 
-#[proc_macro_derive(XmlSchema, attributes(serde, xml_schema_override))]
+#[proc_macro_derive(XmlSchema, attributes(serde, xml_identity))]
 pub fn derive_xml_schema(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
 
@@ -25,8 +25,142 @@ pub fn derive_xml_schema(input: TokenStream) -> TokenStream {
     }
 }
 
+#[proc_macro_derive(VisitIdentified)]
+pub fn derive_visit_identified(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as DeriveInput);
+
+    match expand_visit_identified(input) {
+        Ok(tokens) => tokens.into(),
+        Err(error) => error.to_compile_error().into(),
+    }
+}
+
+fn expand_visit_identified(input: DeriveInput) -> Result<proc_macro2::TokenStream> {
+    let ident = input.ident;
+    let identity_kind = to_snake_case(&ident.to_string());
+    let (visits, visits_mut) = match input.data {
+        Data::Struct(data) => (
+            expand_visit_identified_struct(&data.fields, false),
+            expand_visit_identified_struct(&data.fields, true),
+        ),
+        Data::Enum(data) => (
+            expand_visit_identified_enum(&data.variants, false),
+            expand_visit_identified_enum(&data.variants, true),
+        ),
+        Data::Union(data) => {
+            return Err(Error::new(
+                data.union_token.span(),
+                "VisitIdentified cannot be derived for unions",
+            ));
+        }
+    };
+
+    Ok(quote! {
+        impl crate::identity::VisitIdentified for #ident {
+            const IDENTITY_KIND: &'static str = #identity_kind;
+
+            fn visit_identified<V: crate::identity::IdentifiedVisitor>(&self, visitor: &mut V) {
+                #visits
+            }
+
+            fn visit_identified_mut<V: crate::identity::IdentifiedVisitorMut>(
+                &mut self,
+                visitor: &mut V,
+            ) {
+                #visits_mut
+            }
+        }
+    })
+}
+
+fn expand_visit_identified_struct(fields: &Fields, mutable: bool) -> proc_macro2::TokenStream {
+    let visits = fields.iter().enumerate().map(|(index, field)| {
+        let access = field
+            .ident
+            .as_ref()
+            .map(|ident| quote! { #ident })
+            .unwrap_or_else(|| {
+                let index = syn::Index::from(index);
+                quote! { #index }
+            });
+        let method = if mutable {
+            quote! { visit_identified_mut }
+        } else {
+            quote! { visit_identified }
+        };
+        let value = if mutable {
+            quote! { &mut self.#access }
+        } else {
+            quote! { &self.#access }
+        };
+
+        quote! {
+            crate::identity::VisitIdentified::#method(#value, visitor);
+        }
+    });
+
+    quote! { #(#visits)* }
+}
+
+fn expand_visit_identified_enum(
+    variants: &syn::punctuated::Punctuated<syn::Variant, syn::token::Comma>,
+    mutable: bool,
+) -> proc_macro2::TokenStream {
+    let method = if mutable {
+        quote! { visit_identified_mut }
+    } else {
+        quote! { visit_identified }
+    };
+    let arms = variants.iter().map(|variant| {
+        let ident = &variant.ident;
+
+        match &variant.fields {
+            Fields::Unit => quote! { Self::#ident => {} },
+            Fields::Unnamed(fields) => {
+                let bindings = (0..fields.unnamed.len())
+                    .map(|index| syn::Ident::new(&format!("field_{index}"), variant.span()))
+                    .collect::<Vec<_>>();
+                let visits = bindings.iter().map(|binding| {
+                    quote! {
+                        crate::identity::VisitIdentified::#method(#binding, visitor);
+                    }
+                });
+
+                quote! {
+                    Self::#ident(#(#bindings),*) => {
+                        #(#visits)*
+                    }
+                }
+            }
+            Fields::Named(fields) => {
+                let bindings = fields
+                    .named
+                    .iter()
+                    .filter_map(|field| field.ident.as_ref())
+                    .collect::<Vec<_>>();
+                let visits = bindings.iter().map(|binding| {
+                    quote! {
+                        crate::identity::VisitIdentified::#method(#binding, visitor);
+                    }
+                });
+
+                quote! {
+                    Self::#ident { #(#bindings),* } => {
+                        #(#visits)*
+                    }
+                }
+            }
+        }
+    });
+
+    quote! {
+        match self {
+            #(#arms),*
+        }
+    }
+}
+
 fn expand_xml_schema(input: DeriveInput) -> Result<proc_macro2::TokenStream> {
-    reject_xml_schema_overrides(&input.attrs)?;
     let ident = input.ident;
     let tag = to_snake_case(&ident.to_string());
 
@@ -103,11 +237,8 @@ fn expand_xml_schema_enum(
         .collect::<Result<Vec<_>>>()?;
     let identity_variant_tags = variants
         .iter()
-        .filter_map(|variant| match xml_identity_enabled(&variant.attrs) {
-            Ok(Some(false)) => None,
-            Ok(_) => Some(xml_renamed_tag(&variant.ident.to_string(), &variant.attrs)),
-            Err(error) => Some(Err(error)),
-        })
+        .filter(|variant| has_xml_identity(&variant.attrs))
+        .map(|variant| xml_renamed_tag(&variant.ident.to_string(), &variant.attrs))
         .collect::<Result<Vec<_>>>()?;
     let child_types = variants
         .iter()
@@ -294,20 +425,6 @@ fn field_path(field: &syn::Field) -> Result<String> {
     Ok(path)
 }
 
-fn reject_xml_schema_overrides(attrs: &[syn::Attribute]) -> Result<()> {
-    if let Some(attr) = attrs
-        .iter()
-        .find(|attr| attr.path().is_ident("xml_schema_override"))
-    {
-        Err(Error::new(
-            attr.span(),
-            "unsupported xml_schema_override attribute",
-        ))
-    } else {
-        Ok(())
-    }
-}
-
 fn xml_field_child_match(field: &syn::Field) -> Result<proc_macro2::TokenStream> {
     let tag = xml_renamed_tag(
         &field
@@ -327,10 +444,6 @@ fn xml_field_child_match(field: &syn::Field) -> Result<proc_macro2::TokenStream>
 }
 
 fn xml_identity_child_match(field: &syn::Field) -> Result<Option<proc_macro2::TokenStream>> {
-    if !is_identity_field(field)? || !is_repeated_type(&field.ty) {
-        return Ok(None);
-    }
-
     let tag = xml_renamed_tag(
         &field
             .ident
@@ -341,38 +454,28 @@ fn xml_identity_child_match(field: &syn::Field) -> Result<Option<proc_macro2::To
     )?;
 
     if tag == "$value" {
+        if !is_repeated_type(&field.ty) {
+            return Ok(None);
+        }
         let ty = &field.ty;
         Ok(Some(
             quote! { <#ty as crate::entities::XmlSchema>::is_identity_value_child(tag) },
         ))
+    } else if !is_identity_field(field)? || !is_repeated_type(&field.ty) {
+        Ok(None)
     } else {
         Ok(Some(quote! { matches!(tag, #tag) }))
     }
 }
 
 fn is_identity_field(field: &syn::Field) -> Result<bool> {
-    Ok(xml_identity_enabled(&field.attrs)?.unwrap_or(true))
+    Ok(is_repeated_type(&field.ty) && has_xml_identity(&field.attrs))
 }
 
-fn xml_identity_enabled(attrs: &[syn::Attribute]) -> Result<Option<bool>> {
-    let mut enabled = None;
-
-    for attr in attrs
+fn has_xml_identity(attrs: &[syn::Attribute]) -> bool {
+    attrs
         .iter()
-        .filter(|attr| attr.path().is_ident("xml_schema_override"))
-    {
-        attr.parse_nested_meta(|meta| {
-            if meta.path.is_ident("identity") {
-                let value = meta.value()?;
-                enabled = Some(value.parse::<LitBool>()?.value);
-                Ok(())
-            } else {
-                Err(meta.error("unsupported xml_schema_override attribute"))
-            }
-        })?;
-    }
-
-    Ok(enabled)
+        .any(|attr| attr.path().is_ident("xml_identity"))
 }
 
 fn is_repeated_type(ty: &Type) -> bool {

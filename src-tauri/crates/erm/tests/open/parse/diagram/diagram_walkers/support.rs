@@ -20,6 +20,7 @@ pub(super) fn first_table() -> tables::Table {
         .into_iter()
         .next()
         .expect("missing table")
+        .into_inner()
 }
 
 pub(super) fn assert_replaced_fixture_parse_error(

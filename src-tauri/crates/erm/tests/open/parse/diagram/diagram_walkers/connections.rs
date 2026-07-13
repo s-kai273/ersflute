@@ -11,35 +11,33 @@ fn connections_tags_keep_valid_values() {
     assert_eq!(
         table.connections,
         connections::Connections {
-            identity_key: None,
-            relationships: Some(vec![connections::Relationship {
-                identity_key: None,
-                name: "FK_MEMBERS_PARENT".to_string(),
-                source: "table.PARENT_MEMBERS".to_string(),
-                target: "table.MEMBERS".to_string(),
-                bendpoints: Some(vec![connections::Bendpoint {
-                    identity_key: None,
-                    relative: true,
-                    x: 11,
-                    y: 12,
-                }]),
-                fk_columns: connections::FkColumns {
-                    identity_key: None,
-                    fk_column: vec![connections::FkColumn {
-                        identity_key: None,
-                        fk_column_name: "MEMBER_ID".to_string(),
-                    }],
-                },
-                parent_cardinality: connections::ParentCardinality::ZeroOrOne,
-                child_cardinality: connections::ChildCardinality::ZeroOrMore,
-                reference_for_pk: false,
-                on_delete_action: Some(connections::OnAction::Cascade),
-                on_update_action: Some(connections::OnAction::Restrict),
-                referred_simple_unique_column: Some(
-                    "table.PARENT_MEMBERS.PARENT_MEMBER_CODE".to_string(),
-                ),
-                referred_compound_unique_key: None,
-            }]),
+            relationships: Some(vec![
+                connections::Relationship {
+                    name: "FK_MEMBERS_PARENT".to_string(),
+                    source: "table.PARENT_MEMBERS".to_string(),
+                    target: "table.MEMBERS".to_string(),
+                    bendpoints: Some(vec![connections::Bendpoint {
+                        relative: true,
+                        x: 11,
+                        y: 12,
+                    }]),
+                    fk_columns: connections::FkColumns {
+                        fk_column: vec![connections::FkColumn {
+                            fk_column_name: "MEMBER_ID".to_string(),
+                        }],
+                    },
+                    parent_cardinality: connections::ParentCardinality::ZeroOrOne,
+                    child_cardinality: connections::ChildCardinality::ZeroOrMore,
+                    reference_for_pk: false,
+                    on_delete_action: Some(connections::OnAction::Cascade),
+                    on_update_action: Some(connections::OnAction::Restrict),
+                    referred_simple_unique_column: Some(
+                        "table.PARENT_MEMBERS.PARENT_MEMBER_CODE".to_string(),
+                    ),
+                    referred_compound_unique_key: None,
+                }
+                .into()
+            ]),
         }
     );
 }
@@ -55,7 +53,8 @@ fn relationship_actions_serialize_as_erm_values() {
         .next()
         .expect("missing relationship");
 
-    let value = quick_xml::se::to_string(&relationship).expect("failed to serialize relationship");
+    let value =
+        quick_xml::se::to_string(relationship.as_ref()).expect("failed to serialize relationship");
 
     assert!(value.contains("<onDeleteAction>CASCADE</onDeleteAction>"));
     assert!(value.contains("<onUpdateAction>RESTRICT</onUpdateAction>"));

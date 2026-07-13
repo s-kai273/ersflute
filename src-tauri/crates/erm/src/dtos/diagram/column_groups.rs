@@ -1,15 +1,14 @@
 pub use crate::column_type::ColumnType;
 
+use crate::dtos::{Identified, identified_from_entity, identified_into_entity};
 use crate::entities::diagram::column_groups as entities;
+use crate::identity::VisitIdentified;
 use crate::validation::Validate;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct NormalColumn {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-
     pub physical_name: String,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -45,7 +44,6 @@ pub struct NormalColumn {
 impl From<entities::NormalColumn> for NormalColumn {
     fn from(entity: entities::NormalColumn) -> Self {
         Self {
-            identity_key: None,
             physical_name: entity.physical_name,
             logical_name: entity.logical_name,
             description: entity.description,
@@ -79,23 +77,19 @@ impl From<NormalColumn> for entities::NormalColumn {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct Columns {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub normal_columns: Option<Vec<NormalColumn>>,
+    pub normal_columns: Option<Vec<Identified<NormalColumn>>>,
 }
 
 impl From<entities::Columns> for Columns {
     fn from(entity: entities::Columns) -> Self {
         Self {
-            identity_key: None,
             normal_columns: entity
                 .normal_columns
-                .map(|v| v.into_iter().map(Into::into).collect()),
+                .map(|v| v.into_iter().map(identified_from_entity).collect()),
         }
     }
 }
@@ -105,17 +99,14 @@ impl From<Columns> for entities::Columns {
         Self {
             normal_columns: dto
                 .normal_columns
-                .map(|v| v.into_iter().map(Into::into).collect()),
+                .map(|v| v.into_iter().map(identified_into_entity).collect()),
         }
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct ColumnGroup {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-
     pub column_group_name: String,
     pub columns: Columns,
 }
@@ -123,7 +114,6 @@ pub struct ColumnGroup {
 impl From<entities::ColumnGroup> for ColumnGroup {
     fn from(entity: entities::ColumnGroup) -> Self {
         Self {
-            identity_key: None,
             column_group_name: entity.column_group_name,
             columns: entity.columns.into(),
         }

@@ -12,7 +12,6 @@ pub struct Column {
 #[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct Columns {
     #[serde(rename = "column")]
-    #[xml_schema_override(identity = false)]
     pub columns: Vec<Column>,
 }
 
@@ -39,5 +38,6 @@ pub struct Index {
 pub struct Indexes {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "index")]
+    #[xml_identity]
     pub indexes: Option<Vec<Index>>,
 }

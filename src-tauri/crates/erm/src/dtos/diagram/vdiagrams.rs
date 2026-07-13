@@ -1,16 +1,15 @@
 pub mod vtables;
 
+use crate::dtos::{Identified, identified_from_entity, identified_into_entity};
 use crate::entities::diagram::vdiagrams as entities;
+use crate::identity::VisitIdentified;
 use crate::validation::Validate;
 use serde::{Deserialize, Serialize};
-use vtables::VTable;
+use vtables::Vtable;
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct Color {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-
     pub r: u8,
     pub g: u8,
     pub b: u8,
@@ -19,7 +18,6 @@ pub struct Color {
 impl From<entities::Color> for Color {
     fn from(entity: entities::Color) -> Self {
         Self {
-            identity_key: None,
             r: entity.r,
             g: entity.g,
             b: entity.b,
@@ -37,16 +35,13 @@ impl From<Color> for entities::Color {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
-pub struct WalkerNotes {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-}
+pub struct WalkerNotes {}
 
 impl From<entities::WalkerNotes> for WalkerNotes {
     fn from(_: entities::WalkerNotes) -> Self {
-        Self { identity_key: None }
+        Self {}
     }
 }
 
@@ -56,16 +51,13 @@ impl From<WalkerNotes> for entities::WalkerNotes {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
-pub struct WalkerGroups {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-}
+pub struct WalkerGroups {}
 
 impl From<entities::WalkerGroups> for WalkerGroups {
     fn from(_: entities::WalkerGroups) -> Self {
-        Self { identity_key: None }
+        Self {}
     }
 }
 
@@ -75,46 +67,44 @@ impl From<WalkerGroups> for entities::WalkerGroups {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
-pub struct VDiagram {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-
+pub struct Vdiagram {
     pub vdiagram_name: String,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub color: Option<Color>,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub vtables: Option<Vec<VTable>>,
+    pub vtables: Option<Vec<Identified<Vtable>>>,
     pub walker_notes: WalkerNotes,
     pub walker_groups: WalkerGroups,
 }
 
-impl From<entities::Vdiagram> for VDiagram {
+impl From<entities::Vdiagram> for Vdiagram {
     fn from(entity: entities::Vdiagram) -> Self {
         Self {
-            identity_key: None,
             vdiagram_name: entity.vdiagram_name,
             color: entity.color.map(Into::into),
             vtables: entity
                 .vtables
                 .vtables
-                .map(|v| v.into_iter().map(Into::into).collect()),
+                .map(|v| v.into_iter().map(identified_from_entity).collect()),
             walker_notes: entity.walker_notes.into(),
             walker_groups: entity.walker_groups.into(),
         }
     }
 }
 
-impl From<VDiagram> for entities::Vdiagram {
-    fn from(dto: VDiagram) -> Self {
+impl From<Vdiagram> for entities::Vdiagram {
+    fn from(dto: Vdiagram) -> Self {
         Self {
             vdiagram_name: dto.vdiagram_name,
             color: dto.color.map(Into::into),
             vtables: entities::vtables::Vtables {
-                vtables: dto.vtables.map(|v| v.into_iter().map(Into::into).collect()),
+                vtables: dto
+                    .vtables
+                    .map(|v| v.into_iter().map(identified_into_entity).collect()),
             },
             walker_notes: dto.walker_notes.into(),
             walker_groups: dto.walker_groups.into(),

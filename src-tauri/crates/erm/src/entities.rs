@@ -1,7 +1,6 @@
 pub mod diagram;
 
 pub use erm_macros::XmlSchema;
-
 pub trait XmlSchema {
     const XML_TAG: &'static str;
 

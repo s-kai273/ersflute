@@ -9,7 +9,6 @@ pub struct Column {
 #[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct Columns {
     #[serde(rename = "column")]
-    #[xml_schema_override(identity = false)]
     pub columns: Vec<Column>,
 }
 
@@ -23,5 +22,6 @@ pub struct CompoundUniqueKey {
 pub struct CompoundUniqueKeyList {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "compound_unique_key")]
+    #[xml_identity]
     pub compound_unique_keys: Option<Vec<CompoundUniqueKey>>,
 }

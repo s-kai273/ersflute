@@ -357,19 +357,24 @@ fn compound_unique_key_names(table: &Table) -> HashSet<&str> {
 }
 
 fn find_relationship<'a>(
-    tables: &'a [Table],
+    tables: &'a [crate::dtos::Identified<Table>],
     relationship_name: &str,
 ) -> Option<&'a crate::dtos::diagram::diagram_walkers::tables::connections::Relationship> {
     tables
         .iter()
         .flat_map(|table| table.connections.relationships.iter().flatten())
         .find(|relationship| relationship.name == relationship_name)
+        .map(AsRef::as_ref)
 }
 
-fn find_table<'a>(tables: &'a [Table], table_name: &str) -> Option<&'a Table> {
+fn find_table<'a>(
+    tables: &'a [crate::dtos::Identified<Table>],
+    table_name: &str,
+) -> Option<&'a Table> {
     tables
         .iter()
         .find(|table| table.physical_name == table_name)
+        .map(AsRef::as_ref)
 }
 
 fn validate_relationship_column_source(

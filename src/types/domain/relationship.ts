@@ -23,8 +23,7 @@ export const ReferenceOperation = {
 export type ReferenceOperation =
   (typeof ReferenceOperation)[keyof typeof ReferenceOperation];
 
-export type Relationship = {
-  identityKey?: string;
+export type Relationship = Identified<{
   name: string;
   source: string;
   target: string;
@@ -36,4 +35,5 @@ export type Relationship = {
   referredColumnOptions: string[];
   onDeleteAction?: ReferenceOperation;
   onUpdateAction?: ReferenceOperation;
-};
+}>;
+import type { Identified } from "../identified";

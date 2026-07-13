@@ -8,5 +8,6 @@ use tables::Table;
 pub struct DiagramWalkers {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "table")]
+    #[xml_identity]
     pub tables: Option<Vec<Table>>,
 }

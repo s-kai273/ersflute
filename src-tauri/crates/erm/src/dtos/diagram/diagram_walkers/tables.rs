@@ -3,6 +3,7 @@ pub mod compound_unique_key_list;
 pub mod connections;
 pub mod indexes;
 
+use crate::dtos::{Identified, identified_from_entity, identified_into_entity};
 use crate::entities::diagram::diagram_walkers::tables as entities;
 use columns::Columns;
 use compound_unique_key_list::CompoundUniqueKeyList;
@@ -10,6 +11,7 @@ use connections::Connections;
 use indexes::Index;
 use serde::{Deserialize, Serialize};
 
+use crate::identity::VisitIdentified;
 use crate::validation::Validate;
 use crate::validation::diagram::diagram_walkers::tables::{
     validate_auto_increment_columns_are_key_columns, validate_column_length_and_decimal,
@@ -18,12 +20,9 @@ use crate::validation::diagram::diagram_walkers::tables::{
     validate_index_column_references, validate_local_relationship_consistency,
 };
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct Color {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-
     pub r: u8,
     pub g: u8,
     pub b: u8,
@@ -32,7 +31,6 @@ pub struct Color {
 impl From<entities::Color> for Color {
     fn from(entity: entities::Color) -> Self {
         Self {
-            identity_key: None,
             r: entity.r,
             g: entity.g,
             b: entity.b,
@@ -50,7 +48,7 @@ impl From<Color> for entities::Color {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[validate(rules(
     validate_duplicate_column_physical_names,
     validate_duplicate_index_names,
@@ -63,9 +61,6 @@ impl From<Color> for entities::Color {
 ))]
 #[serde(rename_all = "camelCase")]
 pub struct Table {
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-
     pub physical_name: String,
 
     pub logical_name: String,
@@ -102,7 +97,7 @@ pub struct Table {
     pub columns: Columns,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub indexes: Option<Vec<Index>>,
+    pub indexes: Option<Vec<Identified<Index>>>,
 
     pub compound_unique_key_list: CompoundUniqueKeyList,
 }
@@ -110,7 +105,6 @@ pub struct Table {
 impl From<entities::Table> for Table {
     fn from(entity: entities::Table) -> Self {
         Self {
-            identity_key: None,
             physical_name: entity.physical_name,
             logical_name: entity.logical_name,
             description: entity.description,
@@ -129,7 +123,7 @@ impl From<entities::Table> for Table {
             indexes: entity
                 .indexes
                 .indexes
-                .map(|v| v.into_iter().map(Into::into).collect()),
+                .map(|v| v.into_iter().map(identified_from_entity).collect()),
             compound_unique_key_list: entity.compound_unique_key_list.into(),
         }
     }
@@ -154,7 +148,9 @@ impl From<Table> for entities::Table {
             option: dto.option,
             columns: dto.columns.into(),
             indexes: entities::indexes::Indexes {
-                indexes: dto.indexes.map(|v| v.into_iter().map(Into::into).collect()),
+                indexes: dto
+                    .indexes
+                    .map(|v| v.into_iter().map(identified_into_entity).collect()),
             },
             compound_unique_key_list: dto.compound_unique_key_list.into(),
             table_properties: entities::TableProperties {},

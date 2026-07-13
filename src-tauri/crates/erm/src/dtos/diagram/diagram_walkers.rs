@@ -1,6 +1,8 @@
 pub mod tables;
 
+use crate::dtos::{Identified, identified_from_entity, identified_into_entity};
 use crate::entities::diagram::diagram_walkers as entities;
+use crate::identity::VisitIdentified;
 use crate::validation::Validate;
 use crate::validation::diagram::diagram_walkers::{
     validate_cross_table_references, validate_duplicate_relationship_names,
@@ -9,7 +11,7 @@ use crate::validation::diagram::diagram_walkers::{
 use serde::{Deserialize, Serialize};
 use tables::Table;
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[validate(rules(
     validate_duplicate_table_physical_names,
     validate_duplicate_relationship_names,
@@ -18,20 +20,16 @@ use tables::Table;
 #[serde(rename_all = "camelCase")]
 pub struct DiagramWalkers {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub identity_key: Option<String>,
-
-    #[serde(default, skip_serializing_if = "Option::is_none")]
     #[validate(path = "table")]
-    pub tables: Option<Vec<Table>>,
+    pub tables: Option<Vec<Identified<Table>>>,
 }
 
 impl From<entities::DiagramWalkers> for DiagramWalkers {
     fn from(entity: entities::DiagramWalkers) -> Self {
         Self {
-            identity_key: None,
             tables: entity
                 .tables
-                .map(|v| v.into_iter().map(Into::into).collect()),
+                .map(|v| v.into_iter().map(identified_from_entity).collect()),
         }
     }
 }
@@ -39,7 +37,9 @@ impl From<entities::DiagramWalkers> for DiagramWalkers {
 impl From<DiagramWalkers> for entities::DiagramWalkers {
     fn from(dto: DiagramWalkers) -> Self {
         Self {
-            tables: dto.tables.map(|v| v.into_iter().map(Into::into).collect()),
+            tables: dto
+                .tables
+                .map(|v| v.into_iter().map(identified_into_entity).collect()),
         }
     }
 }

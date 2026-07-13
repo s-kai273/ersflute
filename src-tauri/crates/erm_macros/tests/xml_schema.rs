@@ -86,13 +86,13 @@ struct Root {
     renamed: RenamedChild,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[xml_identity]
     optional_children: Option<Vec<OptionalChildren>>,
 
     #[serde(rename = "$value")]
     items: Vec<Item>,
 
     #[serde(rename = "skipped_child")]
-    #[xml_schema_override(identity = false)]
     skipped_children: Vec<SkippedChild>,
 }
 
@@ -114,13 +114,14 @@ struct SkippedChild {
 #[derive(XmlSchema)]
 enum Item {
     #[serde(rename = "first_item")]
+    #[xml_identity]
     First(String),
 
     #[serde(rename = "second_item")]
+    #[xml_identity]
     Second(String),
 
     #[serde(rename = "skipped_item")]
-    #[xml_schema_override(identity = false)]
     Skipped(String),
 }
 
@@ -154,7 +155,7 @@ fn non_vector_fields_are_not_identity_children() {
 }
 
 #[test]
-fn vector_fields_are_identity_children_by_default() {
+fn annotated_vector_fields_are_identity_children() {
     assert!(Root::is_identity_child("root", "optional_children"));
 }
 
@@ -166,6 +167,6 @@ fn value_vector_fields_use_enum_variant_tags_as_identity_children() {
 }
 
 #[test]
-fn identity_can_be_disabled_for_vector_fields() {
+fn regular_vector_fields_are_not_identity_children() {
     assert!(!Root::is_identity_child("root", "skipped_child"));
 }

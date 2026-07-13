@@ -2,6 +2,7 @@ pub mod column_type;
 pub mod dtos;
 pub mod entities;
 pub mod errors;
+mod identity;
 mod io;
 mod validation;
 

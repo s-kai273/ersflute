@@ -11,31 +11,34 @@ fn columns_tags_keep_valid_values() {
     assert_eq!(
         table.columns,
         columns::Columns {
-            identity_key: None,
             items: Some(vec![
-                columns::ColumnItem::Normal(columns::NormalColumn {
-                    identity_key: None,
-                    physical_name: "MEMBER_ID".to_string(),
-                    logical_name: Some("Member ID".to_string()),
-                    description: Some("Surrogate key".to_string()),
-                    column_type: Some(columns::ColumnType::DecimalPS),
-                    length: Some(18),
-                    decimal: Some(0),
-                    args: Some("UNSIGNED".to_string()),
-                    unsigned: Some(true),
-                    not_null: Some(true),
-                    unique_key: Some(true),
-                    default_value: Some("0".to_string()),
-                    primary_key: Some(true),
-                    auto_increment: Some(true),
-                    referred_column: Some("table.PARENT_MEMBERS.PARENT_MEMBER_ID".to_string()),
-                    relationship: Some("FK_MEMBERS_PARENT".to_string()),
-                }),
-                columns::ColumnItem::Normal(columns::NormalColumn {
-                    identity_key: None,
-                    physical_name: "MEMBER_NAME".to_string(),
-                    ..Default::default()
-                }),
+                columns::ColumnItem::Normal(
+                    columns::NormalColumn {
+                        physical_name: "MEMBER_ID".to_string(),
+                        logical_name: Some("Member ID".to_string()),
+                        description: Some("Surrogate key".to_string()),
+                        column_type: Some(columns::ColumnType::DecimalPS),
+                        length: Some(18),
+                        decimal: Some(0),
+                        args: Some("UNSIGNED".to_string()),
+                        unsigned: Some(true),
+                        not_null: Some(true),
+                        unique_key: Some(true),
+                        default_value: Some("0".to_string()),
+                        primary_key: Some(true),
+                        auto_increment: Some(true),
+                        referred_column: Some("table.PARENT_MEMBERS.PARENT_MEMBER_ID".to_string()),
+                        relationship: Some("FK_MEMBERS_PARENT".to_string()),
+                    }
+                    .into()
+                ),
+                columns::ColumnItem::Normal(
+                    columns::NormalColumn {
+                        physical_name: "MEMBER_NAME".to_string(),
+                        ..Default::default()
+                    }
+                    .into()
+                ),
                 columns::ColumnItem::Group("COMMON_COLUMNS".to_string()),
             ]),
         }
@@ -57,7 +60,8 @@ fn empty_column_type_is_accepted_as_no_type() {
         .expect("missing tables")
         .into_iter()
         .next()
-        .expect("missing table");
+        .expect("missing table")
+        .into_inner();
     let column = table
         .columns
         .items

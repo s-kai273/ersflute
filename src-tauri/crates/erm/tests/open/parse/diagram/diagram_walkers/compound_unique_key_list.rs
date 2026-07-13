@@ -1,8 +1,24 @@
 use pretty_assertions::assert_eq;
 
 use erm::dtos::diagram::diagram_walkers::tables::compound_unique_key_list;
+use erm::open;
 
 use super::support;
+
+#[test]
+fn compound_unique_keys_receive_identity_keys_when_opened() {
+    let diagram = open(support::DIAGRAM_WALKERS_DETAILS_FIXTURE).expect("failed to parse");
+    let keys = diagram
+        .diagram_walkers
+        .as_ref()
+        .and_then(|walkers| walkers.tables.as_ref())
+        .and_then(|tables| tables.first())
+        .and_then(|table| table.compound_unique_key_list.compound_unique_keys.as_ref())
+        .expect("missing compound unique keys");
+
+    assert!(!keys.is_empty());
+    assert!(keys.iter().all(|key| key.identity_key.is_some()));
+}
 
 #[test]
 fn compound_unique_key_list_tags_keep_valid_values() {
@@ -11,21 +27,20 @@ fn compound_unique_key_list_tags_keep_valid_values() {
     assert_eq!(
         table.compound_unique_key_list,
         compound_unique_key_list::CompoundUniqueKeyList {
-            identity_key: None,
-            compound_unique_keys: Some(vec![compound_unique_key_list::CompoundUniqueKey {
-                identity_key: None,
-                name: "UK_MEMBERS_NAME".to_string(),
-                columns: vec![
-                    compound_unique_key_list::Column {
-                        identity_key: None,
-                        column_id: "MEMBER_NAME".to_string(),
-                    },
-                    compound_unique_key_list::Column {
-                        identity_key: None,
-                        column_id: "MEMBER_ID".to_string(),
-                    },
-                ],
-            }]),
+            compound_unique_keys: Some(vec![
+                compound_unique_key_list::CompoundUniqueKey {
+                    name: "UK_MEMBERS_NAME".to_string(),
+                    columns: vec![
+                        compound_unique_key_list::Column {
+                            column_id: "MEMBER_NAME".to_string(),
+                        },
+                        compound_unique_key_list::Column {
+                            column_id: "MEMBER_ID".to_string(),
+                        },
+                    ],
+                }
+                .into()
+            ]),
         }
     );
 }

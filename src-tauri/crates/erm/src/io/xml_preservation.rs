@@ -298,7 +298,7 @@ fn append_identity_tag_in_managed_order(
         .collect::<Vec<_>>();
 
     for candidate in managed {
-        if !candidate.as_ref().is_some_and(|child| child.name == tag) {
+        if candidate.as_ref().is_none_or(|child| child.name != tag) {
             continue;
         }
 

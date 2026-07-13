@@ -17,7 +17,6 @@ fn only_used_diagram_settings_are_exposed() {
     assert_eq!(
         diagram.diagram_settings,
         diagram_settings::DiagramSettings {
-            identity_key: None,
             database: "MySQL".to_string(),
             view_mode: 1,
         }

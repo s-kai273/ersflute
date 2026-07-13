@@ -107,7 +107,6 @@ pub struct FkColumn {
 #[derive(Debug, PartialEq, Serialize, Deserialize, Default, XmlSchema)]
 pub struct FkColumns {
     #[serde(default)]
-    #[xml_schema_override(identity = false)]
     pub fk_column: Vec<FkColumn>,
 }
 
@@ -121,7 +120,6 @@ pub struct Relationship {
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "bendpoint")]
-    #[xml_schema_override(identity = false)]
     pub bendpoints: Option<Vec<Bendpoint>>,
 
     pub fk_columns: FkColumns,
@@ -149,5 +147,6 @@ pub struct Relationship {
 pub struct Connections {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "relationship")]
+    #[xml_identity]
     pub relationships: Option<Vec<Relationship>>,
 }

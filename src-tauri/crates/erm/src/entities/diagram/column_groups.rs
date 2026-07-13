@@ -41,6 +41,7 @@ pub struct NormalColumn {
 pub struct Columns {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "normal_column")]
+    #[xml_identity]
     pub normal_columns: Option<Vec<NormalColumn>>,
 }
 
@@ -54,5 +55,6 @@ pub struct ColumnGroup {
 pub struct ColumnGroups {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "column_group")]
+    #[xml_identity]
     pub column_groups: Option<Vec<ColumnGroup>>,
 }
