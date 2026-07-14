@@ -5,7 +5,7 @@ use crate::errors::Error;
 use quick_xml::errors::IllFormedError;
 use quick_xml::events::{BytesEnd, BytesStart, Event};
 use quick_xml::{Reader, Writer};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 type IdentityIndexLookup<'a> = HashMap<(&'a str, Option<&'a str>, usize), &'a str>;
 
@@ -205,179 +205,129 @@ fn merge_element(mut base: XmlElement, managed: XmlElement) -> XmlElement {
         base.children = managed.children;
         return base;
     }
+    let follows_managed_order = base.children.iter().chain(&managed.children).any(|child| {
+        matches!(
+            child,
+            XmlNode::Element(element) if is_identity_child(&base.name, &element.name)
+        )
+    });
+    if !follows_managed_order {
+        base.children =
+            merge_children_in_preserved_order(&base.name, base.children, managed.children);
+        return base;
+    }
 
-    let mut managed_children: Vec<Option<XmlElement>> = managed
+    let mut base_known_children = Vec::new();
+    let preserved_layout = base
+        .children
+        .into_iter()
+        .map(|child| match child {
+            XmlNode::Element(element) if is_known_child(&base.name, &element.name) => {
+                base_known_children.push(Some(element));
+                None
+            }
+            child => Some(child),
+        })
+        .collect::<Vec<_>>();
+
+    let mut managed_children = managed
         .children
         .into_iter()
         .filter_map(|child| match child {
-            XmlNode::Element(element) => Some(Some(element)),
+            XmlNode::Element(element) => Some(element),
             XmlNode::Raw(_) => None,
-        })
-        .collect();
-    let mut base_identity_children = base_identity_children(&base.name, &base.children);
-    let base_tag_counts = element_tag_counts(&base.children);
-    let mut appended_identity_tags = HashSet::new();
-    let mut seen_tags: HashMap<String, usize> = HashMap::new();
-    let mut merged_children = Vec::new();
-
-    for child in base.children {
-        match child {
-            XmlNode::Raw(raw) => merged_children.push(XmlNode::Raw(raw)),
-            XmlNode::Element(base_child) if !is_known_child(&base.name, &base_child.name) => {
-                merged_children.push(XmlNode::Element(base_child));
-            }
-            XmlNode::Element(base_child) => {
-                let tag = base_child.name.clone();
-                if is_identity_child(&base.name, &tag) {
-                    if appended_identity_tags.insert(tag.clone()) {
-                        append_identity_tag_in_managed_order(
-                            &tag,
-                            &mut base_identity_children,
-                            &mut managed_children,
-                            &mut merged_children,
-                        );
-                    }
-                    continue;
-                }
-
-                *seen_tags.entry(tag.clone()).or_default() += 1;
-                if let Some(index) = find_managed_match(&base_child, &managed_children) {
-                    let managed_child = managed_children[index]
-                        .take()
-                        .expect("managed child was already consumed");
-                    merged_children
-                        .push(XmlNode::Element(merge_element(base_child, managed_child)));
-                }
-
-                if seen_tags.get(&tag) == base_tag_counts.get(&tag) {
-                    append_unmatched_tag(&tag, &mut managed_children, &mut merged_children);
-                }
-            }
-        }
-    }
-
-    for child in managed_children.into_iter().flatten() {
-        merged_children.push(XmlNode::Element(child));
-    }
-    base.children = merged_children;
-    base
-}
-
-// Collects preserved identity children by tag so each managed child can reuse
-// the matching preserved subtree while following managed order.
-fn base_identity_children(parent: &str, children: &[XmlNode]) -> HashMap<String, Vec<XmlElement>> {
-    let mut identity_children: HashMap<String, Vec<XmlElement>> = HashMap::new();
-
-    for child in children {
-        let XmlNode::Element(element) = child else {
-            continue;
-        };
-        if is_identity_child(parent, &element.name) {
-            identity_children
-                .entry(element.name.clone())
-                .or_default()
-                .push(element.clone());
-        }
-    }
-
-    identity_children
-}
-
-// Emits repeated identity children in managed order and merges each item with
-// its preserved counterpart when an identity match exists.
-fn append_identity_tag_in_managed_order(
-    tag: &str,
-    base_identity_children: &mut HashMap<String, Vec<XmlElement>>,
-    managed: &mut [Option<XmlElement>],
-    output: &mut Vec<XmlNode>,
-) {
-    let mut base_children = base_identity_children
-        .remove(tag)
-        .unwrap_or_default()
-        .into_iter()
-        .map(Some)
-        .collect::<Vec<_>>();
-
-    for candidate in managed {
-        if candidate.as_ref().is_none_or(|child| child.name != tag) {
-            continue;
-        }
-
-        let managed_child = candidate.take().expect("candidate disappeared");
-        let base_index = managed_child.identity_id.as_ref().and_then(|identity_id| {
-            base_children.iter().position(|base_child| {
-                base_child
-                    .as_ref()
-                    .is_some_and(|base_child| base_child.identity_id.as_ref() == Some(identity_id))
-            })
         });
+    let mut merged_managed_children = Vec::new();
 
-        let child = if let Some(base_index) = base_index {
-            let base_child = base_children[base_index]
+    for managed_child in &mut managed_children {
+        let base_index = find_base_match(&base.name, &managed_child, &base_known_children);
+        let merged_child = if let Some(base_index) = base_index {
+            let base_child = base_known_children[base_index]
                 .take()
                 .expect("base child was already consumed");
             merge_element(base_child, managed_child)
         } else {
             managed_child
         };
-        output.push(XmlNode::Element(child));
+        merged_managed_children.push(merged_child);
     }
+
+    let mut merged_managed_children = merged_managed_children.into_iter();
+    let mut merged_children = Vec::new();
+    for preserved_child in preserved_layout {
+        if let Some(preserved_child) = preserved_child {
+            merged_children.push(preserved_child);
+        } else if let Some(managed_child) = merged_managed_children.next() {
+            merged_children.push(XmlNode::Element(managed_child));
+        }
+    }
+    merged_children.extend(merged_managed_children.map(XmlNode::Element));
+
+    base.children = merged_children;
+    base
 }
 
-// Finds the managed child that should update a preserved child.
-fn find_managed_match(base: &XmlElement, managed: &[Option<XmlElement>]) -> Option<usize> {
-    // For repeated schema children, identity ids are safer than tag matching.
-    // If managed siblings for this tag have ids but none match, the base node
-    // represents a removed element and should not consume another sibling.
-    if base.identity_id.is_some() {
-        let identity_match = base.identity_id.as_ref().and_then(|id| {
-            managed.iter().position(|candidate| {
-                candidate
-                    .as_ref()
-                    .is_some_and(|candidate| candidate.identity_id.as_ref() == Some(id))
-            })
-        });
-        if identity_match.is_some() {
-            return identity_match;
+// Merges fixed schema fields without moving preserved fields around unknown content.
+fn merge_children_in_preserved_order(
+    parent: &str,
+    base: Vec<XmlNode>,
+    managed: Vec<XmlNode>,
+) -> Vec<XmlNode> {
+    let mut managed = managed
+        .into_iter()
+        .filter_map(|child| match child {
+            XmlNode::Element(element) => Some(Some(element)),
+            XmlNode::Raw(_) => None,
+        })
+        .collect::<Vec<_>>();
+    let mut merged = Vec::new();
+
+    for child in base {
+        let XmlNode::Element(base_child) = child else {
+            merged.push(child);
+            continue;
+        };
+        if !is_known_child(parent, &base_child.name) {
+            merged.push(XmlNode::Element(base_child));
+            continue;
         }
-        let has_ids_for_tag = managed.iter().any(|candidate| {
-            candidate.as_ref().is_some_and(|candidate| {
-                candidate.name == base.name && candidate.identity_id.is_some()
-            })
-        });
-        if has_ids_for_tag {
-            return None;
+        if let Some(index) = managed.iter().position(|candidate| {
+            candidate
+                .as_ref()
+                .is_some_and(|candidate| candidate.name == base_child.name)
+        }) {
+            let managed_child = managed[index]
+                .take()
+                .expect("managed child was already consumed");
+            merged.push(XmlNode::Element(merge_element(base_child, managed_child)));
         }
     }
-    managed.iter().position(|candidate| {
+    merged.extend(managed.into_iter().flatten().map(XmlNode::Element));
+    merged
+}
+
+// Finds the preserved child that should be merged into a managed child.
+fn find_base_match(
+    parent: &str,
+    managed: &XmlElement,
+    base: &[Option<XmlElement>],
+) -> Option<usize> {
+    if let Some(identity_id) = &managed.identity_id {
+        return base.iter().position(|candidate| {
+            candidate.as_ref().is_some_and(|candidate| {
+                candidate.name == managed.name
+                    && candidate.identity_id.as_ref() == Some(identity_id)
+            })
+        });
+    }
+    if is_identity_child(parent, &managed.name) {
+        return None;
+    }
+    base.iter().position(|candidate| {
         candidate
             .as_ref()
-            .is_some_and(|candidate| candidate.name == base.name)
+            .is_some_and(|candidate| candidate.name == managed.name)
     })
-}
-
-// Appends managed children that did not exist in the preserved XML after the
-// last preserved sibling with the same tag.
-fn append_unmatched_tag(tag: &str, managed: &mut [Option<XmlElement>], output: &mut Vec<XmlNode>) {
-    for candidate in managed {
-        if candidate.as_ref().is_some_and(|child| child.name == tag) {
-            output.push(XmlNode::Element(
-                candidate.take().expect("candidate disappeared"),
-            ));
-        }
-    }
-}
-
-// Counts preserved element children by tag so new managed siblings can be
-// inserted after the final preserved sibling in each tag group.
-fn element_tag_counts(children: &[XmlNode]) -> HashMap<String, usize> {
-    let mut counts = HashMap::new();
-    for child in children {
-        if let XmlNode::Element(element) = child {
-            *counts.entry(element.name.clone()).or_default() += 1;
-        }
-    }
-    counts
 }
 
 // Parses a full XML document and returns the root element tree.

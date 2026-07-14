@@ -130,6 +130,51 @@ fn reordered_nested_normal_columns_keep_their_preserved_content() {
 }
 
 #[test]
+fn reordered_mixed_columns_are_saved_in_managed_order() {
+    let source = diagram_with_tables(&[table("TABLE").replace(
+        "<columns/>",
+        concat!(
+            "<columns>",
+            "<normal_column><before>first</before><physical_name>FIRST</physical_name></normal_column>",
+            "<column_group>GROUP</column_group>",
+            "<normal_column><before>second</before><physical_name>SECOND</physical_name></normal_column>",
+            "</columns>",
+        ),
+    )])
+    .replace(
+        "</diagram>",
+        "<column_groups><column_group><column_group_name>GROUP</column_group_name><columns/></column_group></column_groups></diagram>",
+    );
+
+    let saved = open_edit_save(&source, "reordered_mixed_columns", |diagram| {
+        let items = diagram
+            .diagram_walkers
+            .as_mut()
+            .and_then(|walkers| walkers.tables.as_mut())
+            .and_then(|tables| tables.first_mut())
+            .and_then(|table| table.columns.items.as_mut())
+            .expect("missing columns");
+
+        assert!(matches!(items[0], ColumnItem::Normal(_)));
+        assert!(matches!(items[1], ColumnItem::Group(_)));
+        assert!(matches!(items[2], ColumnItem::Normal(_)));
+        let group = items.remove(1);
+        items.insert(0, group);
+    });
+
+    assert_eq!(
+        compact_xml(&extract_element(&saved, "columns")),
+        concat!(
+            "<columns>",
+            "<column_group>GROUP</column_group>",
+            "<normal_column><before>first</before><physical_name>FIRST</physical_name></normal_column>",
+            "<normal_column><before>second</before><physical_name>SECOND</physical_name></normal_column>",
+            "</columns>",
+        )
+    );
+}
+
+#[test]
 fn unknown_nested_elements_and_attributes_keep_their_positions() {
     let source = diagram_with_tables(&[table_with_extra(
         "OLD",
