@@ -180,9 +180,9 @@ fn expand_xml_schema_struct(
     fields: Fields,
 ) -> Result<proc_macro2::TokenStream> {
     let fields = fields.iter().collect::<Vec<_>>();
-    let field_tags = fields
+    let child_schemas = fields
         .iter()
-        .map(|field| xml_field_child_match(field))
+        .map(|field| xml_field_child_schema(field))
         .collect::<Result<Vec<_>>>()?;
     let identity_child_matches = fields
         .iter()
@@ -192,14 +192,7 @@ fn expand_xml_schema_struct(
         .iter()
         .filter_map(|field| xml_repeated_child_match(field).transpose())
         .collect::<Result<Vec<_>>>()?;
-    let child_types = fields.iter().map(|field| &field.ty);
-    let identity_child_types = fields.iter().map(|field| &field.ty);
-    let repeated_child_types = fields.iter().map(|field| &field.ty);
-    let own_child_match = if field_tags.is_empty() {
-        quote! { false }
-    } else {
-        quote! { #(#field_tags)||* }
-    };
+    let own_child_schema = quote! { None #(.or_else(|| #child_schemas))* };
     let own_identity_child_match = if identity_child_matches.is_empty() {
         quote! { false }
     } else {
@@ -215,27 +208,16 @@ fn expand_xml_schema_struct(
         impl crate::entities::XmlSchema for #ident {
             const XML_TAG: &'static str = #tag;
 
-            fn is_known_child(parent: &str, tag: &str) -> bool {
-                (parent == Self::XML_TAG && (#own_child_match))
-                    #(|| <#child_types as crate::entities::XmlSchema>::is_known_child(parent, tag))*
+            fn child_schema(tag: &str) -> Option<crate::entities::XmlSchemaContext> {
+                #own_child_schema
             }
 
-            fn is_identity_child(parent: &str, tag: &str) -> bool {
-                (parent == Self::XML_TAG && (#own_identity_child_match))
-                    #(|| <#identity_child_types as crate::entities::XmlSchema>::is_identity_child(parent, tag))*
+            fn is_identity_child(tag: &str) -> bool {
+                #own_identity_child_match
             }
 
-            fn is_repeated_child(parent: &str, tag: &str) -> bool {
-                (parent == Self::XML_TAG && (#own_repeated_child_match))
-                    #(|| <#repeated_child_types as crate::entities::XmlSchema>::is_repeated_child(parent, tag))*
-            }
-
-            fn is_known_value_child(_tag: &str) -> bool {
-                false
-            }
-
-            fn is_identity_value_child(_tag: &str) -> bool {
-                false
+            fn is_repeated_child(tag: &str) -> bool {
+                #own_repeated_child_match
             }
         }
     })
@@ -255,20 +237,11 @@ fn expand_xml_schema_enum(
         .filter(|variant| has_xml_identity(&variant.attrs))
         .map(|variant| xml_renamed_tag(&variant.ident.to_string(), &variant.attrs))
         .collect::<Result<Vec<_>>>()?;
-    let child_types = variants
+    let value_child_schemas = variants
         .iter()
-        .flat_map(|variant| variant.fields.iter().map(|field| &field.ty));
-    let identity_child_types = variants
-        .iter()
-        .flat_map(|variant| variant.fields.iter().map(|field| &field.ty));
-    let repeated_child_types = variants
-        .iter()
-        .flat_map(|variant| variant.fields.iter().map(|field| &field.ty));
-    let own_child_match = if variant_tags.is_empty() {
-        quote! { false }
-    } else {
-        quote! { matches!(tag, #(#variant_tags)|*) }
-    };
+        .zip(&variant_tags)
+        .map(|(variant, tag)| xml_variant_child_schema(variant, tag));
+    let own_value_child_schema = quote! { None #(.or_else(|| #value_child_schemas))* };
     let own_identity_child_match = if identity_variant_tags.is_empty() {
         quote! { false }
     } else {
@@ -279,23 +252,8 @@ fn expand_xml_schema_enum(
         impl crate::entities::XmlSchema for #ident {
             const XML_TAG: &'static str = #tag;
 
-            fn is_known_child(parent: &str, tag: &str) -> bool {
-                (parent == Self::XML_TAG && (#own_child_match))
-                    #(|| <#child_types as crate::entities::XmlSchema>::is_known_child(parent, tag))*
-            }
-
-            fn is_identity_child(parent: &str, tag: &str) -> bool {
-                (parent == Self::XML_TAG && (#own_identity_child_match))
-                    #(|| <#identity_child_types as crate::entities::XmlSchema>::is_identity_child(parent, tag))*
-            }
-
-            fn is_repeated_child(parent: &str, tag: &str) -> bool {
-                false
-                    #(|| <#repeated_child_types as crate::entities::XmlSchema>::is_repeated_child(parent, tag))*
-            }
-
-            fn is_known_value_child(tag: &str) -> bool {
-                #own_child_match
+            fn value_child_schema(tag: &str) -> Option<crate::entities::XmlSchemaContext> {
+                #own_value_child_schema
             }
 
             fn is_identity_value_child(tag: &str) -> bool {
@@ -448,7 +406,7 @@ fn field_path(field: &syn::Field) -> Result<String> {
     Ok(path)
 }
 
-fn xml_field_child_match(field: &syn::Field) -> Result<proc_macro2::TokenStream> {
+fn xml_field_child_schema(field: &syn::Field) -> Result<proc_macro2::TokenStream> {
     let tag = xml_renamed_tag(
         &field
             .ident
@@ -460,10 +418,24 @@ fn xml_field_child_match(field: &syn::Field) -> Result<proc_macro2::TokenStream>
 
     if tag == "$value" {
         let ty = &field.ty;
-        Ok(quote! { <#ty as crate::entities::XmlSchema>::is_known_value_child(tag) })
+        Ok(quote! { <#ty as crate::entities::XmlSchema>::value_child_schema(tag) })
     } else {
-        Ok(quote! { matches!(tag, #tag) })
+        let ty = &field.ty;
+        Ok(quote! {
+            (tag == #tag).then(<#ty as crate::entities::XmlSchema>::xml_schema)
+        })
     }
+}
+
+fn xml_variant_child_schema(variant: &syn::Variant, tag: &str) -> proc_macro2::TokenStream {
+    let context = if variant.fields.len() == 1 {
+        let ty = &variant.fields.iter().next().expect("checked length").ty;
+        quote! { <#ty as crate::entities::XmlSchema>::xml_schema() }
+    } else {
+        quote! { crate::entities::XmlSchemaContext::leaf() }
+    };
+
+    quote! { (tag == #tag).then(|| #context) }
 }
 
 fn xml_identity_child_match(field: &syn::Field) -> Result<Option<proc_macro2::TokenStream>> {
@@ -508,7 +480,7 @@ fn xml_repeated_child_match(field: &syn::Field) -> Result<Option<proc_macro2::To
     if tag == "$value" {
         let ty = &field.ty;
         Ok(Some(
-            quote! { <#ty as crate::entities::XmlSchema>::is_known_value_child(tag) },
+            quote! { <#ty as crate::entities::XmlSchema>::value_child_schema(tag).is_some() },
         ))
     } else {
         Ok(Some(quote! { matches!(tag, #tag) }))

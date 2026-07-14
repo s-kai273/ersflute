@@ -1,12 +1,11 @@
-use crate::entities::XmlSchema as _;
 use crate::entities::diagram::Diagram;
+use crate::entities::{XmlSchema as _, XmlSchemaContext};
 use crate::errors::Error;
 use quick_xml::events::{BytesText, Event};
 use quick_xml::{Reader, Writer};
 
 struct ElementContext {
-    name: String,
-    is_known: bool,
+    schema: Option<XmlSchemaContext>,
     has_child: bool,
     has_text: bool,
     // Holds owned whitespace until it can be classified. A later child makes
@@ -25,18 +24,18 @@ pub(crate) fn format_xml(xml: &str) -> Result<String, Error> {
             Event::Eof => break,
             Event::Start(start) => {
                 let name = event_name(start.name().as_ref());
-                let is_known = elements.last().map_or(name == Diagram::XML_TAG, |parent| {
-                    parent.is_known && Diagram::is_known_child(&parent.name, &name)
-                });
-                if let Some(parent) = elements.last_mut().filter(|parent| parent.is_known) {
+                let schema = elements.last().map_or_else(
+                    || (name == Diagram::XML_TAG).then(Diagram::xml_schema),
+                    |parent| parent.schema.and_then(|schema| schema.child(&name)),
+                );
+                if let Some(parent) = elements.last_mut().filter(|parent| parent.schema.is_some()) {
                     parent.has_child = true;
                     parent.pending_whitespace.clear();
                 }
 
                 writer.write_event(Event::Start(start.borrow()))?;
                 elements.push(ElementContext {
-                    name,
-                    is_known,
+                    schema,
                     has_child: false,
                     has_text: false,
                     pending_whitespace: Vec::new(),
@@ -44,7 +43,7 @@ pub(crate) fn format_xml(xml: &str) -> Result<String, Error> {
             }
             Event::End(end) => {
                 let element = elements.pop().expect("end event without a start event");
-                if element.is_known && !element.has_child {
+                if element.schema.is_some() && !element.has_child {
                     if element.pending_whitespace.is_empty() && !element.has_text {
                         writer.write_event(Event::Text(BytesText::new("")))?;
                     } else {
@@ -56,14 +55,16 @@ pub(crate) fn format_xml(xml: &str) -> Result<String, Error> {
                 writer.write_event(Event::End(end.borrow()))?;
             }
             Event::Empty(empty) => {
-                if let Some(parent) = elements.last_mut().filter(|parent| parent.is_known) {
+                if let Some(parent) = elements.last_mut().filter(|parent| parent.schema.is_some()) {
                     parent.has_child = true;
                     parent.pending_whitespace.clear();
                 }
                 writer.write_event(Event::Empty(empty.borrow()))?;
             }
             Event::Text(text)
-                if elements.last().is_none_or(|element| element.is_known)
+                if elements
+                    .last()
+                    .is_none_or(|element| element.schema.is_some())
                     && is_whitespace_text(&text) =>
             {
                 if let Some(element) = elements.last_mut() {
@@ -71,7 +72,10 @@ pub(crate) fn format_xml(xml: &str) -> Result<String, Error> {
                 }
             }
             Event::Text(text) => {
-                if let Some(element) = elements.last_mut().filter(|element| element.is_known) {
+                if let Some(element) = elements
+                    .last_mut()
+                    .filter(|element| element.schema.is_some())
+                {
                     for whitespace in element.pending_whitespace.drain(..) {
                         writer.write_event(Event::Text(whitespace))?;
                     }

@@ -401,6 +401,42 @@ fn entity_defined_children_are_matched_instead_of_duplicated() {
     );
 }
 
+#[test]
+fn unsupported_tags_are_classified_using_the_concrete_parent_type() {
+    let source = diagram_with_tables(&[table("TABLE")
+        .replace(
+            "<columns/>",
+            "<columns><normal_column><physical_name>ID</physical_name><primary_key>true</primary_key></normal_column></columns>",
+        )
+        .replace(
+            "<indexes/>",
+            concat!(
+                "<indexes><index>",
+                "<name>IDX_TABLE_ID</name><type>BTREE</type>",
+                "<columns>",
+                "<column><column_id>ID</column_id></column>",
+                "<normal_column><unsupported>preserved</unsupported></normal_column>",
+                "</columns>",
+                "</index></indexes>",
+            ),
+        )]);
+
+    let saved = open_edit_save(&source, "concrete_schema_context", |_| {});
+
+    assert_eq!(
+        compact_xml(&extract_element(&saved, "indexes")),
+        concat!(
+            "<indexes><index>",
+            "<name>IDX_TABLE_ID</name><type>BTREE</type>",
+            "<columns>",
+            "<column><column_id>ID</column_id></column>",
+            "<normal_column><unsupported>preserved</unsupported></normal_column>",
+            "</columns>",
+            "</index></indexes>",
+        )
+    );
+}
+
 fn open_edit_save(source: &str, test_name: &str, edit: impl FnOnce(&mut Diagram)) -> String {
     let source_path = temp_file_path(test_name, "source");
     let output_path = temp_file_path(test_name, "output");

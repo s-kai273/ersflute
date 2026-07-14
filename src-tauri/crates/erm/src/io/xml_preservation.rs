@@ -1,6 +1,6 @@
 use super::xml_identity::{attach_identity_keys, collect_identity_keys};
 use crate::dtos::diagram::Diagram;
-use crate::entities::XmlSchema as _;
+use crate::entities::{XmlSchema as _, XmlSchemaContext};
 use crate::errors::Error;
 use quick_xml::errors::IllFormedError;
 use quick_xml::events::{BytesEnd, BytesStart, Event};
@@ -41,6 +41,7 @@ enum ChildLayoutSlot {
 #[derive(Clone)]
 struct XmlElement {
     name: String,
+    schema: Option<XmlSchemaContext>,
     start: BytesStart<'static>,
     end: Option<BytesEnd<'static>>,
     children: Vec<XmlNode>,
@@ -120,7 +121,7 @@ fn collect_identities(
         let index = tag_indexes.entry(&child.name).or_default();
         let id = path_id(path);
 
-        let next_parent = if is_identity_child(&element.name, &child.name) {
+        let next_parent = if is_identity_child(element.schema, &child.name) {
             identities.push(XmlNodeIdentity {
                 id: id.clone(),
                 tag: child.name.clone(),
@@ -151,7 +152,7 @@ fn assign_source_identity_children(element: &mut XmlElement, path: &mut Vec<usiz
             continue;
         };
         path.push(element_index);
-        if is_identity_child(&element.name, &child.name) {
+        if is_identity_child(element.schema, &child.name) {
             child.identity_id = Some(path_id(path));
         }
         assign_source_identity_children(child, path);
@@ -193,7 +194,7 @@ fn assign_managed_identity_children<'a>(
         };
         let index = tag_indexes.entry(child.name.clone()).or_default();
         let mut next_parent_id = repeated_parent_id.map(str::to_string);
-        if is_identity_child(&element.name, &child.name) {
+        if is_identity_child(element.schema, &child.name) {
             child.identity_id = index_lookup
                 .get(&(child.name.as_str(), repeated_parent_id, *index))
                 .copied()
@@ -208,6 +209,7 @@ fn assign_managed_identity_children<'a>(
 // Merges one preserved element with the corresponding managed element while
 // keeping raw and unknown preserved children in place.
 fn merge_element(mut base: XmlElement, managed: XmlElement) -> XmlElement {
+    let parent_schema = base.schema;
     if base.end.is_none() && managed.end.is_some() {
         base.end = managed.end.clone();
     }
@@ -218,12 +220,11 @@ fn merge_element(mut base: XmlElement, managed: XmlElement) -> XmlElement {
     let follows_managed_order = base.children.iter().chain(&managed.children).any(|child| {
         matches!(
             child,
-            XmlNode::Element(element) if is_repeated_child(&base.name, &element.name)
+            XmlNode::Element(element) if is_repeated_child(parent_schema, &element.name)
         )
     });
     if !follows_managed_order {
-        base.children =
-            merge_children_in_preserved_order(&base.name, base.children, managed.children);
+        base.children = merge_children_in_preserved_order(base.children, managed.children);
         return base;
     }
 
@@ -232,8 +233,8 @@ fn merge_element(mut base: XmlElement, managed: XmlElement) -> XmlElement {
         .children
         .into_iter()
         .map(|child| match child {
-            XmlNode::Element(element) if is_known_child(&base.name, &element.name) => {
-                let layout = if is_repeated_child(&base.name, &element.name) {
+            XmlNode::Element(element) if element.schema.is_some() => {
+                let layout = if is_repeated_child(parent_schema, &element.name) {
                     ChildLayoutSlot::KnownRepeated
                 } else {
                     ChildLayoutSlot::KnownSingle {
@@ -257,7 +258,7 @@ fn merge_element(mut base: XmlElement, managed: XmlElement) -> XmlElement {
     let mut merged_managed_children = Vec::new();
 
     for managed_child in &mut managed_children {
-        let base_index = find_base_match(&base.name, &managed_child, &base_known_children);
+        let base_index = find_base_match(parent_schema, &managed_child, &base_known_children);
         let merged_child = if let Some(base_index) = base_index {
             let base_child = base_known_children[base_index]
                 .take()
@@ -286,7 +287,7 @@ fn merge_element(mut base: XmlElement, managed: XmlElement) -> XmlElement {
             }
             ChildLayoutSlot::KnownRepeated => {
                 if let Some(child) = take_matching_child(&mut merged_managed_children, |child| {
-                    is_repeated_child(&base.name, &child.name)
+                    is_repeated_child(parent_schema, &child.name)
                 }) {
                     merged_children.push(XmlNode::Element(child));
                 }
@@ -315,11 +316,7 @@ fn take_matching_child(
 }
 
 // Merges fixed schema fields without moving preserved fields around unknown content.
-fn merge_children_in_preserved_order(
-    parent: &str,
-    base: Vec<XmlNode>,
-    managed: Vec<XmlNode>,
-) -> Vec<XmlNode> {
+fn merge_children_in_preserved_order(base: Vec<XmlNode>, managed: Vec<XmlNode>) -> Vec<XmlNode> {
     let mut managed = managed
         .into_iter()
         .filter_map(|child| match child {
@@ -334,7 +331,7 @@ fn merge_children_in_preserved_order(
             merged.push(child);
             continue;
         };
-        if !is_known_child(parent, &base_child.name) {
+        if base_child.schema.is_none() {
             merged.push(XmlNode::Element(base_child));
             continue;
         }
@@ -355,7 +352,7 @@ fn merge_children_in_preserved_order(
 
 // Finds the preserved child that should be merged into a managed child.
 fn find_base_match(
-    parent: &str,
+    parent_schema: Option<XmlSchemaContext>,
     managed: &XmlElement,
     base: &[Option<XmlElement>],
 ) -> Option<usize> {
@@ -367,7 +364,7 @@ fn find_base_match(
             })
         });
     }
-    if is_repeated_child(parent, &managed.name) {
+    if is_repeated_child(parent_schema, &managed.name) {
         return None;
     }
     base.iter().position(|candidate| {
@@ -384,11 +381,20 @@ fn parse_document(xml: &str) -> Result<XmlElement, Error> {
     let mut reader = Reader::from_str(xml);
     loop {
         match reader.read_event()? {
-            Event::Start(start) => return parse_element(&mut reader, start.into_owned()),
+            Event::Start(start) => {
+                let start = start.into_owned();
+                let schema = (event_name(&start) == crate::entities::diagram::Diagram::XML_TAG)
+                    .then(crate::entities::diagram::Diagram::xml_schema);
+                return parse_element(&mut reader, start, schema);
+            }
             Event::Empty(start) => {
                 let start = start.into_owned();
+                let name = event_name(&start);
+                let schema = (name == crate::entities::diagram::Diagram::XML_TAG)
+                    .then(crate::entities::diagram::Diagram::xml_schema);
                 return Ok(XmlElement {
-                    name: event_name(&start),
+                    name,
+                    schema,
                     start,
                     end: None,
                     children: Vec::new(),
@@ -406,18 +412,27 @@ fn parse_document(xml: &str) -> Result<XmlElement, Error> {
 fn parse_element(
     reader: &mut Reader<&[u8]>,
     start: BytesStart<'static>,
+    schema: Option<XmlSchemaContext>,
 ) -> Result<XmlElement, Error> {
     let name = event_name(&start);
     let mut children = Vec::new();
     loop {
         match reader.read_event()? {
             Event::Start(child) => {
-                children.push(XmlNode::Element(parse_element(reader, child.into_owned())?));
+                let child = child.into_owned();
+                let child_schema = schema.and_then(|schema| schema.child(&event_name(&child)));
+                children.push(XmlNode::Element(parse_element(
+                    reader,
+                    child,
+                    child_schema,
+                )?));
             }
             Event::Empty(child) => {
                 let child = child.into_owned();
+                let child_name = event_name(&child);
                 children.push(XmlNode::Element(XmlElement {
-                    name: event_name(&child),
+                    schema: schema.and_then(|schema| schema.child(&child_name)),
+                    name: child_name,
                     start: child,
                     end: None,
                     children: Vec::new(),
@@ -427,6 +442,7 @@ fn parse_element(
             Event::End(end) => {
                 return Ok(XmlElement {
                     name,
+                    schema,
                     start,
                     end: Some(end.into_owned()),
                     children,
@@ -494,16 +510,11 @@ fn is_element(node: &XmlNode) -> bool {
 
 // Checks entity schema metadata for repeated children that require identity
 // matching.
-fn is_identity_child(parent: &str, tag: &str) -> bool {
-    crate::entities::diagram::Diagram::is_identity_child(parent, tag)
+fn is_identity_child(parent: Option<XmlSchemaContext>, tag: &str) -> bool {
+    parent.is_some_and(|schema| schema.is_identity_child(tag))
 }
 
 // Checks entity schema metadata for children serialized from a list.
-fn is_repeated_child(parent: &str, tag: &str) -> bool {
-    crate::entities::diagram::Diagram::is_repeated_child(parent, tag)
-}
-
-// Checks entity schema metadata for children owned by ERM serialization.
-fn is_known_child(parent: &str, tag: &str) -> bool {
-    crate::entities::diagram::Diagram::is_known_child(parent, tag)
+fn is_repeated_child(parent: Option<XmlSchemaContext>, tag: &str) -> bool {
+    parent.is_some_and(|schema| schema.is_repeated_child(tag))
 }
