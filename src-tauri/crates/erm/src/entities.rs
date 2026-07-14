@@ -8,6 +8,10 @@ pub trait XmlSchema {
 
     fn is_identity_child(parent: &str, tag: &str) -> bool;
 
+    fn is_repeated_child(_parent: &str, _tag: &str) -> bool {
+        false
+    }
+
     fn is_known_value_child(tag: &str) -> bool;
 
     fn is_identity_value_child(tag: &str) -> bool;
@@ -52,6 +56,10 @@ impl<T: XmlSchema> XmlSchema for Option<T> {
         T::is_identity_child(parent, tag)
     }
 
+    fn is_repeated_child(parent: &str, tag: &str) -> bool {
+        T::is_repeated_child(parent, tag)
+    }
+
     fn is_known_value_child(tag: &str) -> bool {
         T::is_known_value_child(tag)
     }
@@ -70,6 +78,10 @@ impl<T: XmlSchema> XmlSchema for Vec<T> {
 
     fn is_identity_child(parent: &str, tag: &str) -> bool {
         T::is_identity_child(parent, tag)
+    }
+
+    fn is_repeated_child(parent: &str, tag: &str) -> bool {
+        T::is_repeated_child(parent, tag)
     }
 
     fn is_known_value_child(tag: &str) -> bool {

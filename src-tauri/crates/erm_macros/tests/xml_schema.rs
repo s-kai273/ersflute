@@ -12,6 +12,10 @@ mod entities {
 
         fn is_identity_child(parent: &str, tag: &str) -> bool;
 
+        fn is_repeated_child(_parent: &str, _tag: &str) -> bool {
+            false
+        }
+
         fn is_known_value_child(tag: &str) -> bool;
 
         fn is_identity_value_child(tag: &str) -> bool;
@@ -48,6 +52,10 @@ mod entities {
             T::is_identity_child(parent, tag)
         }
 
+        fn is_repeated_child(parent: &str, tag: &str) -> bool {
+            T::is_repeated_child(parent, tag)
+        }
+
         fn is_known_value_child(tag: &str) -> bool {
             T::is_known_value_child(tag)
         }
@@ -66,6 +74,10 @@ mod entities {
 
         fn is_identity_child(parent: &str, tag: &str) -> bool {
             T::is_identity_child(parent, tag)
+        }
+
+        fn is_repeated_child(parent: &str, tag: &str) -> bool {
+            T::is_repeated_child(parent, tag)
         }
 
         fn is_known_value_child(tag: &str) -> bool {
@@ -94,6 +106,8 @@ struct Root {
 
     #[serde(rename = "skipped_child")]
     skipped_children: Vec<SkippedChild>,
+
+    optional_skipped_children: Option<Vec<SkippedChild>>,
 }
 
 #[derive(XmlSchema)]
@@ -169,4 +183,27 @@ fn value_vector_fields_use_enum_variant_tags_as_identity_children() {
 #[test]
 fn regular_vector_fields_are_not_identity_children() {
     assert!(!Root::is_identity_child("root", "skipped_child"));
+}
+
+#[test]
+fn vector_fields_are_repeated_children() {
+    assert!(Root::is_repeated_child("root", "skipped_child"));
+}
+
+#[test]
+fn optional_vector_fields_are_repeated_children() {
+    assert!(Root::is_repeated_child("root", "optional_skipped_children"));
+}
+
+#[test]
+fn value_vector_fields_use_enum_variant_tags_as_repeated_children() {
+    assert!(Root::is_repeated_child("root", "first_item"));
+    assert!(Root::is_repeated_child("root", "second_item"));
+    assert!(Root::is_repeated_child("root", "skipped_item"));
+}
+
+#[test]
+fn non_vector_fields_are_not_repeated_children() {
+    assert!(!Root::is_repeated_child("root", "visible_name"));
+    assert!(!Root::is_repeated_child("root", "renamed_child"));
 }

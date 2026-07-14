@@ -208,7 +208,7 @@ fn merge_element(mut base: XmlElement, managed: XmlElement) -> XmlElement {
     let follows_managed_order = base.children.iter().chain(&managed.children).any(|child| {
         matches!(
             child,
-            XmlNode::Element(element) if is_identity_child(&base.name, &element.name)
+            XmlNode::Element(element) if is_repeated_child(&base.name, &element.name)
         )
     });
     if !follows_managed_order {
@@ -320,7 +320,7 @@ fn find_base_match(
             })
         });
     }
-    if is_identity_child(parent, &managed.name) {
+    if is_repeated_child(parent, &managed.name) {
         return None;
     }
     base.iter().position(|candidate| {
@@ -449,6 +449,11 @@ fn is_element(node: &XmlNode) -> bool {
 // matching.
 fn is_identity_child(parent: &str, tag: &str) -> bool {
     crate::entities::diagram::Diagram::is_identity_child(parent, tag)
+}
+
+// Checks entity schema metadata for children serialized from a list.
+fn is_repeated_child(parent: &str, tag: &str) -> bool {
+    crate::entities::diagram::Diagram::is_repeated_child(parent, tag)
 }
 
 // Checks entity schema metadata for children owned by ERM serialization.

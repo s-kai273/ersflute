@@ -175,6 +175,56 @@ fn reordered_mixed_columns_are_saved_in_managed_order() {
 }
 
 #[test]
+fn removing_a_bendpoint_rebuilds_the_non_identity_list() {
+    let relationship = concat!(
+        "<relationship>",
+        "<name>RELATIONSHIP</name>",
+        "<source>table.TABLE</source>",
+        "<target>table.TABLE</target>",
+        "<bendpoint><relative>true</relative><x>11</x><y>12</y>",
+        "<unsupported>first</unsupported></bendpoint>",
+        "<bendpoint><relative>false</relative><x>21</x><y>22</y>",
+        "<unsupported>second</unsupported></bendpoint>",
+        "<fk_columns/>",
+        "<parent_cardinality>1</parent_cardinality>",
+        "<child_cardinality>0..n</child_cardinality>",
+        "<reference_for_pk>true</reference_for_pk>",
+        "</relationship>",
+    );
+    let source = diagram_with_tables(&[table("TABLE")
+        .replace(
+            "<connections/>",
+            &format!("<connections>{relationship}</connections>"),
+        )
+        .replace(
+            "<columns/>",
+            "<columns><normal_column><physical_name>ID</physical_name><primary_key>true</primary_key></normal_column></columns>",
+        )]);
+
+    let saved = open_edit_save(&source, "removed_bendpoint", |diagram| {
+        let bendpoints = diagram
+            .diagram_walkers
+            .as_mut()
+            .and_then(|walkers| walkers.tables.as_mut())
+            .and_then(|tables| tables.first_mut())
+            .and_then(|table| table.connections.relationships.as_mut())
+            .and_then(|relationships| relationships.first_mut())
+            .and_then(|relationship| relationship.bendpoints.as_mut())
+            .expect("missing bendpoints");
+
+        bendpoints.remove(0);
+    });
+
+    let relationship = compact_xml(&extract_element(&saved, "relationship"));
+    assert_eq!(relationship.matches("<bendpoint>").count(), 1);
+    assert!(
+        relationship
+            .contains("<bendpoint><relative>false</relative><x>21</x><y>22</y></bendpoint>")
+    );
+    assert!(!relationship.contains("<unsupported>"));
+}
+
+#[test]
 fn unknown_nested_elements_and_attributes_keep_their_positions() {
     let source = diagram_with_tables(&[table_with_extra(
         "OLD",
