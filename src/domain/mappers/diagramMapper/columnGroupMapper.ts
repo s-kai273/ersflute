@@ -9,9 +9,11 @@ export function mapColumnGroupsFromApi(
   return columnGroupResponses.map((columnGroup) => {
     const normalColumns = columnGroup.columns.normalColumns ?? [];
     return {
+      identityKey: columnGroup.identityKey,
       columnGroupName: columnGroup.columnGroupName,
       columns: normalColumns.map((column) => {
         return {
+          identityKey: column.identityKey,
           physicalName: column.physicalName,
           logicalName: column.logicalName,
           description: column.description,
@@ -31,6 +33,7 @@ export function mapColumnGroupsFromApi(
 
 function mapColumnGroupColumnToApi(column: Column) {
   return {
+    identityKey: column.identityKey,
     physicalName: column.physicalName,
     logicalName: column.logicalName,
     description: column.description,
@@ -49,6 +52,7 @@ export function mapColumnGroupsToApi(
   columnGroups: ColumnGroup[],
 ): ColumnGroupResponse[] {
   return columnGroups.map((columnGroup) => ({
+    identityKey: columnGroup.identityKey,
     columnGroupName: columnGroup.columnGroupName,
     columns: {
       normalColumns: columnGroup.columns.map(mapColumnGroupColumnToApi),

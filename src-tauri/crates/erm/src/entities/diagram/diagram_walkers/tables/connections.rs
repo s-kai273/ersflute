@@ -1,6 +1,7 @@
+use crate::entities::XmlSchema;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, XmlSchema)]
 pub enum OnAction {
     Restrict,
     Cascade,
@@ -51,7 +52,7 @@ impl<'de> Deserialize<'de> for OnAction {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub enum ParentCardinality {
     #[serde(rename = "1")]
     One,
@@ -68,7 +69,7 @@ impl ParentCardinality {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub enum ChildCardinality {
     #[serde(rename = "1..n")]
     OneOrMore,
@@ -91,25 +92,25 @@ impl ChildCardinality {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct Bendpoint {
     pub relative: bool,
     pub x: u16,
     pub y: u16,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct FkColumn {
     pub fk_column_name: String,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default, XmlSchema)]
 pub struct FkColumns {
     #[serde(default)]
     pub fk_column: Vec<FkColumn>,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct Relationship {
     pub name: String,
 
@@ -142,9 +143,10 @@ pub struct Relationship {
     pub referred_compound_unique_key: Option<String>,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default, XmlSchema)]
 pub struct Connections {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "relationship")]
+    #[xml_identity]
     pub relationships: Option<Vec<Relationship>>,
 }

@@ -3,10 +3,13 @@
 ## General
 
 - Write all code in English, including tests.
+
+## TypeScript
+
 - Fix all ESLint syntax errors and warnings before completing any task.
 - Avoid using `useMemo` and `useCallback` by default; use them only when there is a clear, meaningful performance benefit.
 
-## Component Directory Structure
+### Component Directory Structure
 
 Place each component in its own directory.
 A typical structure should look like:
@@ -18,9 +21,9 @@ component_name/
   // other files (e.g., hooks, styles, tests)
 ```
 
-## Tests
+### Tests
 
-### General
+#### General
 
 - Do not write tests for code that is excluded from `collectCoverageFrom` in `jest.config.ts`.
   For example, files under `src/features/**/adapters/` are excluded unless they are explicitly re-included there.
@@ -42,7 +45,7 @@ component_name/
   If a test requires another user interaction after an assertion, it should be split into a separate test case.
   Each test is expected to represent one coherent user scenario, expressed through its structure rather than explanatory comments.
 
-### Testing library
+#### Testing library
 
 - Avoid selecting elements by passing `id` values to `getByLabelText`.
   Prefer user-facing attributes such as roles, labels, and visible text rather than internal implementation details.
@@ -54,3 +57,12 @@ component_name/
 - Avoid using DOM navigation helpers such as `closest`.
   These patterns depend on non-user-visible implementation details and conflict with Testing Library’s user-centric approach.
   Use them only when no accessible queries or user-facing selectors are viable.
+
+## Rust
+
+### Tests
+
+- Define Rust test code under the crate's `tests/` directory.
+  Do not place Rust test modules under `src/` unless there is a specific reason to test private implementation details.
+
+- Behavior available through public crate APIs should be tested from `tests/`.

@@ -1,11 +1,13 @@
+import type { Identified } from "../identified";
+
 type Column = {
   columnId: string;
 };
 
-type CompoundUniqueKey = {
+type CompoundUniqueKey = Identified<{
   name: string;
   columns: Column[];
-};
+}>;
 
 export type CompoundUniqueKeyList = {
   compoundUniqueKeys?: CompoundUniqueKey[];

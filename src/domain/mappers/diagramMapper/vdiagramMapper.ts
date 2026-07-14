@@ -6,10 +6,12 @@ export function mapVDiagramsFromApi(
 ): VirtualDiagram[] {
   return vdiagramResponses.map((vdiagram) => {
     return {
+      identityKey: vdiagram.identityKey,
       vdiagramName: vdiagram.vdiagramName,
       color: vdiagram.color,
       vtables: (vdiagram.vtables ?? []).map((vtable) => {
         return {
+          identityKey: vtable.identityKey,
           tableId: vtable.tableId,
           x: vtable.x,
           y: vtable.y,
@@ -27,9 +29,11 @@ export function mapVDiagramsToApi(
   vdiagrams: VirtualDiagram[],
 ): VDiagramResponse[] {
   return vdiagrams.map((vdiagram) => ({
+    identityKey: vdiagram.identityKey,
     vdiagramName: vdiagram.vdiagramName,
     color: vdiagram.color,
     vtables: vdiagram.vtables?.map((vtable) => ({
+      identityKey: vtable.identityKey,
       tableId: vtable.tableId,
       x: vtable.x,
       y: vtable.y,

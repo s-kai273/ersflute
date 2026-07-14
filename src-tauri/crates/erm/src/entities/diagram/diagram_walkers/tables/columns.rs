@@ -1,8 +1,9 @@
 use crate::column_type::ColumnType;
+use crate::entities::XmlSchema;
 use serde::de::IntoDeserializer;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default, XmlSchema)]
 pub struct NormalColumn {
     pub physical_name: String,
 
@@ -51,16 +52,17 @@ pub struct NormalColumn {
     pub relationship: Option<String>,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub enum ColumnItem {
     #[serde(rename = "normal_column")]
+    #[xml_identity]
     Normal(NormalColumn),
 
     #[serde(rename = "column_group")]
     Group(String),
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct Columns {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde(rename = "$value")]

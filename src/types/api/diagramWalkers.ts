@@ -1,4 +1,5 @@
 import type { Cardinality, ReferenceOperation } from "../domain/relationship";
+import type { Identified } from "../identified";
 import type { CompoundUniqueKeyList } from "./compoundUniqueKeyList";
 import type { Indexes } from "./indexes";
 
@@ -22,7 +23,7 @@ type Bendpoint = {
   y: number;
 };
 
-type Relationship = {
+type Relationship = Identified<{
   name: string;
   source: string;
   target: string;
@@ -35,13 +36,13 @@ type Relationship = {
   onUpdateAction?: ReferenceOperation;
   referredSimpleUniqueColumn?: string;
   referredCompoundUniqueKey?: string;
-};
+}>;
 
 type Connections = {
   relationships: Relationship[];
 };
 
-export type NormalColumn = {
+export type NormalColumn = Identified<{
   physicalName: string;
   logicalName?: string;
   description?: string;
@@ -57,13 +58,13 @@ export type NormalColumn = {
   autoIncrement?: boolean;
   referredColumn?: string;
   relationship?: string;
-};
+}>;
 
 type Columns = {
   items?: (NormalColumn | string)[];
 };
 
-export type TableResponse = {
+export type TableResponse = Identified<{
   physicalName: string;
   logicalName: string;
   description: string;
@@ -81,7 +82,7 @@ export type TableResponse = {
   columns: Columns;
   indexes?: Indexes;
   compoundUniqueKeyList: CompoundUniqueKeyList;
-};
+}>;
 
 export type DiagramWalkersResponse = {
   tables?: TableResponse[];

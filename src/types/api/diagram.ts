@@ -4,6 +4,7 @@ import type { DiagramWalkersResponse } from "./diagramWalkers";
 import type { VDiagramResponse } from "./vdiagrams";
 
 export type DiagramResponse = {
+  identityKey?: string;
   preservedXml?: string;
   diagramSettings?: DiagramSettingsResponse;
   diagramWalkers?: DiagramWalkersResponse;

@@ -3,23 +3,24 @@ pub mod compound_unique_key_list;
 pub mod connections;
 pub mod indexes;
 
+use crate::entities::XmlSchema;
 use columns::Columns;
 use compound_unique_key_list::CompoundUniqueKeyList;
 use connections::Connections;
 use indexes::Indexes;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct Color {
     pub r: u8,
     pub g: u8,
     pub b: u8,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct TableProperties {}
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, XmlSchema)]
 pub struct Table {
     pub physical_name: String,
 

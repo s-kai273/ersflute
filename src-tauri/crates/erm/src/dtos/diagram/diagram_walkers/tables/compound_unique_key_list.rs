@@ -1,8 +1,10 @@
+use crate::dtos::{Identified, identified_from_entity, identified_into_entity};
 use crate::entities::diagram::diagram_walkers::tables::compound_unique_key_list as entities;
+use crate::identity::VisitIdentified;
 use crate::validation::Validate;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct Column {
     pub column_id: String,
@@ -24,7 +26,7 @@ impl From<Column> for entities::Column {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct CompoundUniqueKey {
     pub name: String,
@@ -51,11 +53,11 @@ impl From<CompoundUniqueKey> for entities::CompoundUniqueKey {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct CompoundUniqueKeyList {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub compound_unique_keys: Option<Vec<CompoundUniqueKey>>,
+    pub compound_unique_keys: Option<Vec<Identified<CompoundUniqueKey>>>,
 }
 
 impl From<entities::CompoundUniqueKeyList> for CompoundUniqueKeyList {
@@ -63,7 +65,7 @@ impl From<entities::CompoundUniqueKeyList> for CompoundUniqueKeyList {
         Self {
             compound_unique_keys: entity
                 .compound_unique_keys
-                .map(|v| v.into_iter().map(Into::into).collect()),
+                .map(|v| v.into_iter().map(identified_from_entity).collect()),
         }
     }
 }
@@ -73,7 +75,7 @@ impl From<CompoundUniqueKeyList> for entities::CompoundUniqueKeyList {
         Self {
             compound_unique_keys: dto
                 .compound_unique_keys
-                .map(|v| v.into_iter().map(Into::into).collect()),
+                .map(|v| v.into_iter().map(identified_into_entity).collect()),
         }
     }
 }

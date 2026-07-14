@@ -8,6 +8,7 @@ it("maps table attributes and columns to API values", () => {
     settings: defaultSettings,
     tables: [
       {
+        identityKey: "table-members",
         x: 10,
         y: 20,
         width: 240,
@@ -23,6 +24,7 @@ it("maps table attributes and columns to API values", () => {
         option: "table option",
         columns: [
           {
+            identityKey: "column-member-id",
             physicalName: "MEMBER_ID",
             logicalName: "Member ID",
             description: "Identifier",
@@ -40,6 +42,7 @@ it("maps table attributes and columns to API values", () => {
         ],
         indexes: [
           {
+            identityKey: "index-member-name",
             name: "IDX_MEMBER_NAME",
             indexType: "BTREE",
             description: "Name lookup",
@@ -50,6 +53,7 @@ it("maps table attributes and columns to API values", () => {
         ],
         compoundUniqueKeys: [
           {
+            identityKey: "unique-member-name",
             name: "UK_MEMBER_NAME",
             columns: ["MEMBER_NAME", "MEMBER_STATUS_CODE"],
           },
@@ -62,6 +66,7 @@ it("maps table attributes and columns to API values", () => {
   });
 
   expect(result.diagramWalkers?.tables?.[0]).toMatchObject({
+    identityKey: "table-members",
     physicalName: "MEMBERS",
     logicalName: "Members",
     description: "Member table",
@@ -79,6 +84,7 @@ it("maps table attributes and columns to API values", () => {
     columns: {
       items: [
         {
+          identityKey: "column-member-id",
           physicalName: "MEMBER_ID",
           logicalName: "Member ID",
           description: "Identifier",
@@ -97,6 +103,7 @@ it("maps table attributes and columns to API values", () => {
     },
     indexes: [
       {
+        identityKey: "index-member-name",
         name: "IDX_MEMBER_NAME",
         indexType: "BTREE",
         description: "Name lookup",
@@ -108,6 +115,7 @@ it("maps table attributes and columns to API values", () => {
     compoundUniqueKeyList: {
       compoundUniqueKeys: [
         {
+          identityKey: "unique-member-name",
           name: "UK_MEMBER_NAME",
           columns: [
             { columnId: "MEMBER_NAME" },
@@ -148,6 +156,7 @@ it("places relationships on their target API table", () => {
     ],
     relationships: [
       {
+        identityKey: "relationship-purchase-member",
         name: "FK_PURCHASE_MEMBER",
         source: "table.MEMBERS",
         target: "table.PURCHASES",
@@ -166,6 +175,7 @@ it("places relationships on their target API table", () => {
 
   expect(result.diagramWalkers?.tables?.[1].connections.relationships).toEqual([
     {
+      identityKey: "relationship-purchase-member",
       name: "FK_PURCHASE_MEMBER",
       source: "table.MEMBERS",
       target: "table.PURCHASES",

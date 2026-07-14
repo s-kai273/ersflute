@@ -1,8 +1,9 @@
 use crate::entities::diagram::diagram_settings as entities;
+use crate::identity::VisitIdentified;
 use crate::validation::Validate;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct DiagramSettings {
     pub database: String,

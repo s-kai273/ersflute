@@ -21,21 +21,6 @@ fn writes_diagram_xml_as_snapshot() {
 
 const EXPECTED_DIAGRAM_XML: &str = include_str!("./fixtures/write_snapshot.erm");
 
-#[test]
-fn saving_without_preserved_xml_is_rejected() {
-    let mut diagram = support::minimal_diagram();
-    diagram.preserved_xml = None;
-    let path = temp_file_path();
-
-    let error = save(path.to_str().expect("invalid temp path"), diagram)
-        .expect_err("saving without preserved XML should fail");
-
-    assert_eq!(
-        error.to_string(),
-        "preserved XML is required to save a diagram"
-    );
-}
-
 fn temp_file_path() -> std::path::PathBuf {
     std::env::temp_dir().join(format!("erm_write_{}_snapshot.erm", std::process::id()))
 }

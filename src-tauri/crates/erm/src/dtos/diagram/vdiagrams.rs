@@ -1,11 +1,13 @@
 pub mod vtables;
 
+use crate::dtos::{Identified, identified_from_entity, identified_into_entity};
 use crate::entities::diagram::vdiagrams as entities;
+use crate::identity::VisitIdentified;
 use crate::validation::Validate;
 use serde::{Deserialize, Serialize};
-use vtables::VTable;
+use vtables::Vtable;
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct Color {
     pub r: u8,
@@ -33,7 +35,7 @@ impl From<Color> for entities::Color {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct WalkerNotes {}
 
@@ -49,7 +51,7 @@ impl From<WalkerNotes> for entities::WalkerNotes {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct WalkerGroups {}
 
@@ -65,42 +67,44 @@ impl From<WalkerGroups> for entities::WalkerGroups {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
-pub struct VDiagram {
+pub struct Vdiagram {
     pub vdiagram_name: String,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub color: Option<Color>,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub vtables: Option<Vec<VTable>>,
+    pub vtables: Option<Vec<Identified<Vtable>>>,
     pub walker_notes: WalkerNotes,
     pub walker_groups: WalkerGroups,
 }
 
-impl From<entities::VDiagram> for VDiagram {
-    fn from(entity: entities::VDiagram) -> Self {
+impl From<entities::Vdiagram> for Vdiagram {
+    fn from(entity: entities::Vdiagram) -> Self {
         Self {
             vdiagram_name: entity.vdiagram_name,
             color: entity.color.map(Into::into),
             vtables: entity
                 .vtables
                 .vtables
-                .map(|v| v.into_iter().map(Into::into).collect()),
+                .map(|v| v.into_iter().map(identified_from_entity).collect()),
             walker_notes: entity.walker_notes.into(),
             walker_groups: entity.walker_groups.into(),
         }
     }
 }
 
-impl From<VDiagram> for entities::VDiagram {
-    fn from(dto: VDiagram) -> Self {
+impl From<Vdiagram> for entities::Vdiagram {
+    fn from(dto: Vdiagram) -> Self {
         Self {
             vdiagram_name: dto.vdiagram_name,
             color: dto.color.map(Into::into),
-            vtables: entities::vtables::VTables {
-                vtables: dto.vtables.map(|v| v.into_iter().map(Into::into).collect()),
+            vtables: entities::vtables::Vtables {
+                vtables: dto
+                    .vtables
+                    .map(|v| v.into_iter().map(identified_into_entity).collect()),
             },
             walker_notes: dto.walker_notes.into(),
             walker_groups: dto.walker_groups.into(),

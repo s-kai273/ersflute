@@ -12,12 +12,26 @@ const ASSERTIONS: support::FixtureAssertions =
 
 #[test]
 fn vdiagrams_tags_keep_valid_values() {
-    let diagram = open(VDIAGRAMS_FIXTURE).expect("failed to parse");
+    let mut diagram = open(VDIAGRAMS_FIXTURE).expect("failed to parse");
+    let opened_vdiagrams = diagram.vdiagrams.as_ref().expect("missing vdiagrams");
+    assert!(
+        opened_vdiagrams
+            .iter()
+            .all(|vdiagram| vdiagram.identity_key.is_some())
+    );
+    assert!(opened_vdiagrams.iter().all(|vdiagram| {
+        vdiagram
+            .vtables
+            .iter()
+            .flatten()
+            .all(|vtable| vtable.identity_key.is_some())
+    }));
+    support::clear_identity_keys(&mut diagram);
 
     assert_eq!(
         diagram.vdiagrams,
         Some(vec![
-            vdiagrams::VDiagram {
+            vdiagrams::Vdiagram {
                 vdiagram_name: "main".to_string(),
                 color: Some(vdiagrams::Color {
                     r: 64,
@@ -25,31 +39,35 @@ fn vdiagrams_tags_keep_valid_values() {
                     b: 192,
                 }),
                 vtables: Some(vec![
-                    vdiagrams::vtables::VTable {
+                    vdiagrams::vtables::Vtable {
                         table_id: "table.MEMBERS".to_string(),
                         x: 160,
                         y: 106,
                         font_name: "Ubuntu".to_string(),
                         font_size: 9,
-                    },
-                    vdiagrams::vtables::VTable {
+                    }
+                    .into(),
+                    vdiagrams::vtables::Vtable {
                         table_id: "table.MEMBER_STATUS".to_string(),
                         x: 400,
                         y: 120,
                         font_name: "Ubuntu".to_string(),
                         font_size: 10,
-                    },
+                    }
+                    .into(),
                 ]),
                 walker_notes: vdiagrams::WalkerNotes {},
                 walker_groups: vdiagrams::WalkerGroups {},
-            },
-            vdiagrams::VDiagram {
+            }
+            .into(),
+            vdiagrams::Vdiagram {
                 vdiagram_name: "empty".to_string(),
                 color: None,
                 vtables: None,
                 walker_notes: vdiagrams::WalkerNotes {},
                 walker_groups: vdiagrams::WalkerGroups {},
-            },
+            }
+            .into(),
         ])
     );
 }

@@ -1,6 +1,7 @@
 import type { ColumnType } from "./columnType";
+import type { Identified } from "../identified";
 
-export type Column = {
+export type Column = Identified<{
   physicalName: string;
   logicalName?: string;
   description?: string;
@@ -16,4 +17,4 @@ export type Column = {
   referredColumn?: string;
   relationship?: string;
   enumArgs?: string;
-};
+}>;

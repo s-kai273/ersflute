@@ -12,7 +12,25 @@ const ASSERTIONS: support::FixtureAssertions =
 
 #[test]
 fn column_groups_tags_keep_valid_values() {
-    let diagram = open(COLUMN_GROUPS_FIXTURE).expect("failed to parse");
+    let mut diagram = open(COLUMN_GROUPS_FIXTURE).expect("failed to parse");
+    let opened_groups = diagram
+        .column_groups
+        .as_ref()
+        .expect("missing column groups");
+    assert!(
+        opened_groups
+            .iter()
+            .all(|group| group.identity_key.is_some())
+    );
+    assert!(opened_groups.iter().all(|group| {
+        group
+            .columns
+            .normal_columns
+            .iter()
+            .flatten()
+            .all(|column| column.identity_key.is_some())
+    }));
+    support::clear_identity_keys(&mut diagram);
 
     assert_eq!(
         diagram.column_groups,
@@ -33,21 +51,25 @@ fn column_groups_tags_keep_valid_values() {
                             unique_key: Some(false),
                             unsigned: Some(false),
                             default_value: Some("CURRENT_TIMESTAMP".to_string()),
-                        },
+                        }
+                        .into(),
                         column_groups::NormalColumn {
                             physical_name: "UPDATED_BY".to_string(),
                             column_type: column_groups::ColumnType::BigInt,
                             ..Default::default()
-                        },
+                        }
+                        .into(),
                     ]),
                 },
-            },
+            }
+            .into(),
             column_groups::ColumnGroup {
                 column_group_name: "AUDIT".to_string(),
                 columns: column_groups::Columns {
                     normal_columns: None,
                 },
-            },
+            }
+            .into(),
         ])
     );
 }

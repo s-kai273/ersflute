@@ -1,4 +1,5 @@
 import type { Column } from "./column";
+import type { Identified } from "../identified";
 
 export type ColumnGroupName = string;
 
@@ -19,21 +20,21 @@ export type IndexColumn = {
   desc?: boolean;
 };
 
-export type Index = {
+export type Index = Identified<{
   name: string;
   indexType: string;
   description?: string;
   fullText?: boolean;
   nonUnique?: boolean;
   columns: IndexColumn[];
-};
+}>;
 
-export type CompoundUniqueKey = {
+export type CompoundUniqueKey = Identified<{
   name: string;
   columns: string[];
-};
+}>;
 
-export type Table = {
+export type Table = Identified<{
   color: Color;
   x: number;
   y: number;
@@ -50,4 +51,4 @@ export type Table = {
   columns?: (Column | ColumnGroupName)[];
   indexes?: Index[];
   compoundUniqueKeys?: CompoundUniqueKey[];
-};
+}>;

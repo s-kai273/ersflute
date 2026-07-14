@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<diagram><diagram_settings><database>MySQL</database><view_mode>1</view_mode></diagram_settings></diagram>
+<diagram>
+	<diagram_settings>
+		<database>MySQL</database>
+		<view_mode>1</view_mode>
+	</diagram_settings>
+</diagram>

@@ -10,7 +10,8 @@ pub(super) const DIAGRAM_WALKERS_DETAILS_FIXTURE: &str =
 const TEMP_PREFIX: &str = "erm_diagram_walkers_details";
 
 pub(super) fn first_table() -> tables::Table {
-    let diagram = open(DIAGRAM_WALKERS_DETAILS_FIXTURE).expect("failed to parse");
+    let mut diagram = open(DIAGRAM_WALKERS_DETAILS_FIXTURE).expect("failed to parse");
+    diagram_support::clear_identity_keys(&mut diagram);
     diagram
         .diagram_walkers
         .expect("missing diagram walkers")
@@ -19,6 +20,7 @@ pub(super) fn first_table() -> tables::Table {
         .into_iter()
         .next()
         .expect("missing table")
+        .into_inner()
 }
 
 pub(super) fn assert_replaced_fixture_parse_error(

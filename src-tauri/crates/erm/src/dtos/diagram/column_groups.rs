@@ -1,10 +1,12 @@
 pub use crate::column_type::ColumnType;
 
+use crate::dtos::{Identified, identified_from_entity, identified_into_entity};
 use crate::entities::diagram::column_groups as entities;
+use crate::identity::VisitIdentified;
 use crate::validation::Validate;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct NormalColumn {
     pub physical_name: String,
@@ -75,11 +77,11 @@ impl From<NormalColumn> for entities::NormalColumn {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct Columns {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub normal_columns: Option<Vec<NormalColumn>>,
+    pub normal_columns: Option<Vec<Identified<NormalColumn>>>,
 }
 
 impl From<entities::Columns> for Columns {
@@ -87,7 +89,7 @@ impl From<entities::Columns> for Columns {
         Self {
             normal_columns: entity
                 .normal_columns
-                .map(|v| v.into_iter().map(Into::into).collect()),
+                .map(|v| v.into_iter().map(identified_from_entity).collect()),
         }
     }
 }
@@ -97,12 +99,12 @@ impl From<Columns> for entities::Columns {
         Self {
             normal_columns: dto
                 .normal_columns
-                .map(|v| v.into_iter().map(Into::into).collect()),
+                .map(|v| v.into_iter().map(identified_into_entity).collect()),
         }
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct ColumnGroup {
     pub column_group_name: String,

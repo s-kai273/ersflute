@@ -9,12 +9,12 @@ fn vdiagrams_tags_are_serialized() {
     let mut diagram = support::minimal_diagram();
     diagram.diagram_walkers = Some(diagram_walkers::DiagramWalkers {
         tables: Some(vec![
-            table("MEMBERS", 160, 106),
-            table("MEMBER_STATUS", 400, 120),
+            table("MEMBERS", 160, 106).into(),
+            table("MEMBER_STATUS", 400, 120).into(),
         ]),
     });
     diagram.vdiagrams = Some(vec![
-        vdiagrams::VDiagram {
+        vdiagrams::Vdiagram {
             vdiagram_name: "main".to_string(),
             color: Some(vdiagrams::Color {
                 r: 64,
@@ -22,31 +22,35 @@ fn vdiagrams_tags_are_serialized() {
                 b: 192,
             }),
             vtables: Some(vec![
-                vdiagrams::vtables::VTable {
+                vdiagrams::vtables::Vtable {
                     table_id: "table.MEMBERS".to_string(),
                     x: 160,
                     y: 106,
                     font_name: "Ubuntu".to_string(),
                     font_size: 9,
-                },
-                vdiagrams::vtables::VTable {
+                }
+                .into(),
+                vdiagrams::vtables::Vtable {
                     table_id: "table.MEMBER_STATUS".to_string(),
                     x: 400,
                     y: 120,
                     font_name: "Ubuntu".to_string(),
                     font_size: 10,
-                },
+                }
+                .into(),
             ]),
             walker_notes: vdiagrams::WalkerNotes {},
             walker_groups: vdiagrams::WalkerGroups {},
-        },
-        vdiagrams::VDiagram {
+        }
+        .into(),
+        vdiagrams::Vdiagram {
             vdiagram_name: "empty".to_string(),
             color: None,
             vtables: None,
             walker_notes: vdiagrams::WalkerNotes {},
             walker_groups: vdiagrams::WalkerGroups {},
-        },
+        }
+        .into(),
     ]);
 
     support::assert_serialized_element(

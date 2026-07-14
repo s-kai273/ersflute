@@ -47,6 +47,7 @@ it("maps API relationships that reference a primary key", () => {
           connections: {
             relationships: [
               {
+                identityKey: "relationship-user-comments",
                 name: "user_comments",
                 source: "table.users",
                 target: "table.comments",
@@ -66,6 +67,7 @@ it("maps API relationships that reference a primary key", () => {
 
   expect(result.relationships).toEqual([
     {
+      identityKey: "relationship-user-comments",
       name: "user_comments",
       source: "table.users",
       target: "table.comments",

@@ -13,7 +13,8 @@ const ASSERTIONS: support::FixtureAssertions =
 
 #[test]
 fn diagram_walkers_table_tags_keep_valid_values() {
-    let diagram = open(DIAGRAM_WALKERS_FIXTURE).expect("failed to parse");
+    let mut diagram = open(DIAGRAM_WALKERS_FIXTURE).expect("failed to parse");
+    support::clear_identity_keys(&mut diagram);
     let diagram_walkers = diagram.diagram_walkers.expect("missing diagram walkers");
     let tables = diagram_walkers.tables.expect("missing tables");
 
@@ -47,7 +48,8 @@ fn diagram_walkers_table_tags_keep_valid_values() {
                         physical_name: "MEMBER_ID".to_string(),
                         primary_key: Some(true),
                         ..Default::default()
-                    },
+                    }
+                    .into(),
                 )]),
             },
             indexes: None,
@@ -55,6 +57,7 @@ fn diagram_walkers_table_tags_keep_valid_values() {
                 compound_unique_keys: None,
             },
         }
+        .into()
     );
     assert_eq!(
         tables[1],
@@ -85,6 +88,7 @@ fn diagram_walkers_table_tags_keep_valid_values() {
                 compound_unique_keys: None,
             },
         }
+        .into()
     );
 }
 

@@ -5,7 +5,7 @@ use pretty_assertions::assert_eq;
 use erm::dtos::diagram;
 use erm::dtos::diagram::Diagram;
 use erm::dtos::diagram::diagram_settings;
-use erm::save;
+use erm::{open, save};
 
 pub(crate) fn save_diagram_to_string(diagram: Diagram, test_name: &str) -> String {
     let path = temp_file_path(test_name);
@@ -18,6 +18,18 @@ pub(crate) fn save_diagram_to_string(diagram: Diagram, test_name: &str) -> Strin
     content
 }
 
+pub(crate) fn save_and_reopen_diagram(diagram: Diagram, test_name: &str) -> (String, Diagram) {
+    let path = temp_file_path(test_name);
+
+    save(path.to_str().expect("invalid temp path"), diagram).expect("failed to write");
+
+    let content = fs::read_to_string(&path).expect("failed to read written file");
+    let reopened = open(path.to_str().expect("invalid temp path")).expect("failed to reopen");
+    fs::remove_file(&path).expect("failed to remove temp file");
+
+    (content, reopened)
+}
+
 pub(crate) fn assert_serialized_element(
     diagram: Diagram,
     test_name: &str,
@@ -27,8 +39,8 @@ pub(crate) fn assert_serialized_element(
     let content = save_diagram_to_string(diagram, test_name);
 
     assert_eq!(
-        extract_element(&content, tag_name),
-        extract_element(expected, tag_name)
+        compact_xml(&extract_element(&content, tag_name)),
+        compact_xml(&extract_element(expected, tag_name))
     );
 }
 
@@ -49,6 +61,14 @@ pub(crate) fn extract_element(content: &str, tag_name: &str) -> String {
         .expect("failed to find element end");
 
     content[start..end].to_string()
+}
+
+pub(crate) fn compact_xml(content: &str) -> String {
+    content
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.is_empty())
+        .collect::<String>()
 }
 
 pub(crate) fn minimal_diagram() -> diagram::Diagram {

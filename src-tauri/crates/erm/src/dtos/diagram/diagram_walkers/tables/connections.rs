@@ -2,11 +2,13 @@ pub use crate::entities::diagram::diagram_walkers::tables::connections::{
     ChildCardinality, OnAction, ParentCardinality,
 };
 
+use crate::dtos::{Identified, identified_from_entity, identified_into_entity};
 use crate::entities::diagram::diagram_walkers::tables::connections as entities;
+use crate::identity::VisitIdentified;
 use crate::validation::Validate;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct Bendpoint {
     pub relative: bool,
@@ -34,7 +36,7 @@ impl From<Bendpoint> for entities::Bendpoint {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct FkColumn {
     pub fk_column_name: String,
@@ -56,7 +58,7 @@ impl From<FkColumn> for entities::FkColumn {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct FkColumns {
     #[serde(default)]
@@ -79,7 +81,7 @@ impl From<FkColumns> for entities::FkColumns {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct Relationship {
     pub name: String,
@@ -154,11 +156,11 @@ impl From<Relationship> for entities::Relationship {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Default, Validate, VisitIdentified)]
 #[serde(rename_all = "camelCase")]
 pub struct Connections {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub relationships: Option<Vec<Relationship>>,
+    pub relationships: Option<Vec<Identified<Relationship>>>,
 }
 
 impl From<entities::Connections> for Connections {
@@ -166,7 +168,7 @@ impl From<entities::Connections> for Connections {
         Self {
             relationships: entity
                 .relationships
-                .map(|v| v.into_iter().map(Into::into).collect()),
+                .map(|v| v.into_iter().map(identified_from_entity).collect()),
         }
     }
 }
@@ -176,7 +178,7 @@ impl From<Connections> for entities::Connections {
         Self {
             relationships: dto
                 .relationships
-                .map(|v| v.into_iter().map(Into::into).collect()),
+                .map(|v| v.into_iter().map(identified_into_entity).collect()),
         }
     }
 }

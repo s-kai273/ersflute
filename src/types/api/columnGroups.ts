@@ -1,4 +1,6 @@
-type NormalColumn = {
+import type { Identified } from "../identified";
+
+type NormalColumn = Identified<{
   physicalName: string;
   logicalName?: string;
   description?: string;
@@ -10,16 +12,16 @@ type NormalColumn = {
   uniqueKey?: boolean;
   unsigned?: boolean;
   defaultValue?: string;
-};
+}>;
 
 type Columns = {
   normalColumns?: NormalColumn[];
 };
 
-export type ColumnGroupResponse = {
+export type ColumnGroupResponse = Identified<{
   columnGroupName: string;
   columns: Columns;
-};
+}>;
 
 export type ColumnGroupsResponse = {
   columnGroups?: ColumnGroupResponse[];

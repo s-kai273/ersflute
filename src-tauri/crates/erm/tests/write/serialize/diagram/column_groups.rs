@@ -22,21 +22,25 @@ fn column_groups_tags_are_serialized() {
                         unique_key: Some(false),
                         unsigned: Some(false),
                         default_value: Some("CURRENT_TIMESTAMP".to_string()),
-                    },
+                    }
+                    .into(),
                     column_groups::NormalColumn {
                         physical_name: "UPDATED_BY".to_string(),
                         column_type: column_groups::ColumnType::BigInt,
                         ..Default::default()
-                    },
+                    }
+                    .into(),
                 ]),
             },
-        },
+        }
+        .into(),
         column_groups::ColumnGroup {
             column_group_name: "AUDIT".to_string(),
             columns: column_groups::Columns {
                 normal_columns: None,
             },
-        },
+        }
+        .into(),
     ]);
 
     support::assert_serialized_element(

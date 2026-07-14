@@ -6,10 +6,12 @@ it("maps column groups from API values", () => {
   const result = mapDiagramFromApi({
     columnGroups: [
       {
+        identityKey: "column-group-audit",
         columnGroupName: "Audit",
         columns: {
           normalColumns: [
             {
+              identityKey: "column-registered-at",
               physicalName: "registered_at",
               logicalName: "Registered at",
               description: "Registration timestamp",
@@ -30,9 +32,11 @@ it("maps column groups from API values", () => {
 
   expect(result.columnGroups).toEqual([
     {
+      identityKey: "column-group-audit",
       columnGroupName: "Audit",
       columns: [
         {
+          identityKey: "column-registered-at",
           physicalName: "registered_at",
           logicalName: "Registered at",
           description: "Registration timestamp",
@@ -57,9 +61,11 @@ it("maps column groups to API values", () => {
     relationships: [],
     columnGroups: [
       {
+        identityKey: "column-group-audit",
         columnGroupName: "Audit",
         columns: [
           {
+            identityKey: "column-registered-at",
             physicalName: "registered_at",
             logicalName: "Registered at",
             description: "Registration timestamp",
@@ -80,10 +86,12 @@ it("maps column groups to API values", () => {
 
   expect(result.columnGroups).toEqual([
     {
+      identityKey: "column-group-audit",
       columnGroupName: "Audit",
       columns: {
         normalColumns: [
           {
+            identityKey: "column-registered-at",
             physicalName: "registered_at",
             logicalName: "Registered at",
             description: "Registration timestamp",

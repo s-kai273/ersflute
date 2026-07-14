@@ -316,7 +316,7 @@ fn normal_columns(table: &Table) -> impl Iterator<Item = (usize, &NormalColumn)>
         .iter()
         .flat_map(|items| items.iter().enumerate())
         .filter_map(|(index, item)| match item {
-            ColumnItem::Normal(column) => Some((index, column)),
+            ColumnItem::Normal(column) => Some((index, column.as_ref())),
             ColumnItem::Group(_) => None,
         })
 }
@@ -338,6 +338,7 @@ fn find_relationship<'a>(
         .iter()
         .flatten()
         .find(|relationship| relationship.name == relationship_name)
+        .map(AsRef::as_ref)
 }
 
 fn table_reference_name(reference: &str) -> Option<&str> {
