@@ -28,6 +28,16 @@ enum XmlNode {
     Raw(Vec<u8>),
 }
 
+// Describes how each child position in the source XML is refilled after merge.
+enum ChildLayoutSlot {
+    // Schema-unknown elements and raw XML remain at their source position.
+    Unknown(XmlNode),
+    // Only a managed non-repeated child with this tag can fill the position.
+    KnownSingle { tag: String },
+    // The next managed repeated child fills the position in managed order.
+    KnownRepeated,
+}
+
 #[derive(Clone)]
 struct XmlElement {
     name: String,
@@ -218,15 +228,22 @@ fn merge_element(mut base: XmlElement, managed: XmlElement) -> XmlElement {
     }
 
     let mut base_known_children = Vec::new();
-    let preserved_layout = base
+    let child_layout = base
         .children
         .into_iter()
         .map(|child| match child {
             XmlNode::Element(element) if is_known_child(&base.name, &element.name) => {
+                let layout = if is_repeated_child(&base.name, &element.name) {
+                    ChildLayoutSlot::KnownRepeated
+                } else {
+                    ChildLayoutSlot::KnownSingle {
+                        tag: element.name.clone(),
+                    }
+                };
                 base_known_children.push(Some(element));
-                None
+                layout
             }
-            child => Some(child),
+            child => ChildLayoutSlot::Unknown(child),
         })
         .collect::<Vec<_>>();
 
@@ -252,19 +269,49 @@ fn merge_element(mut base: XmlElement, managed: XmlElement) -> XmlElement {
         merged_managed_children.push(merged_child);
     }
 
-    let mut merged_managed_children = merged_managed_children.into_iter();
+    let mut merged_managed_children = merged_managed_children
+        .into_iter()
+        .map(Some)
+        .collect::<Vec<_>>();
     let mut merged_children = Vec::new();
-    for preserved_child in preserved_layout {
-        if let Some(preserved_child) = preserved_child {
-            merged_children.push(preserved_child);
-        } else if let Some(managed_child) = merged_managed_children.next() {
-            merged_children.push(XmlNode::Element(managed_child));
+    for slot in child_layout {
+        match slot {
+            ChildLayoutSlot::Unknown(child) => merged_children.push(child),
+            ChildLayoutSlot::KnownSingle { tag } => {
+                if let Some(child) =
+                    take_matching_child(&mut merged_managed_children, |child| child.name == tag)
+                {
+                    merged_children.push(XmlNode::Element(child));
+                }
+            }
+            ChildLayoutSlot::KnownRepeated => {
+                if let Some(child) = take_matching_child(&mut merged_managed_children, |child| {
+                    is_repeated_child(&base.name, &child.name)
+                }) {
+                    merged_children.push(XmlNode::Element(child));
+                }
+            }
         }
     }
-    merged_children.extend(merged_managed_children.map(XmlNode::Element));
+    merged_children.extend(
+        merged_managed_children
+            .into_iter()
+            .flatten()
+            .map(XmlNode::Element),
+    );
 
     base.children = merged_children;
     base
+}
+
+fn take_matching_child(
+    children: &mut [Option<XmlElement>],
+    matches: impl Fn(&XmlElement) -> bool,
+) -> Option<XmlElement> {
+    let index = children
+        .iter()
+        .position(|child| child.as_ref().is_some_and(&matches))?;
+    children[index].take()
 }
 
 // Merges fixed schema fields without moving preserved fields around unknown content.

@@ -225,6 +225,55 @@ fn removing_a_bendpoint_rebuilds_the_non_identity_list() {
 }
 
 #[test]
+fn removing_an_optional_field_keeps_unknown_content_before_the_next_fixed_field() {
+    let relationship = concat!(
+        "<relationship>",
+        "<name>RELATIONSHIP</name>",
+        "<source>table.TABLE</source>",
+        "<target>table.TABLE</target>",
+        "<bendpoint><relative>true</relative><x>11</x><y>12</y></bendpoint>",
+        "<fk_columns/>",
+        "<parent_cardinality>1</parent_cardinality>",
+        "<child_cardinality>0..n</child_cardinality>",
+        "<reference_for_pk>true</reference_for_pk>",
+        "<on_delete_action>CASCADE</on_delete_action>",
+        "<extension>preserved</extension>",
+        "<on_update_action>RESTRICT</on_update_action>",
+        "</relationship>",
+    );
+    let source = diagram_with_tables(&[table("TABLE")
+        .replace(
+            "<connections/>",
+            &format!("<connections>{relationship}</connections>"),
+        )
+        .replace(
+            "<columns/>",
+            "<columns><normal_column><physical_name>ID</physical_name><primary_key>true</primary_key></normal_column></columns>",
+        )]);
+
+    let saved = open_edit_save(&source, "removed_optional_field", |diagram| {
+        let relationship = diagram
+            .diagram_walkers
+            .as_mut()
+            .and_then(|walkers| walkers.tables.as_mut())
+            .and_then(|tables| tables.first_mut())
+            .and_then(|table| table.connections.relationships.as_mut())
+            .and_then(|relationships| relationships.first_mut())
+            .expect("missing relationship");
+
+        relationship.on_delete_action = None;
+    });
+
+    let relationship = compact_xml(&extract_element(&saved, "relationship"));
+    assert!(!relationship.contains("<on_delete_action>"));
+    assert!(relationship.contains(concat!(
+        "<reference_for_pk>true</reference_for_pk>",
+        "<extension>preserved</extension>",
+        "<on_update_action>RESTRICT</on_update_action>",
+    )));
+}
+
+#[test]
 fn unknown_nested_elements_and_attributes_keep_their_positions() {
     let source = diagram_with_tables(&[table_with_extra(
         "OLD",
