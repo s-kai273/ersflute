@@ -2,6 +2,7 @@ use super::xml_identity::{attach_identity_keys, collect_identity_keys};
 use crate::dtos::diagram::Diagram;
 use crate::entities::XmlSchema as _;
 use crate::errors::Error;
+use quick_xml::errors::IllFormedError;
 use quick_xml::events::{BytesEnd, BytesStart, Event};
 use quick_xml::{Reader, Writer};
 use std::collections::{HashMap, HashSet};
@@ -436,7 +437,11 @@ fn parse_element(
                 });
             }
             Event::Comment(_) => {}
-            Event::Eof => unreachable!("XML element was not closed"),
+            Event::Eof => {
+                return Err(Error::Xml(
+                    IllFormedError::MissingEndTag(name.clone()).into(),
+                ));
+            }
             event => children.push(XmlNode::Raw(event_bytes(event)?)),
         }
     }
