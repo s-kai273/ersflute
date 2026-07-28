@@ -111,6 +111,13 @@ function getColumnRow(physicalName: string): HTMLTableRowElement {
   });
 }
 
+function getDisplayedItemOrder(itemNames: string[]) {
+  const itemNamePattern = new RegExp(`^(${itemNames.join("|")})$`);
+  return screen
+    .getAllByText(itemNamePattern)
+    .map((element) => element.textContent);
+}
+
 async function openDetailFor(
   user: ReturnType<typeof userEvent.setup>,
   physicalName: string,
@@ -290,15 +297,17 @@ describe("when editing is allowed", () => {
     expect(screen.queryByText("PROFILE_TYPE")).not.toBeInTheDocument();
   });
 
-  it("keeps Edit/Delete disabled before any row is selected", () => {
+  it("keeps row actions disabled before any row is selected", () => {
     renderEditableTableInfoDialog();
 
     expect(screen.getByRole("button", { name: "Add" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Edit" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Delete" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Up" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Down" })).toBeDisabled();
   });
 
-  it("enables Edit/Delete after a row is selected", async () => {
+  it("enables actions available for the selected last row", async () => {
     const user = userEvent.setup();
     renderEditableTableInfoDialog();
 
@@ -306,6 +315,75 @@ describe("when editing is allowed", () => {
 
     expect(screen.getByRole("button", { name: "Edit" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Delete" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Up" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Down" })).toBeDisabled();
+  });
+
+  it("moves the selected column down", async () => {
+    const user = userEvent.setup();
+    renderEditableTableInfoDialog();
+    await user.click(getColumnRow("ID"));
+
+    await user.click(screen.getByRole("button", { name: "Down" }));
+
+    expect(getDisplayedItemOrder(["ID", "EMAIL"])).toEqual(["EMAIL", "ID"]);
+    expect(screen.getByRole("button", { name: "Up" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Down" })).toBeDisabled();
+  });
+
+  it("moves the selected column up", async () => {
+    const user = userEvent.setup();
+    renderEditableTableInfoDialog();
+    await user.click(getColumnRow("EMAIL"));
+
+    await user.click(screen.getByRole("button", { name: "Up" }));
+
+    expect(getDisplayedItemOrder(["ID", "EMAIL"])).toEqual(["EMAIL", "ID"]);
+    expect(screen.getByRole("button", { name: "Up" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Down" })).toBeEnabled();
+  });
+
+  it("moves a selected column group as one top-level item", async () => {
+    const user = userEvent.setup();
+    renderEditableTableInfoDialog({
+      columns: [seedColumnGroups(), createTableData().columns![0]],
+    });
+    await user.click(screen.getByRole("button", { name: "PROFILE_GROUP" }));
+
+    await user.click(screen.getByRole("button", { name: "Down" }));
+
+    expect(getDisplayedItemOrder(["PROFILE_GROUP", "ID"])).toEqual([
+      "ID",
+      "PROFILE_GROUP",
+    ]);
+  });
+
+  it("disables moving when a column inside a group is selected", async () => {
+    const user = userEvent.setup();
+    renderEditableTableInfoDialog({
+      columns: [seedColumnGroups(), createTableData().columns![0]],
+    });
+    await user.click(screen.getByRole("button", { name: "PROFILE_GROUP" }));
+
+    await user.click(getColumnRow("PROFILE_ID"));
+
+    expect(screen.getByRole("button", { name: "Up" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Down" })).toBeDisabled();
+  });
+
+  it("applies columns in their reordered sequence", async () => {
+    const user = userEvent.setup();
+    const { onApply } = renderEditableTableInfoDialog();
+    await user.click(getColumnRow("ID"));
+    await user.click(screen.getByRole("button", { name: "Down" }));
+
+    await user.click(screen.getByRole("button", { name: "OK" }));
+
+    await waitFor(() => expect(onApply).toHaveBeenCalledTimes(1));
+    expect(onApply.mock.calls[0][0].columns).toEqual([
+      expect.objectContaining({ physicalName: "EMAIL" }),
+      expect.objectContaining({ physicalName: "ID" }),
+    ]);
   });
 
   it("opens the detail view when Add is clicked", async () => {
@@ -527,7 +605,7 @@ describe("in read-only mode", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("keeps Add/Delete disabled while enabling Edit after selection", async () => {
+  it("keeps mutating actions disabled while enabling Edit after selection", async () => {
     const user = userEvent.setup();
     renderReadOnlyTableInfoDialog();
 
@@ -536,6 +614,8 @@ describe("in read-only mode", () => {
     expect(screen.getByRole("button", { name: "Add" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Delete" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Edit" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Up" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Down" })).toBeDisabled();
   });
 
   it("opens the detail view for the selected row when Edit is clicked", async () => {

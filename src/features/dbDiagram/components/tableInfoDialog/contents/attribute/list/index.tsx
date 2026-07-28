@@ -16,6 +16,8 @@ export function AttributeList({
   onAddColumn,
   onEditColumn,
   onDeleteColumn,
+  onMoveColumnUp,
+  onMoveColumnDown,
 }: AttributeListProps) {
   const { isReadOnly } = useViewModeStore();
   const columnGroups = useDiagramStore((state) => state.columnGroups);
@@ -114,6 +116,34 @@ export function AttributeList({
           disabled={isReadOnly || selectedColumnIndex == null}
         >
           Delete
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onMoveColumnUp}
+          disabled={
+            isReadOnly ||
+            selectedColumnIndex == null ||
+            selectedInGroupIndex != null ||
+            selectedColumnIndex === 0
+          }
+        >
+          Up
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onMoveColumnDown}
+          disabled={
+            isReadOnly ||
+            selectedColumnIndex == null ||
+            selectedInGroupIndex != null ||
+            selectedColumnIndex >= columns.length - 1
+          }
+        >
+          Down
         </Button>
       </div>
     </section>

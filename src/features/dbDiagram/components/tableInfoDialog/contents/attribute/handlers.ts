@@ -91,6 +91,50 @@ export function createAttributeContentHandlers({
     setAttributeView("list");
   };
 
+  const handleMoveColumnUp = () => {
+    if (
+      selectedColumnIndex == null ||
+      selectedInGroupIndex != null ||
+      selectedColumnIndex === 0
+    ) {
+      return;
+    }
+
+    const nextColumns = [...columns];
+    const nextIndex = selectedColumnIndex - 1;
+    [nextColumns[nextIndex], nextColumns[selectedColumnIndex]] = [
+      nextColumns[selectedColumnIndex],
+      nextColumns[nextIndex],
+    ];
+    setData((current) => ({
+      ...current,
+      columns: nextColumns,
+    }));
+    setSelectedColumnIndex(nextIndex);
+  };
+
+  const handleMoveColumnDown = () => {
+    if (
+      selectedColumnIndex == null ||
+      selectedInGroupIndex != null ||
+      selectedColumnIndex >= columns.length - 1
+    ) {
+      return;
+    }
+
+    const nextColumns = [...columns];
+    const nextIndex = selectedColumnIndex + 1;
+    [nextColumns[nextIndex], nextColumns[selectedColumnIndex]] = [
+      nextColumns[selectedColumnIndex],
+      nextColumns[nextIndex],
+    ];
+    setData((current) => ({
+      ...current,
+      columns: nextColumns,
+    }));
+    setSelectedColumnIndex(nextIndex);
+  };
+
   const handleUpdateColumn = (column: Column) => {
     setData((current) => {
       const nextColumns = current.columns?.map((col, index) => {
@@ -117,6 +161,8 @@ export function createAttributeContentHandlers({
     handleAddColumn,
     handleEditColumn,
     handleDeleteColumn,
+    handleMoveColumnUp,
+    handleMoveColumnDown,
     handleUpdateColumn,
     handleBackToColumnList,
   };
