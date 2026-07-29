@@ -37,6 +37,8 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
     handleAddColumn,
     handleEditColumn,
     handleDeleteColumn,
+    handleMoveColumnUp,
+    handleMoveColumnDown,
     handleUpdateColumn,
     handleBackToColumnList,
   } = createAttributeContentHandlers({
@@ -105,6 +107,8 @@ export function AttributeContent({ data, setData }: AttributeContentProps) {
           onAddColumn={handleAddColumn}
           onEditColumn={handleEditColumn}
           onDeleteColumn={handleDeleteColumn}
+          onMoveColumnUp={handleMoveColumnUp}
+          onMoveColumnDown={handleMoveColumnDown}
         />
       ) : (
         <AttributeDetail

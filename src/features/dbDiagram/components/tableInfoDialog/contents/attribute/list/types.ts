@@ -33,4 +33,6 @@ export type AttributeListProps = {
   onAddColumn: () => void;
   onEditColumn: () => void;
   onDeleteColumn: () => void;
+  onMoveColumnUp: () => void;
+  onMoveColumnDown: () => void;
 };
