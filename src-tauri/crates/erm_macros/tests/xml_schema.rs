@@ -7,6 +7,7 @@ use crate::entities::XmlSchema as _;
 mod entities {
     #[derive(Clone, Copy)]
     pub struct XmlSchemaContext {
+        is_leaf: bool,
         child_schema: fn(&str) -> Option<Self>,
         is_identity_child: fn(&str) -> bool,
         is_repeated_child: fn(&str) -> bool,
@@ -19,6 +20,7 @@ mod entities {
             is_repeated_child: fn(&str) -> bool,
         ) -> Self {
             Self {
+                is_leaf: false,
                 child_schema,
                 is_identity_child,
                 is_repeated_child,
@@ -26,7 +28,16 @@ mod entities {
         }
 
         pub fn leaf() -> Self {
-            Self::new(no_child_schema, no_child_match, no_child_match)
+            Self {
+                is_leaf: true,
+                child_schema: no_child_schema,
+                is_identity_child: no_child_match,
+                is_repeated_child: no_child_match,
+            }
+        }
+
+        pub fn is_leaf(self) -> bool {
+            self.is_leaf
         }
 
         pub fn child(self, tag: &str) -> Option<Self> {
@@ -84,6 +95,10 @@ mod entities {
 
     impl XmlSchema for String {
         const XML_TAG: &'static str = "";
+
+        fn xml_schema() -> XmlSchemaContext {
+            XmlSchemaContext::leaf()
+        }
     }
 
     impl<T: XmlSchema> XmlSchema for Option<T> {
@@ -193,6 +208,26 @@ struct SecondColumns {
 #[test]
 fn field_names_are_known_children_of_the_derived_type_tag() {
     assert!(Root::xml_schema().child("visible_name").is_some());
+}
+
+#[test]
+fn scalar_fields_are_leaf_children() {
+    assert!(
+        Root::xml_schema()
+            .child("visible_name")
+            .expect("missing scalar field schema")
+            .is_leaf()
+    );
+}
+
+#[test]
+fn structured_fields_are_not_leaf_children() {
+    assert!(
+        !Root::xml_schema()
+            .child("renamed_child")
+            .expect("missing structured field schema")
+            .is_leaf()
+    );
 }
 
 #[test]

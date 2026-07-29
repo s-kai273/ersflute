@@ -34,3 +34,15 @@ fn whitespace_only_managed_string_values_are_preserved() {
     assert!(content.contains(&format!("<database>{whitespace}</database>")));
     assert_eq!(reopened.diagram_settings.database, whitespace);
 }
+
+#[test]
+fn newline_only_managed_string_values_use_a_carriage_return_reference() {
+    let mut diagram = support::minimal_diagram();
+    diagram.diagram_settings.database = "\n".to_string();
+
+    let (content, reopened) =
+        support::save_and_reopen_diagram(diagram, "newline_only_managed_string");
+
+    assert!(content.contains("<database>&#x0D;</database>"));
+    assert_eq!(reopened.diagram_settings.database, "\r");
+}

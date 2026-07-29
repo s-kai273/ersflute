@@ -347,6 +347,47 @@ fn whitespace_only_content_in_unknown_elements_is_preserved() {
 }
 
 #[test]
+fn newlines_in_unknown_elements_are_preserved() {
+    let source = diagram_with_tables(&[table_with_extra(
+        "OLD",
+        "",
+        "<extension>first\nsecond</extension>",
+    )]);
+
+    let saved = open_edit_save(&source, "unknown_element_newline", |diagram| {
+        let table = diagram
+            .diagram_walkers
+            .as_mut()
+            .and_then(|walkers| walkers.tables.as_mut())
+            .and_then(|tables| tables.first_mut())
+            .expect("missing table");
+
+        table.physical_name = "NEW".to_string();
+    });
+
+    assert!(saved.contains("<extension>first\nsecond</extension>"));
+}
+
+#[test]
+fn mixed_text_in_managed_containers_is_preserved() {
+    let source = diagram_with_tables(&[table_with_extra("OLD", "custom\ntext", "")]);
+
+    let saved = open_edit_save(&source, "managed_container_mixed_text", |diagram| {
+        let table = diagram
+            .diagram_walkers
+            .as_mut()
+            .and_then(|walkers| walkers.tables.as_mut())
+            .and_then(|tables| tables.first_mut())
+            .expect("missing table");
+
+        table.physical_name = "NEW".to_string();
+    });
+
+    assert!(saved.contains("<table>custom\ntext<physical_name>NEW</physical_name>"));
+    assert!(!saved.contains("<table>custom&#x0D;text"));
+}
+
+#[test]
 fn empty_elements_can_be_updated_with_text() {
     let source = diagram_with_settings("<database/><view_mode>1</view_mode>");
 

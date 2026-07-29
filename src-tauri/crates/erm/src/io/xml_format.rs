@@ -48,7 +48,11 @@ pub(crate) fn format_xml(xml: &str) -> Result<String, Error> {
                         writer.write_event(Event::Text(BytesText::new("")))?;
                     } else {
                         for text in element.pending_whitespace {
-                            writer.write_event(Event::Text(text))?;
+                            if element.schema.is_some_and(XmlSchemaContext::is_leaf) {
+                                writer.write_event(Event::Text(encode_managed_newlines(&text)))?;
+                            } else {
+                                writer.write_event(Event::Text(text))?;
+                            }
                         }
                     }
                 }
@@ -76,12 +80,24 @@ pub(crate) fn format_xml(xml: &str) -> Result<String, Error> {
                     .last_mut()
                     .filter(|element| element.schema.is_some())
                 {
+                    let is_leaf = element.schema.is_some_and(XmlSchemaContext::is_leaf);
                     for whitespace in element.pending_whitespace.drain(..) {
-                        writer.write_event(Event::Text(whitespace))?;
+                        if is_leaf {
+                            writer
+                                .write_event(Event::Text(encode_managed_newlines(&whitespace)))?;
+                        } else {
+                            writer.write_event(Event::Text(whitespace))?;
+                        }
                     }
                     element.has_text = true;
+                    if is_leaf {
+                        writer.write_event(Event::Text(encode_managed_newlines(&text)))?;
+                    } else {
+                        writer.write_event(Event::Text(text.borrow()))?;
+                    }
+                } else {
+                    writer.write_event(Event::Text(text.borrow()))?;
                 }
-                writer.write_event(Event::Text(text.borrow()))?;
             }
             event => writer.write_event(event.borrow())?,
         }
@@ -93,6 +109,20 @@ pub(crate) fn format_xml(xml: &str) -> Result<String, Error> {
 // Detects indentation-only text that should be replaced by formatter output.
 fn is_whitespace_text(text: &BytesText<'_>) -> bool {
     text.as_ref().iter().all(u8::is_ascii_whitespace)
+}
+
+// ERM represents line breaks in managed leaf values as explicit
+// carriage-return character references instead of literal XML text.
+fn encode_managed_newlines(text: &BytesText<'_>) -> BytesText<'static> {
+    const CARRIAGE_RETURN_REFERENCE: &str = "&#x0D;";
+
+    let escaped = std::str::from_utf8(text.as_ref()).expect("quick-xml read invalid UTF-8 text");
+    let encoded = escaped
+        .replace("\r\n", CARRIAGE_RETURN_REFERENCE)
+        .replace('\r', CARRIAGE_RETURN_REFERENCE)
+        .replace('\n', CARRIAGE_RETURN_REFERENCE);
+
+    BytesText::from_escaped(encoded)
 }
 
 fn event_name(name: &[u8]) -> String {
