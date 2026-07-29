@@ -55,7 +55,7 @@ export function AttributeList({
                 }
                 return (
                   <ColumnGroupItem
-                    key={`${columnGroup.columnGroupName}-${index}`}
+                    key={`column-group:${columnGroup.identityKey ?? columnGroup.columnGroupName}`}
                     index={index}
                     selectedIndex={selectedColumnIndex}
                     selectedInGroupIndex={selectedInGroupIndex}
@@ -67,7 +67,7 @@ export function AttributeList({
               }
               return (
                 <ColumnItem
-                  key={`${column.physicalName}-${index}`}
+                  key={`column:${column.identityKey ?? `${column.physicalName}-${index}`}`}
                   column={column}
                   isSelected={isSelected}
                   isReadOnly={isReadOnly}

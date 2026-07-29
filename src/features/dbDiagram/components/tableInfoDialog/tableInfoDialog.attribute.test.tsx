@@ -356,6 +356,7 @@ describe("when editing is allowed", () => {
       "ID",
       "PROFILE_GROUP",
     ]);
+    expect(getColumnRow("PROFILE_ID")).toBeInTheDocument();
   });
 
   it("disables moving when a column inside a group is selected", async () => {
