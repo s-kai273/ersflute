@@ -48,7 +48,11 @@ pub(crate) fn format_xml(xml: &str) -> Result<String, Error> {
                         writer.write_event(Event::Text(BytesText::new("")))?;
                     } else {
                         for text in element.pending_whitespace {
-                            writer.write_event(Event::Text(encode_managed_newlines(&text)))?;
+                            if element.schema.is_some_and(XmlSchemaContext::is_leaf) {
+                                writer.write_event(Event::Text(encode_managed_newlines(&text)))?;
+                            } else {
+                                writer.write_event(Event::Text(text))?;
+                            }
                         }
                     }
                 }
@@ -76,11 +80,21 @@ pub(crate) fn format_xml(xml: &str) -> Result<String, Error> {
                     .last_mut()
                     .filter(|element| element.schema.is_some())
                 {
+                    let is_leaf = element.schema.is_some_and(XmlSchemaContext::is_leaf);
                     for whitespace in element.pending_whitespace.drain(..) {
-                        writer.write_event(Event::Text(encode_managed_newlines(&whitespace)))?;
+                        if is_leaf {
+                            writer
+                                .write_event(Event::Text(encode_managed_newlines(&whitespace)))?;
+                        } else {
+                            writer.write_event(Event::Text(whitespace))?;
+                        }
                     }
                     element.has_text = true;
-                    writer.write_event(Event::Text(encode_managed_newlines(&text)))?;
+                    if is_leaf {
+                        writer.write_event(Event::Text(encode_managed_newlines(&text)))?;
+                    } else {
+                        writer.write_event(Event::Text(text.borrow()))?;
+                    }
                 } else {
                     writer.write_event(Event::Text(text.borrow()))?;
                 }

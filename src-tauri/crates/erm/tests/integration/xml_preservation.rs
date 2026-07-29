@@ -369,6 +369,25 @@ fn newlines_in_unknown_elements_are_preserved() {
 }
 
 #[test]
+fn mixed_text_in_managed_containers_is_preserved() {
+    let source = diagram_with_tables(&[table_with_extra("OLD", "custom\ntext", "")]);
+
+    let saved = open_edit_save(&source, "managed_container_mixed_text", |diagram| {
+        let table = diagram
+            .diagram_walkers
+            .as_mut()
+            .and_then(|walkers| walkers.tables.as_mut())
+            .and_then(|tables| tables.first_mut())
+            .expect("missing table");
+
+        table.physical_name = "NEW".to_string();
+    });
+
+    assert!(saved.contains("<table>custom\ntext<physical_name>NEW</physical_name>"));
+    assert!(!saved.contains("<table>custom&#x0D;text"));
+}
+
+#[test]
 fn empty_elements_can_be_updated_with_text() {
     let source = diagram_with_settings("<database/><view_mode>1</view_mode>");
 

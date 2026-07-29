@@ -16,6 +16,9 @@ pub use erm_macros::XmlSchema;
 /// is matched with its preserved counterpart before merging.
 #[derive(Clone, Copy)]
 pub struct XmlSchemaContext {
+    /// Reports whether this context represents a scalar XML value rather than
+    /// an element containing managed child elements.
+    is_leaf: bool,
     /// Returns the concrete schema context for a known direct child tag.
     /// Returning `None` marks that child as unsupported by the current type.
     child_schema: fn(&str) -> Option<Self>,
@@ -34,6 +37,7 @@ impl XmlSchemaContext {
         is_repeated_child: fn(&str) -> bool,
     ) -> Self {
         Self {
+            is_leaf: false,
             child_schema,
             is_identity_child,
             is_repeated_child,
@@ -41,7 +45,16 @@ impl XmlSchemaContext {
     }
 
     pub fn leaf() -> Self {
-        Self::new(no_child_schema, no_child_match, no_child_match)
+        Self {
+            is_leaf: true,
+            child_schema: no_child_schema,
+            is_identity_child: no_child_match,
+            is_repeated_child: no_child_match,
+        }
+    }
+
+    pub fn is_leaf(self) -> bool {
+        self.is_leaf
     }
 
     pub fn child(self, tag: &str) -> Option<Self> {
@@ -102,11 +115,18 @@ macro_rules! impl_leaf_xml_schema {
         $(
             impl XmlSchema for $ty {
                 const XML_TAG: &'static str = "";
+
+                fn xml_schema() -> XmlSchemaContext {
+                    XmlSchemaContext::leaf()
+                }
             }
         )*
     };
 }
 
+// Register scalar ERM values as leaf XML nodes. The formatter uses this
+// distinction to encode newlines in element values without modifying text
+// preserved alongside child elements in structured nodes.
 impl_leaf_xml_schema!(crate::column_type::ColumnType, String, bool, i64, u8, u16);
 
 impl<T: XmlSchema> XmlSchema for Option<T> {
