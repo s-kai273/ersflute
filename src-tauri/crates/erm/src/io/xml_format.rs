@@ -28,7 +28,7 @@ pub(crate) fn format_xml(xml: &str) -> Result<String, Error> {
                     || (name == Diagram::XML_TAG).then(Diagram::xml_schema),
                     |parent| parent.schema.and_then(|schema| schema.child(&name)),
                 );
-                if let Some(parent) = elements.last_mut().filter(|parent| parent.schema.is_some()) {
+                if let Some(parent) = elements.last_mut() {
                     parent.has_child = true;
                     parent.pending_whitespace.clear();
                 }
@@ -43,7 +43,7 @@ pub(crate) fn format_xml(xml: &str) -> Result<String, Error> {
             }
             Event::End(end) => {
                 let element = elements.pop().expect("end event without a start event");
-                if element.schema.is_some() && !element.has_child {
+                if !element.has_child {
                     if element.pending_whitespace.is_empty() && !element.has_text {
                         writer.write_event(Event::Text(BytesText::new("")))?;
                     } else {
@@ -59,7 +59,7 @@ pub(crate) fn format_xml(xml: &str) -> Result<String, Error> {
                 writer.write_event(Event::End(end.borrow()))?;
             }
             Event::Empty(empty) => {
-                if let Some(parent) = elements.last_mut().filter(|parent| parent.schema.is_some()) {
+                if let Some(parent) = elements.last_mut() {
                     parent.has_child = true;
                     parent.pending_whitespace.clear();
                 }
@@ -76,10 +76,14 @@ pub(crate) fn format_xml(xml: &str) -> Result<String, Error> {
                 }
             }
             Event::Text(text) => {
-                if let Some(element) = elements
-                    .last_mut()
-                    .filter(|element| element.schema.is_some())
-                {
+                if let Some(element) = elements.last_mut() {
+                    element.has_text = true;
+
+                    if element.schema.is_none() {
+                        writer.write_event(Event::Text(text.borrow()))?;
+                        continue;
+                    }
+
                     let is_leaf = element.schema.is_some_and(XmlSchemaContext::is_leaf);
                     for whitespace in element.pending_whitespace.drain(..) {
                         if is_leaf {
@@ -89,7 +93,6 @@ pub(crate) fn format_xml(xml: &str) -> Result<String, Error> {
                             writer.write_event(Event::Text(whitespace))?;
                         }
                     }
-                    element.has_text = true;
                     if is_leaf {
                         writer.write_event(Event::Text(encode_managed_newlines(&text)))?;
                     } else {
