@@ -28,7 +28,6 @@ labels: ["bug"]
 <!-- Useful info for debugging -->
 
 - OS:
-- Browser / App:
 - Version / Commit:
 
 ## Notes
