@@ -111,16 +111,16 @@ fn is_whitespace_text(text: &BytesText<'_>) -> bool {
     text.as_ref().iter().all(u8::is_ascii_whitespace)
 }
 
-// ERM represents line breaks in managed leaf values as explicit
-// carriage-return character references instead of literal XML text.
+// Preserve each newline character in managed leaf values as an explicit XML
+// character reference instead of normalizing different newline sequences.
 fn encode_managed_newlines(text: &BytesText<'_>) -> BytesText<'static> {
     const CARRIAGE_RETURN_REFERENCE: &str = "&#x0D;";
+    const LINE_FEED_REFERENCE: &str = "&#x0A;";
 
     let escaped = std::str::from_utf8(text.as_ref()).expect("quick-xml read invalid UTF-8 text");
     let encoded = escaped
-        .replace("\r\n", CARRIAGE_RETURN_REFERENCE)
         .replace('\r', CARRIAGE_RETURN_REFERENCE)
-        .replace('\n', CARRIAGE_RETURN_REFERENCE);
+        .replace('\n', LINE_FEED_REFERENCE);
 
     BytesText::from_escaped(encoded)
 }
