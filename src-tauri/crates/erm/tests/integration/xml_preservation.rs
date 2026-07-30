@@ -369,6 +369,18 @@ fn newlines_in_unknown_elements_are_preserved() {
 }
 
 #[test]
+fn line_feed_references_in_unchanged_managed_values_are_preserved() {
+    let source = diagram_with_tables(&[table("TABLE").replace(
+        "<logical_name>TABLE</logical_name>",
+        "<logical_name>Line 1&#x0A;Line 2</logical_name>",
+    )]);
+
+    let saved = open_edit_save(&source, "unchanged_managed_line_feed", |_| {});
+
+    assert!(saved.contains("<logical_name>Line 1&#x0A;Line 2</logical_name>"));
+}
+
+#[test]
 fn mixed_text_in_managed_containers_is_preserved() {
     let source = diagram_with_tables(&[table_with_extra("OLD", "custom\ntext", "")]);
 
