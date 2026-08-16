@@ -1,8 +1,13 @@
+import { resolveColumnTypeAttributes } from "@/domain/column/resolveColumnTypeAttributes";
 import type { Column } from "@/types/domain/column";
 import { ColumnTypeConfigMap } from "@/types/domain/columnType";
 
 function buildColumnTypeWithoutUnsigned(column: Column) {
-  const columnType = column.columnType!;
+  const { columnType, length, decimal } =
+    resolveColumnTypeAttributes(column);
+  if (!columnType) {
+    return "";
+  }
   const config = ColumnTypeConfigMap[columnType];
   const labelWithoutArgs = config.labelWithoutArgs;
   // By design, there is no columnType that supports decimal only.
@@ -10,17 +15,18 @@ function buildColumnTypeWithoutUnsigned(column: Column) {
   // meaning the column is still treated as supporting both length and decimal.
   // Hence, a case where supportsDecimal is true and supportsLength is false does not exist.
   if (config.supportsLength && config.supportsDecimal) {
-    return `${labelWithoutArgs}(${column.length ?? 0}, ${column.decimal ?? 0})`;
+    return `${labelWithoutArgs}(${length ?? 0}, ${decimal ?? 0})`;
   }
   if (config.supportsLength) {
-    return `${labelWithoutArgs}(${column.length ?? 0})`;
+    return `${labelWithoutArgs}(${length ?? 0})`;
   }
   return ColumnTypeConfigMap[columnType].label;
 }
 
 export function formatColumnType(column: Column) {
-  if (!column.columnType) {
+  const { columnType, unsigned } = resolveColumnTypeAttributes(column);
+  if (!columnType) {
     return "";
   }
-  return `${buildColumnTypeWithoutUnsigned(column)}${column.unsigned ? " unsigned" : ""}`;
+  return `${buildColumnTypeWithoutUnsigned(column)}${unsigned ? " unsigned" : ""}`;
 }

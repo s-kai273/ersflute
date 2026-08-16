@@ -1,6 +1,9 @@
 import { parseReference, stringifyReference } from "@/domain/parsers/referenceParser";
 import type { NormalColumn, TableResponse } from "@/types/api/diagramWalkers";
-import type { Column } from "@/types/domain/column";
+import type {
+  Column,
+  ColumnTypeAttributes,
+} from "@/types/domain/column";
 import { parseColumnType } from "@/types/domain/columnType";
 import type { Relationship } from "@/types/domain/relationship";
 import type {
@@ -36,6 +39,26 @@ function getReferredColumn(
   return undefined;
 }
 
+function getInheritedTypeAttributes(
+  referredColumn: NormalColumn | undefined,
+): ColumnTypeAttributes | undefined {
+  const inheritedTypeAttributes = {
+    columnType: referredColumn?.columnType
+      ? parseColumnType(referredColumn.columnType)
+      : undefined,
+    length: referredColumn?.length,
+    decimal: referredColumn?.decimal,
+    enumArgs: referredColumn?.args,
+    unsigned: referredColumn?.unsigned,
+  } satisfies ColumnTypeAttributes;
+
+  return Object.values(inheritedTypeAttributes).some(
+    (value) => value !== undefined,
+  )
+    ? inheritedTypeAttributes
+    : undefined;
+}
+
 export function mapTablesFromApi(tableResponses: TableResponse[]): Table[] {
   if (!tableResponses) {
     return [];
@@ -65,21 +88,21 @@ export function mapTablesFromApi(tableResponses: TableResponse[]): Table[] {
           return item;
         }
         const referredColumn = getReferredColumn(item, tableResponses);
-        const columnType = item.columnType
-          ? parseColumnType(item.columnType)
-          : referredColumn?.columnType
-            ? parseColumnType(referredColumn.columnType)
-            : undefined;
+        const inheritedTypeAttributes =
+          getInheritedTypeAttributes(referredColumn);
         return {
           identityKey: item.identityKey,
           physicalName: item.physicalName,
           logicalName: item.logicalName,
           description: item.description,
-          columnType,
-          length: item.length ?? referredColumn?.length,
-          decimal: item.decimal ?? referredColumn?.decimal,
-          enumArgs: item.args ?? referredColumn?.args,
-          unsigned: item.unsigned ?? referredColumn?.unsigned,
+          columnType: item.columnType
+            ? parseColumnType(item.columnType)
+            : undefined,
+          length: item.length,
+          decimal: item.decimal,
+          enumArgs: item.args,
+          unsigned: item.unsigned,
+          inheritedTypeAttributes,
           notNull: item.notNull,
           unique: item.uniqueKey,
           defaultValue: item.defaultValue,

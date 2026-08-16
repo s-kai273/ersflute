@@ -56,6 +56,26 @@ it("renders the table header and columns with formatted types in physical view",
   expect(screen.getByText("companyId")).toBeInTheDocument();
 });
 
+it("renders inherited column type attributes", () => {
+  const table = createTable({
+    columns: [
+      {
+        physicalName: "companyId",
+        referredColumn: "companies.id",
+        inheritedTypeAttributes: {
+          columnType: ColumnType.IntN,
+          length: 11,
+          unsigned: true,
+        },
+      },
+    ],
+  });
+
+  render(<TableCard width={200} height={140} data={table} />);
+
+  expect(screen.getByText("companyId: int(11) unsigned")).toBeInTheDocument();
+});
+
 it("renders logical names in the header and columns in logical view", () => {
   const table = createTable({
     logicalName: "Users",
