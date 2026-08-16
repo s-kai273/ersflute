@@ -4,10 +4,7 @@ import type {
 } from "@/types/domain/column";
 
 export function usesInheritedTypeAttributes(column: Column): boolean {
-  return (
-    column.columnType === undefined &&
-    column.inheritedTypeAttributes?.columnType !== undefined
-  );
+  return column.inheritedTypeAttributes !== undefined;
 }
 
 export function resolveColumnTypeAttributes(

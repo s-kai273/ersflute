@@ -193,6 +193,8 @@ describe("when editing is allowed", () => {
       columns: [
         {
           physicalName: "AMOUNT",
+          columnType: ColumnType.VarCharN,
+          length: 20,
           referredColumn: "ORDERS.AMOUNT",
           inheritedTypeAttributes: {
             columnType: ColumnType.DecimalPS,
