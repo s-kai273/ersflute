@@ -75,3 +75,16 @@ it("adds unsigned when the column type supports it", () => {
 
   expect(formatColumnType(column)).toBe("int unsigned");
 });
+
+it("formats inherited type attributes when explicit values are missing", () => {
+  const column = createColumn({
+    columnType: undefined,
+    inheritedTypeAttributes: {
+      columnType: ColumnType.IntN,
+      length: 11,
+      unsigned: true,
+    },
+  });
+
+  expect(formatColumnType(column)).toBe("int(11) unsigned");
+});

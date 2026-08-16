@@ -1,7 +1,7 @@
 import type { TableResponse } from "@/types/api/diagramWalkers";
 import type { Column } from "@/types/domain/column";
 import { ColumnType } from "@/types/domain/columnType";
-import { mapDiagramFromApi } from ".";
+import { mapDiagramFromApi, mapDiagramToApi } from ".";
 
 function createTableResponse(
   overrides?: Partial<TableResponse>,
@@ -142,7 +142,7 @@ it("maps table properties and column attributes from API values", () => {
   ]);
 });
 
-it("uses referred column attributes when API column details are omitted", () => {
+it("keeps referred column attributes separate from explicit values", () => {
   const result = mapDiagramFromApi({
     diagramWalkers: {
       tables: [
@@ -176,10 +176,150 @@ it("uses referred column attributes when API column details are omitted", () => 
   });
 
   const column = result.tables[1].columns?.[0] as Column;
-  expect(column.columnType).toBe(ColumnType.VarCharN);
-  expect(column.length).toBe(32);
-  expect(column.unsigned).toBe(true);
-  expect(column.enumArgs).toBe("A,B,C");
+  expect(column).toMatchObject({
+    columnType: undefined,
+    length: undefined,
+    unsigned: undefined,
+    enumArgs: undefined,
+    inheritedTypeAttributes: {
+      columnType: ColumnType.VarCharN,
+      length: 32,
+      unsigned: true,
+      enumArgs: "A,B,C",
+    },
+  });
+});
+
+it("does not write inherited column attributes back to the API", () => {
+  const diagram = mapDiagramFromApi({
+    diagramWalkers: {
+      tables: [
+        createTableResponse({
+          physicalName: "users",
+          columns: {
+            items: [
+              {
+                physicalName: "account_code",
+                columnType: "varchar(n)",
+                length: 32,
+                decimal: 2,
+                unsigned: true,
+                args: "A,B,C",
+              },
+            ],
+          },
+        }),
+        createTableResponse({
+          physicalName: "orders",
+          columns: {
+            items: [
+              {
+                physicalName: "account_code",
+                referredColumn: "table.users.account_code",
+              },
+            ],
+          },
+        }),
+      ],
+    },
+  });
+
+  const result = mapDiagramToApi(diagram);
+  const column = result.diagramWalkers?.tables?.[1].columns.items?.[0];
+
+  expect(column).toMatchObject({
+    physicalName: "account_code",
+    referredColumn: "table.users.account_code",
+    columnType: undefined,
+    length: undefined,
+    decimal: undefined,
+    unsigned: undefined,
+    args: undefined,
+  });
+});
+
+it("keeps explicit attributes on a referred column", () => {
+  const diagram = mapDiagramFromApi({
+    diagramWalkers: {
+      tables: [
+        createTableResponse({
+          physicalName: "users",
+          columns: {
+            items: [
+              {
+                physicalName: "account_code",
+                columnType: "varchar(n)",
+                length: 32,
+              },
+            ],
+          },
+        }),
+        createTableResponse({
+          physicalName: "orders",
+          columns: {
+            items: [
+              {
+                physicalName: "account_code",
+                columnType: "varchar(n)",
+                length: 32,
+                referredColumn: "table.users.account_code",
+              },
+            ],
+          },
+        }),
+      ],
+    },
+  });
+
+  const result = mapDiagramToApi(diagram);
+  const column = result.diagramWalkers?.tables?.[1].columns.items?.[0];
+
+  expect(column).toMatchObject({
+    columnType: ColumnType.VarCharN,
+    length: 32,
+  });
+});
+
+it("writes only explicit values when inherited attributes are present", () => {
+  const diagram = mapDiagramFromApi({
+    diagramWalkers: {
+      tables: [
+        createTableResponse({
+          physicalName: "users",
+          columns: {
+            items: [
+              {
+                physicalName: "account_code",
+                columnType: "varchar(n)",
+                length: 32,
+              },
+            ],
+          },
+        }),
+        createTableResponse({
+          physicalName: "orders",
+          columns: {
+            items: [
+              {
+                physicalName: "account_code",
+                referredColumn: "table.users.account_code",
+              },
+            ],
+          },
+        }),
+      ],
+    },
+  });
+  const column = diagram.tables[1].columns?.[0] as Column;
+  column.length = 64;
+
+  const result = mapDiagramToApi(diagram);
+  const savedColumn = result.diagramWalkers?.tables?.[1].columns.items?.[0];
+
+  expect(savedColumn).toMatchObject({
+    columnType: undefined,
+    length: 64,
+  });
 });
 
 it("omits table columns when API columns are missing", () => {

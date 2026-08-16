@@ -187,6 +187,34 @@ describe("when editing is allowed", () => {
     );
   });
 
+  it("shows inherited type attributes as disabled values", async () => {
+    const user = userEvent.setup();
+    renderEditableTableInfoDialog({
+      columns: [
+        {
+          physicalName: "AMOUNT",
+          referredColumn: "ORDERS.AMOUNT",
+          inheritedTypeAttributes: {
+            columnType: ColumnType.DecimalPS,
+            length: 10,
+            decimal: 2,
+          },
+        },
+      ],
+    });
+
+    const detailRegion = await openDetailFor(user, "AMOUNT");
+
+    expect(within(detailRegion).getByLabelText("Type")).toHaveValue(
+      ColumnType.DecimalPS,
+    );
+    expect(within(detailRegion).getByLabelText("Type")).toBeDisabled();
+    expect(within(detailRegion).getByLabelText("Length")).toHaveValue(10);
+    expect(within(detailRegion).getByLabelText("Length")).toBeDisabled();
+    expect(within(detailRegion).getByLabelText("Decimal")).toHaveValue(2);
+    expect(within(detailRegion).getByLabelText("Decimal")).toBeDisabled();
+  });
+
   it("returns to the list when back is clicked from the detail view", async () => {
     const user = userEvent.setup();
     renderEditableTableInfoDialog();

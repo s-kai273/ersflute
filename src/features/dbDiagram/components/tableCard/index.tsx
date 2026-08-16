@@ -39,8 +39,9 @@ function formatColumnLabel(
     column.physicalName,
     column.logicalName,
   );
-  if (column.columnType) {
-    return `${nameLabel}: ${formatColumnType(column)}${uniqueSuffix}`;
+  const formattedColumnType = formatColumnType(column);
+  if (formattedColumnType) {
+    return `${nameLabel}: ${formattedColumnType}${uniqueSuffix}`;
   }
   return nameLabel;
 }

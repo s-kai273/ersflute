@@ -1,9 +1,13 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ArrowLeftIcon, CheckIcon } from "@heroicons/react/16/solid";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  resolveColumnTypeAttributes,
+  usesInheritedTypeAttributes,
+} from "@/domain/column/resolveColumnTypeAttributes";
 import { useViewModeStore } from "@/stores/viewModeStore";
 import type { Column } from "@/types/domain/column";
 import {
@@ -77,35 +81,23 @@ export function AttributeDetail({
 }: AttributeDetailProps) {
   const { isReadOnly } = useViewModeStore();
   const currentColumn: Column = column ?? initialColumn;
-  const columnType = currentColumn?.columnType;
-  const typeSupportsLength = useMemo(
-    () =>
-      columnType
-        ? ColumnTypeConfigMap[columnType].supportsLength !== false
-        : false,
-    [columnType],
-  );
-  const typeSupportsDecimal = useMemo(
-    () =>
-      columnType
-        ? ColumnTypeConfigMap[columnType].supportsDecimal !== false
-        : false,
-    [columnType],
-  );
-  const typeSupportsUnsigned = useMemo(
-    () =>
-      columnType
-        ? ColumnTypeConfigMap[columnType].supportsUnsigned !== false
-        : false,
-    [columnType],
-  );
-  const typeSupportsEnumArgs = useMemo(
-    () =>
-      columnType
-        ? ColumnTypeConfigMap[columnType].supportsEnumArgs !== false
-        : false,
-    [columnType],
-  );
+  const effectiveTypeAttributes = resolveColumnTypeAttributes(currentColumn);
+  const { columnType, length, decimal, unsigned, enumArgs } =
+    effectiveTypeAttributes;
+  const typeAttributesAreInherited =
+    usesInheritedTypeAttributes(currentColumn);
+  const typeSupportsLength = columnType
+    ? ColumnTypeConfigMap[columnType].supportsLength
+    : false;
+  const typeSupportsDecimal = columnType
+    ? ColumnTypeConfigMap[columnType].supportsDecimal
+    : false;
+  const typeSupportsUnsigned = columnType
+    ? ColumnTypeConfigMap[columnType].supportsUnsigned
+    : false;
+  const typeSupportsEnumArgs = columnType
+    ? ColumnTypeConfigMap[columnType].supportsEnumArgs
+    : false;
 
   const physicalNameInputRef = useRef<HTMLInputElement>(null);
 
@@ -317,15 +309,16 @@ export function AttributeDetail({
                 <span className="font-medium text-slate-600">Type</span>
                 {isReadOnly ? (
                   <p id="table-info-column-type" className="px-2 h-8 text-sm">
-                    {currentColumn.columnType
-                      ? ColumnTypeConfigMap[currentColumn.columnType].label
+                    {columnType
+                      ? ColumnTypeConfigMap[columnType].label
                       : "-"}
                   </p>
                 ) : (
                   <select
                     id="table-info-column-type"
                     className="h-8 rounded border border-slate-300 px-2 shadow-inner focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-200"
-                    value={currentColumn.columnType}
+                    value={columnType ?? ""}
+                    disabled={typeAttributesAreInherited}
                     onChange={(event) => {
                       const columnType =
                         event.target.value === ""
@@ -378,8 +371,8 @@ export function AttributeDetail({
                   id="table-info-column-length"
                   className="h-8 px-2"
                   type="number"
-                  value={currentColumn.length ?? ""}
-                  disabled={!typeSupportsLength}
+                  value={length ?? ""}
+                  disabled={!typeSupportsLength || typeAttributesAreInherited}
                   readOnly={isReadOnly}
                   onChange={(event) =>
                     onChange({
@@ -401,8 +394,8 @@ export function AttributeDetail({
                   id="table-info-column-decimal"
                   className="h-8 px-2"
                   type="number"
-                  value={currentColumn.decimal ?? ""}
-                  disabled={!typeSupportsDecimal}
+                  value={decimal ?? ""}
+                  disabled={!typeSupportsDecimal || typeAttributesAreInherited}
                   readOnly={isReadOnly}
                   onChange={(event) =>
                     onChange({
@@ -421,7 +414,7 @@ export function AttributeDetail({
               >
                 {isReadOnly ? (
                   <div className="size-4">
-                    {currentColumn.unsigned && (
+                    {unsigned && (
                       <CheckIcon
                         id="table-info-column-unsigned"
                         className="text-blue-500"
@@ -432,8 +425,10 @@ export function AttributeDetail({
                   <Checkbox
                     id="table-info-column-unsigned"
                     className="border-slate-300"
-                    checked={currentColumn.unsigned ?? false}
-                    disabled={!typeSupportsUnsigned}
+                    checked={unsigned ?? false}
+                    disabled={
+                      !typeSupportsUnsigned || typeAttributesAreInherited
+                    }
                     onCheckedChange={(checked) =>
                       onChange({
                         ...currentColumn,
@@ -458,8 +453,8 @@ export function AttributeDetail({
                 id="table-info-column-enum-args"
                 className="h-8 px-2"
                 type="text"
-                value={currentColumn.enumArgs ?? ""}
-                disabled={!typeSupportsEnumArgs}
+                value={enumArgs ?? ""}
+                disabled={!typeSupportsEnumArgs || typeAttributesAreInherited}
                 readOnly={isReadOnly}
                 onChange={(event) =>
                   onChange({
